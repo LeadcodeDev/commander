@@ -19,7 +19,6 @@ Then run `pub get` to install the dependencies.
 
 A simple example of using Commander to create an option selection component :
 
-```dart
 - [x] Placeholder
 - [x] Searchable values
 - [x] Selected line custom style
@@ -27,6 +26,7 @@ A simple example of using Commander to create an option selection component :
 - [x] Display transformer
 - [ ] Count limitation (actually defined as 5)
 
+```dart
 final select = Select(
   answer: "Please select your best hello",
   options: List.generate(20, (index) => Item('${index + 1}. Hello World', index + 1)),
