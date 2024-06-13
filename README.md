@@ -17,6 +17,26 @@ Then run `pub get` to install the dependencies.
 
 ## Utilisation
 
+### Input component
+
+A simple example of using Commander to create an input component :
+
+- [x] Placeholder
+- [x] Validator with error message as callback
+- [ ] Default value
+
+```dart
+final input = Input(
+  answer: 'Please give us your name',
+  placeholder: 'firstname lastname',
+  validate: (value) => switch(value) {
+    String value when value.trim().isNotEmpty => Ok(null),
+    _ => Err('Please provide a valid name')
+  }
+);
+```
+
+### Select component
 A simple example of using Commander to create an option selection component :
 
 - [x] Placeholder
@@ -43,21 +63,4 @@ final selected = switch(await select.handle()) {
 };
 
 print(selected);
-```
-
-A simple example of using Commander to create an input component :
-
-- [x] Placeholder
-- [x] Validator with error message as callback
-- [ ] Default value
-
-```dart
-final input = Input(
-  answer: 'Please give us your name',
-  placeholder: 'firstname lastname',
-  validate: (value) => switch(value) {
-    String value when value.trim().isNotEmpty => Ok(null),
-    _ => Err('Please provide a valid name')
-  }
-);
 ```
