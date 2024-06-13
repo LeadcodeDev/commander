@@ -15,7 +15,7 @@ dependencies:
 
 Then run `pub get` to install the dependencies.
 
-## Utilisation
+## Usage
 
 ### Input component
 
