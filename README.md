@@ -26,6 +26,8 @@ A simple example of using Commander to create an input component :
 - [ ] Default value
 
 ```dart
+StdinBuffer.initialize();
+
 final input = Input(
   answer: 'Please give us your name',
   placeholder: 'firstname lastname',
@@ -47,6 +49,8 @@ A simple example of using Commander to create an option selection component :
 - [ ] Count limitation (actually defined as 5)
 
 ```dart
+StdinBuffer.initialize();
+
 final select = Select(
   answer: "Please select your best hello",
   options: List.generate(20, (index) => Item('${index + 1}. Hello World', index + 1)),
