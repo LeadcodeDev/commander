@@ -1,0 +1,83 @@
+class AsciiColors {
+  static const String _black = '\u001b[30m';
+  static const String _red = '\u001b[31m';
+  static const String _green = '\u001b[32m';
+  static const String _yellow = '\u001b[33m';
+  static const String _blue = '\u001b[34m';
+  static const String _magenta = '\u001b[35m';
+  static const String _cyan = '\u001b[36m';
+  static const String _white = '\u001b[37m';
+  static const String _lightBlack = '\u001b[90m';
+  static const String _lightRed = '\u001b[91m';
+  static const String _lightGreen = '\u001b[92m';
+  static const String _lightYellow = '\u001b[93m';
+  static const String _lightBlue = '\u001b[94m';
+  static const String _lightMagenta = '\u001b[95m';
+  static const String _lightCyan = '\u001b[96m';
+  static const String _lightWhite = '\u001b[97m';
+
+  static const String _reset = '\u001b[0m';
+  static const String _bold = '\u001b[1m';
+  static const String _dim = '\u001b[2m';
+  static const String _italic = '\u001b[3m';
+  static const String _underline = '\u001b[4m';
+  static const String _strike = '\u001b[9m';
+
+  static const String _blackBg = '\u001b[40m';
+  static const String _redBg = '\u001b[41m';
+  static const String _greenBg = '\u001b[42m';
+  static const String _yellowBg = '\u001b[43m';
+  static const String _blueBg = '\u001b[44m';
+  static const String _magentaBg = '\u001b[45m';
+  static const String _cyanBg = '\u001b[46m';
+  static const String _whiteBg = '\u001b[47m';
+  static const String _lightBlackBg = '\u001b[100m';
+  static const String _lightRedBg = '\u001b[101m';
+  static const String _lightGreenBg = '\u001b[102m';
+  static const String _lightYellowBg = '\u001b[103m';
+  static const String _lightBlueBg = '\u001b[104m';
+  static const String _lightMagentaBg = '\u001b[105m';
+  static const String _lightCyanBg = '\u001b[106m';
+  static const String _lightWhiteBg = '\u001b[107m';
+
+  static String black(String text) => '$_black$text$_reset';
+  static String red(String text) => '$_red$text$_reset';
+  static String green(String text) => '$_green$text$_reset';
+  static String yellow(String text) => '$_yellow$text$_reset';
+  static String blue(String text) => '$_blue$text$_reset';
+  static String magenta(String text) => '$_magenta$text$_reset';
+  static String cyan(String text) => '$_cyan$text$_reset';
+  static String white(String text) => '$_white$text$_reset';
+  static String lightBlack(String text) => '$_lightBlack$text$_reset';
+  static String lightRed(String text) => '$_lightRed$text$_reset';
+  static String lightGreen(String text) => '$_lightGreen$text$_reset';
+  static String lightYellow(String text) => '$_lightYellow$text$_reset';
+  static String lightBlue(String text) => '$_lightBlue$text$_reset';
+  static String lightMagenta(String text) => '$_lightMagenta$text$_reset';
+  static String lightCyan(String text) => '$_lightCyan$text$_reset';
+  static String lightWhite(String text) => '$_lightWhite$text$_reset';
+
+  static String reset(String text) => '$_reset$text$_reset';
+  static String bold(String text) => '$_bold$text$_reset';
+  static String dim(String text) => '$_dim$text$_reset';
+  static String italic(String text) => '$_italic$text$_reset';
+  static String underline(String text) => '$_underline$text$_reset';
+  static String strike(String text) => '$_strike$text$_reset';
+
+  static String blackBg(String text) => '$_blackBg$text$_reset';
+  static String redBg(String text) => '$_redBg$text$_reset';
+  static String greenBg(String text) => '$_greenBg$text$_reset';
+  static String yellowBg(String text) => '$_yellowBg$text$_reset';
+  static String blueBg(String text) => '$_blueBg$text$_reset';
+  static String magentaBg(String text) => '$_magentaBg$text$_reset';
+  static String cyanBg(String text) => '$_cyanBg$text$_reset';
+  static String whiteBg(String text) => '$_whiteBg$text$_reset';
+  static String lightBlackBg(String text) => '$_lightBlackBg$text$_reset';
+  static String lightRedBg(String text) => '$_lightRedBg$text$_reset';
+  static String lightGreenBg(String text) => '$_lightGreenBg$text$_reset';
+  static String lightYellowBg(String text) => '$_lightYellowBg$text$_reset';
+  static String lightBlueBg(String text) => '$_lightBlueBg$text$_reset';
+  static String lightMagentaBg(String text) => '$_lightMagentaBg$text$_reset';
+  static String lightCyanBg(String text) => '$_lightCyanBg$text$_reset';
+  static String lightWhiteBg(String text) => '$_lightWhiteBg$text$_reset';
+}
