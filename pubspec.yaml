@@ -1,10 +1,10 @@
 name: commander
-description: A sample command-line application.
+description: Commander is a Dart library for creating user interfaces within the terminal.
 version: 1.0.0
 repository: https://github.com/LeadcodeDev/commander
 
 environment:
-  sdk: ^3.0.6
+  sdk: '>=3.0.6 <4.0.0'
 
 dependencies:
   collection: ^1.18.0
