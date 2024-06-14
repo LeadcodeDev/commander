@@ -8,9 +8,9 @@ import 'package:commander_ui/src/component.dart';
 import 'package:commander_ui/src/key_down_event_listener.dart';
 import 'package:commander_ui/src/result.dart';
 
-final class Select<T, R extends dynamic>
-    with Tools
-    implements Component<Result<T>> {
+/// A class that represents a select component.
+/// This component handles user selection from a list of options.
+final class Select<T, R extends dynamic> with Tools implements Component<Result<T>> {
   String filter = '';
   int currentIndex = 0;
   bool isRendering = false;
@@ -27,6 +27,16 @@ final class Select<T, R extends dynamic>
 
   final _completer = Completer<Result<T>>();
 
+  /// Creates a new instance of [Select].
+  ///
+  /// * The [answer] parameter is the question that the user is asked.
+  /// * The [options] parameter is the list of options that the user can select from.
+  /// * The [onDisplay] parameter is a function that transforms an option into a string for display.
+  /// * The [placeholder] parameter is an optional placeholder for the input.
+  /// * The [noResultFoundMessage] parameter is an optional message that is displayed when no results are found.
+  /// * The [exitMessage] parameter is an optional message that is displayed when the user exits the input.
+  /// * The [selectedLineStyle] parameter is a function that styles the selected line.
+  /// * The [unselectedLineStyle] parameter is a function that styles the unselected line.
   Select({
     required this.answer,
     required this.options,
@@ -37,16 +47,14 @@ final class Select<T, R extends dynamic>
     String Function(String)? selectedLineStyle,
     String Function(String)? unselectedLineStyle,
   }) {
-    this.noResultFoundMessage =
-        noResultFoundMessage ?? AsciiColors.dim('No result found');
-    this.exitMessage =
-        exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
-    this.selectedLineStyle = selectedLineStyle ??
-        (line) => '${AsciiColors.green('❯')} $selectedLineStyle(line)';
-    this.unselectedLineStyle =
-        unselectedLineStyle ?? (line) => '  $unselectedLineStyle(line)';
+    this.noResultFoundMessage = noResultFoundMessage ?? AsciiColors.dim('No result found');
+    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
+    this.selectedLineStyle =
+        selectedLineStyle ?? (line) => '${AsciiColors.green('❯')} $selectedLineStyle(line)';
+    this.unselectedLineStyle = unselectedLineStyle ?? (line) => '  $unselectedLineStyle(line)';
   }
 
+  /// Handles the select component and returns a [Future] that completes with the result of the selection.
   @override
   Future<Result<T>> handle() async {
     saveCursorPosition();
@@ -101,11 +109,9 @@ final class Select<T, R extends dynamic>
       return;
     }
 
-    final value = onDisplay?.call(options[currentIndex]) ??
-        options[currentIndex].toString();
+    final value = onDisplay?.call(options[currentIndex]) ?? options[currentIndex].toString();
 
-    stdout.writeln(
-        '${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
+    stdout.writeln('${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
     saveCursorPosition();
     showCursor();
     _completer.complete(Ok(options[currentIndex]));
@@ -146,9 +152,7 @@ final class Select<T, R extends dynamic>
 
     List<T> filteredArr = options.where((item) {
       final value = onDisplay?.call(item) ?? item.toString();
-      return filter.isNotEmpty
-          ? value.toLowerCase().contains(filter.toLowerCase())
-          : true;
+      return filter.isNotEmpty ? value.toLowerCase().contains(filter.toLowerCase()) : true;
     }).toList();
 
     buffer.writeln(
@@ -161,12 +165,10 @@ final class Select<T, R extends dynamic>
       if (currentIndex >= filteredArr.length - 2) {
         start = filteredArr.length - 5;
       }
-      int end =
-          start + 5 <= filteredArr.length ? start + 5 : filteredArr.length;
+      int end = start + 5 <= filteredArr.length ? start + 5 : filteredArr.length;
 
       for (int i = start; i < end; i++) {
-        final value =
-            onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
+        final value = onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
         if (i == currentIndex) {
           copy.add(selectedLineStyle(value));
         } else {
