@@ -68,3 +68,25 @@ final selected = switch(await select.handle()) {
 
 print(selected);
 ```
+
+### Switching component
+A simple example of using Commander to create a switch component :
+
+```dart
+StdinBuffer.initialize();
+
+final switch = Switch(
+  answer: 'Do you love cat ?',
+  defaultValue: false,
+);
+
+final result = switch(await switch.handle()) {
+  Ok(:final value) => value.value 
+    ? 'I love cat 😍' 
+    : 'I hate cat 😕',
+  Err(:final error) => Exception('Error: $error'),
+  _ => 'Unknown',
+};
+
+print(result);
+```
