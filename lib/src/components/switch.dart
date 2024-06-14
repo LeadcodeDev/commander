@@ -8,6 +8,8 @@ import 'package:commander_ui/src/component.dart';
 import 'package:commander_ui/src/key_down_event_listener.dart';
 import 'package:commander_ui/src/result.dart';
 
+/// A class that represents a switch component.
+/// This component handles user input as a boolean value.
 class Switch with Tools implements Component<Result<bool>> {
   final String answer;
   final bool? defaultValue;
@@ -21,6 +23,11 @@ class Switch with Tools implements Component<Result<bool>> {
 
   final _completer = Completer<Result<bool>>();
 
+  /// Creates a new instance of [Switch].
+  ///
+  /// * The [answer] parameter is the question that the user is asked.
+  /// * The [defaultValue] parameter is the default value of the switch.
+  /// * The [exitMessage] parameter is an optional message that is displayed when the user exits the input.
   Switch({
     required this.answer,
     this.defaultValue,
@@ -33,6 +40,7 @@ class Switch with Tools implements Component<Result<bool>> {
     }
   }
 
+  /// Handles the switch component and returns a [Future] that completes with the result of the switch.
   @override
   Future<Result<bool>> handle() async {
     saveCursorPosition();
