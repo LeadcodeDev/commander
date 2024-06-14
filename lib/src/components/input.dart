@@ -11,6 +11,7 @@ import 'package:commander_ui/src/result.dart';
 class Input with Tools implements Component<Result<String>> {
   final String answer;
   final String? placeholder;
+  final bool secure;
   late final String exitMessage;
   String value = '';
   String? errorMessage;
@@ -21,10 +22,12 @@ class Input with Tools implements Component<Result<String>> {
   Input({
     required this.answer,
     this.placeholder,
+    this.secure = false,
     Result Function(String value)? validate,
     String? exitMessage,
   }) {
-    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
+    this.exitMessage =
+        exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     this.validate = validate ?? (value) => Ok(null);
   }
 
@@ -53,13 +56,19 @@ class Input with Tools implements Component<Result<String>> {
       return;
     }
 
-    restoreCursorPosition();
+    saveCursorPosition();
     clearFromCursorToEnd();
+    restoreCursorPosition();
     showInput();
 
     dispose();
 
-    stdout.writeln('${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
+    final computedValue = secure
+        ? AsciiColors.dim(generateValue())
+        : AsciiColors.lightGreen(generateValue());
+
+    stdout.writeln('${AsciiColors.green('✔')} $answer · $computedValue}');
+
     saveCursorPosition();
     _completer.complete(Ok(value));
   }
@@ -79,7 +88,8 @@ class Input with Tools implements Component<Result<String>> {
     errorMessage = null;
     if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key)) {
       if (key == '\x7F' && value.isNotEmpty) {
-        value = value.substring(0, value.length - 1); // Supprimer le dernier caractère
+        value = value.substring(
+            0, value.length - 1); // Supprimer le dernier caractère
       } else if (key != '\x7F') {
         value = value + key; // Ajouter le caractère tapé
       }
@@ -88,10 +98,14 @@ class Input with Tools implements Component<Result<String>> {
     }
   }
 
+  String generateValue() =>
+      secure ? value.replaceAll(RegExp(r'.'), '*') : value;
+
   void render() async {
     final buffer = StringBuffer();
 
-    buffer.writeln('${AsciiColors.yellow('?')} $answer : ${AsciiColors.dim(value)}');
+    buffer.writeln(
+        '${AsciiColors.yellow('?')} $answer : ${AsciiColors.dim(generateValue())}');
     if (errorMessage != null) {
       buffer.writeln(AsciiColors.lightRed(errorMessage!));
     }
