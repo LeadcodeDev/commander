@@ -18,8 +18,8 @@ class Switch with Tools implements Component<Result<bool>> {
   String? errorMessage;
   late final String exitMessage;
 
-  final allowedYesValues = ['yes', 'y'];
-  final allowedNoValues = ['no', 'n'];
+  final List<String> allowedYesValues = ['yes', 'y'];
+  final List<String> allowedNoValues = ['no', 'n'];
 
   final _completer = Completer<Result<bool>>();
 
@@ -32,12 +32,15 @@ class Switch with Tools implements Component<Result<bool>> {
     required this.answer,
     this.defaultValue,
     String? exitMessage,
+    List<String>? allowedYesValues,
+    List<String>? allowedNoValues,
   }) {
-    this.exitMessage =
-        exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
+    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     if (defaultValue != null) {
       value = defaultValue!;
     }
+    this.allowedNoValues.addAll(allowedNoValues ?? []);
+    this.allowedYesValues.addAll(allowedYesValues ?? []);
   }
 
   /// Handles the switch component and returns a [Future] that completes with the result of the switch.
