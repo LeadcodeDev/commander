@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander/src/commons/ansi_character.dart';
-import 'package:commander/src/commons/cli.dart';
-import 'package:commander/src/commons/color.dart';
-import 'package:commander/src/component.dart';
-import 'package:commander/src/key_down_event_listener.dart';
-import 'package:commander/src/result.dart';
+import 'package:commander_ui/src/commons/ansi_character.dart';
+import 'package:commander_ui/src/commons/cli.dart';
+import 'package:commander_ui/src/commons/color.dart';
+import 'package:commander_ui/src/component.dart';
+import 'package:commander_ui/src/key_down_event_listener.dart';
+import 'package:commander_ui/src/result.dart';
 
 class Input with Tools implements Component<Result<String>> {
   final String answer;

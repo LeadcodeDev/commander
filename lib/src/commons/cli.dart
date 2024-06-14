@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:commander/src/application/stdin_buffer.dart';
+import 'package:commander_ui/src/application/stdin_buffer.dart';
 
 mixin Tools {
   static final a = '';

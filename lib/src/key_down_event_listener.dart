@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:commander/src/application/stdin_buffer.dart';
-import 'package:commander/src/commons/ansi_character.dart';
+import 'package:commander_ui/src/application/stdin_buffer.dart';
+import 'package:commander_ui/src/commons/ansi_character.dart';
 
 class KeyDownEventListener {
   StreamSubscription? sigintSubscription;
