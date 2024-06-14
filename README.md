@@ -21,9 +21,9 @@ Then run `pub get` to install the dependencies.
 
 A simple example of using Commander to create an input component :
 
-- [x] Placeholder
-- [x] Validator with error message as callback
-- [ ] Default value
+- ✅ Placeholder
+- ✅ Validator with error message as callback 
+- ❌ Default value
 
 ```dart
 StdinBuffer.initialize();
@@ -41,12 +41,12 @@ final input = Input(
 ### Select component
 A simple example of using Commander to create an option selection component :
 
-- [x] Placeholder
-- [x] Searchable values
-- [x] Selected line custom style
-- [x] Unselected line custom style
-- [x] Display transformer
-- [ ] Count limitation (actually defined as 5)
+- ✅ Placeholder
+- ✅ Searchable values
+- ✅ Selected line custom style
+- ✅ Unselected line custom style
+- ✅ Display transformer
+- ❌ Count limitation (actually defined as 5)
 
 ```dart
 StdinBuffer.initialize();

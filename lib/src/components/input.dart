@@ -8,6 +8,8 @@ import 'package:commander_ui/src/component.dart';
 import 'package:commander_ui/src/key_down_event_listener.dart';
 import 'package:commander_ui/src/result.dart';
 
+/// A class that represents an input component.
+/// This component handles user input and provides validation and error handling.
 class Input with Tools implements Component<Result<String>> {
   final String answer;
   final String? placeholder;
@@ -19,6 +21,11 @@ class Input with Tools implements Component<Result<String>> {
 
   final _completer = Completer<Result<String>>();
 
+  /// * The [answer] parameter is the answer that the user provides.
+  /// * The [placeholder] parameter is an optional placeholder for the input.
+  /// * The [secure] parameter determines whether the input should be hidden.
+  /// * The [validate] parameter is a function that validates the input.
+  /// * The [exitMessage] parameter is an optional message that is displayed when the user exits the input.
   Input({
     required this.answer,
     this.placeholder,
@@ -26,11 +33,11 @@ class Input with Tools implements Component<Result<String>> {
     Result Function(String value)? validate,
     String? exitMessage,
   }) {
-    this.exitMessage =
-        exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
+    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     this.validate = validate ?? (value) => Ok(null);
   }
 
+  /// Handles the input component and returns a [Future] that completes with the result of the input.
   @override
   Future<Result<String>> handle() async {
     saveCursorPosition();
@@ -64,9 +71,8 @@ class Input with Tools implements Component<Result<String>> {
 
     dispose();
 
-    final computedValue = secure
-        ? AsciiColors.dim(generateValue())
-        : AsciiColors.lightGreen(generateValue());
+    final computedValue =
+        secure ? AsciiColors.dim(generateValue()) : AsciiColors.lightGreen(generateValue());
 
     stdout.writeln('${AsciiColors.green('✔')} $answer · $computedValue}');
 
@@ -89,8 +95,7 @@ class Input with Tools implements Component<Result<String>> {
     errorMessage = null;
     if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key)) {
       if (key == '\x7F' && value.isNotEmpty) {
-        value = value.substring(
-            0, value.length - 1); // Supprimer le dernier caractère
+        value = value.substring(0, value.length - 1); // Supprimer le dernier caractère
       } else if (key != '\x7F') {
         value = value + key; // Ajouter le caractère tapé
       }
@@ -99,14 +104,12 @@ class Input with Tools implements Component<Result<String>> {
     }
   }
 
-  String generateValue() =>
-      secure ? value.replaceAll(RegExp(r'.'), '*') : value;
+  String generateValue() => secure ? value.replaceAll(RegExp(r'.'), '*') : value;
 
   void render() async {
     final buffer = StringBuffer();
 
-    buffer.writeln(
-        '${AsciiColors.yellow('?')} $answer : ${AsciiColors.dim(generateValue())}');
+    buffer.writeln('${AsciiColors.yellow('?')} $answer : ${AsciiColors.dim(generateValue())}');
     if (errorMessage != null) {
       buffer.writeln(AsciiColors.lightRed(errorMessage!));
     }
