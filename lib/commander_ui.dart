@@ -10,5 +10,3 @@ export '../src/commons/cli.dart';
 export '../src/commons/color.dart';
 
 export '../src/application/stdin_buffer.dart';
-
-

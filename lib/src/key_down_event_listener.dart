@@ -14,7 +14,8 @@ class KeyDownEventListener {
 
   KeyDownEventListener() {
     subscription = StdinBuffer.stream.transform(utf8.decoder).listen((data) {
-      final listener = listeners.firstWhereOrNull((listener) => listener.key.value == data);
+      final listener =
+          listeners.firstWhereOrNull((listener) => listener.key.value == data);
       if (listener case KeyDownListener listener) {
         listener.callback(data, dispose);
         return;
@@ -26,11 +27,13 @@ class KeyDownEventListener {
     });
   }
 
-  void match(AnsiCharacter key, void Function(String, void Function() dispose) callback) {
+  void match(AnsiCharacter key,
+      void Function(String, void Function() dispose) callback) {
     listeners.add(KeyDownListener(key, callback));
   }
 
-  void catchAll(FutureOr<void> Function(String, void Function() dispose) callback) {
+  void catchAll(
+      FutureOr<void> Function(String, void Function() dispose) callback) {
     fallback = callback;
   }
 
@@ -48,7 +51,6 @@ class KeyDownEventListener {
     sigintSubscription = null;
   }
 }
-
 
 final class KeyDownListener {
   final AnsiCharacter key;

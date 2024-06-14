@@ -52,10 +52,10 @@ mixin Tools {
       throw Exception('Could not parse cursor position');
     }
 
-    return (
-    int.parse(match.group(1)!),
-    int.parse(match.group(2)!)
-    );
+    final line = int.parse(match.group(1)!);
+    final column = int.parse(match.group(2)!);
+
+    return (line, column);
   }
 
   Future<int> getAvailableLinesBelowCursor() async {

@@ -1,7 +1,9 @@
 abstract class Result<T> {
   const Result();
 
-  R when<R>({required R Function(T value) ok, required String Function(Object error) err});
+  R when<R>(
+      {required R Function(T value) ok,
+      required String Function(Object error) err});
   T unwrap();
 }
 
@@ -19,7 +21,9 @@ class Err<T> extends Result<T> with ResultWhen {
 
 mixin ResultWhen<T> on Result<T> {
   @override
-  R when<R>({required R Function(T value) ok, required String Function(Object error) err}) {
+  R when<R>(
+      {required R Function(T value) ok,
+      required String Function(Object error) err}) {
     if (this is Ok<T>) {
       return ok((this as Ok<T>).value);
     } else {

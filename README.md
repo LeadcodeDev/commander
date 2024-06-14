@@ -10,7 +10,7 @@ user input.
 To use Commander in your Dart project, add this to your `pubspec.yaml` file :
 ```yaml
 dependencies:
-  cli_commander: ^1.0.0
+  commander_ui: ^1.1.0
 ```
 
 Then run `pub get` to install the dependencies.

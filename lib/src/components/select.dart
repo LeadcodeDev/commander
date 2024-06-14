@@ -8,7 +8,9 @@ import 'package:commander_ui/src/component.dart';
 import 'package:commander_ui/src/key_down_event_listener.dart';
 import 'package:commander_ui/src/result.dart';
 
-final class Select<T, R extends dynamic> with Tools implements Component<Result<T>> {
+final class Select<T, R extends dynamic>
+    with Tools
+    implements Component<Result<T>> {
   String filter = '';
   int currentIndex = 0;
   bool isRendering = false;
@@ -35,10 +37,14 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
     String Function(String)? selectedLineStyle,
     String Function(String)? unselectedLineStyle,
   }) {
-    this.noResultFoundMessage = noResultFoundMessage ?? AsciiColors.dim('No result found');
-    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
-    this.selectedLineStyle = selectedLineStyle ?? (line) => '${AsciiColors.green('❯')} $selectedLineStyle(line)';
-    this.unselectedLineStyle = unselectedLineStyle ?? (line) => '  $unselectedLineStyle(line)';
+    this.noResultFoundMessage =
+        noResultFoundMessage ?? AsciiColors.dim('No result found');
+    this.exitMessage =
+        exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
+    this.selectedLineStyle = selectedLineStyle ??
+        (line) => '${AsciiColors.green('❯')} $selectedLineStyle(line)';
+    this.unselectedLineStyle =
+        unselectedLineStyle ?? (line) => '  $unselectedLineStyle(line)';
   }
 
   @override
@@ -95,9 +101,11 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
       return;
     }
 
-    final value = onDisplay?.call(options[currentIndex]) ?? options[currentIndex].toString();
+    final value = onDisplay?.call(options[currentIndex]) ??
+        options[currentIndex].toString();
 
-    stdout.writeln('${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
+    stdout.writeln(
+        '${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
     saveCursorPosition();
     showCursor();
     _completer.complete(Ok(options[currentIndex]));
@@ -139,11 +147,12 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
     List<T> filteredArr = options.where((item) {
       final value = onDisplay?.call(item) ?? item.toString();
       return filter.isNotEmpty
-        ? value.toLowerCase().contains(filter.toLowerCase())
-        : true;
+          ? value.toLowerCase().contains(filter.toLowerCase())
+          : true;
     }).toList();
 
-    buffer.writeln('${AsciiColors.yellow('?')} $answer : ${filter.isEmpty ? AsciiColors.dim(placeholder ?? '') : filter}');
+    buffer.writeln(
+        '${AsciiColors.yellow('?')} $answer : ${filter.isEmpty ? AsciiColors.dim(placeholder ?? '') : filter}');
 
     if (filteredArr.isEmpty) {
       buffer.writeln(noResultFoundMessage);
@@ -152,10 +161,12 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
       if (currentIndex >= filteredArr.length - 2) {
         start = filteredArr.length - 5;
       }
-      int end = start + 5 <= filteredArr.length ? start + 5 : filteredArr.length;
+      int end =
+          start + 5 <= filteredArr.length ? start + 5 : filteredArr.length;
 
       for (int i = start; i < end; i++) {
-        final value = onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
+        final value =
+            onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
         if (i == currentIndex) {
           copy.add(selectedLineStyle(value));
         } else {

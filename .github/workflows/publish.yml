@@ -15,5 +15,7 @@ jobs:
       - uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get
+      - name: Lint
+        run: dart format .
       - name: Publish
         run: dart pub publish --force
