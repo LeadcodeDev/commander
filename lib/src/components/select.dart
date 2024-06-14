@@ -99,6 +99,7 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
 
     stdout.writeln('${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
     saveCursorPosition();
+    showCursor();
     _completer.complete(Ok(options[currentIndex]));
   }
 

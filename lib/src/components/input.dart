@@ -60,6 +60,7 @@ class Input with Tools implements Component<Result<String>> {
     clearFromCursorToEnd();
     restoreCursorPosition();
     showInput();
+    showCursor();
 
     dispose();
 
