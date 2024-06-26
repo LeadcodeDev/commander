@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
+import 'package:mansion/mansion.dart';
 
 /// A class that represents a select component.
 /// This component handles user selection from a list of options.
@@ -13,12 +14,12 @@ final class Select<T> with Tools implements Component<T> {
   final List<T> options;
   final String answer;
   final String? placeholder;
-  late final String noResultFoundMessage;
-  late final String exitMessage;
+  late final List<Sequence> noResultFoundMessage;
+  late final List<Sequence> exitMessage;
 
   final String Function(T)? onDisplay;
-  late final String Function(String) selectedLineStyle;
-  late final String Function(String) unselectedLineStyle;
+  late final List<Sequence> Function(String) selectedLineStyle;
+  late final List<Sequence> Function(String) unselectedLineStyle;
 
   final _completer = Completer<T>();
 
@@ -37,18 +38,37 @@ final class Select<T> with Tools implements Component<T> {
     required this.options,
     this.onDisplay,
     this.placeholder,
-    String? noResultFoundMessage,
-    String? exitMessage,
-    String Function(String)? selectedLineStyle,
-    String Function(String)? unselectedLineStyle,
+    List<Sequence>? noResultFoundMessage,
+    List<Sequence>? exitMessage,
+    List<Sequence> Function(String)? selectedLineStyle,
+    List<Sequence> Function(String)? unselectedLineStyle,
   }) {
     StdinBuffer.initialize();
 
-    this.noResultFoundMessage = noResultFoundMessage ?? AsciiColors.dim('No result found');
-    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
-    this.selectedLineStyle =
-        selectedLineStyle ?? (line) => '${AsciiColors.green('❯')} $line';
-    this.unselectedLineStyle = unselectedLineStyle ?? (line) => '  $line';
+    this.noResultFoundMessage = noResultFoundMessage ?? [
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print('No result found'),
+      SetStyles.reset,
+    ];
+
+    this.exitMessage = exitMessage ?? [
+      SetStyles(Style.foreground(Color.brightRed)),
+      Print('✘'),
+      SetStyles.reset,
+      Print(' Operation canceled by user'),
+    ];
+
+    this.selectedLineStyle = selectedLineStyle ?? (line) => [
+      SetStyles(Style.foreground(Color.brightGreen)),
+      Print('❯'),
+      SetStyles.reset,
+      Print(' $line'),
+    ];
+
+    this.unselectedLineStyle = unselectedLineStyle ?? (line) => [
+      Print(''.padRight(2)),
+      Print(line),
+    ];
   }
 
   /// Handles the select component and returns a [Future] that completes with the result of the selection.
@@ -107,7 +127,18 @@ final class Select<T> with Tools implements Component<T> {
 
     final value = onDisplay?.call(options[currentIndex]) ?? options[currentIndex].toString();
 
-    stdout.writeln('${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
+    stdout.writeAnsiAll([
+      SetStyles(Style.foreground(Color.green)),
+      Print('✔'),
+      SetStyles.reset,
+      Print(' $answer '),
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print(value),
+      SetStyles.reset
+    ]);
+
+    stdout.writeln();
+
     saveCursorPosition();
     showCursor();
     _completer.complete(options[currentIndex]);
@@ -143,19 +174,30 @@ final class Select<T> with Tools implements Component<T> {
     saveCursorPosition();
 
     final buffer = StringBuffer();
-    final List<String> copy = [];
+    final List<Sequence> copy = [];
 
     List<T> filteredArr = options.where((item) {
       final value = onDisplay?.call(item) ?? item.toString();
       return filter.isNotEmpty ? value.toLowerCase().contains(filter.toLowerCase()) : true;
     }).toList();
 
-    buffer.writeln(
-        '${AsciiColors.yellow('?')} $answer : ${filter.isEmpty ? AsciiColors.dim(placeholder ?? '') : filter}');
+    buffer.writeAnsiAll([
+      SetStyles(Style.foreground(Color.yellow)),
+      Print('?'),
+      SetStyles.reset,
+      Print(' $answer : '),
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print(filter.isEmpty ? placeholder ?? '' : filter),
+      SetStyles.reset,
+    ]);
 
     if (filteredArr.isEmpty) {
-      buffer.writeln(noResultFoundMessage);
+      buffer.writeAnsiAll([
+        AsciiControl.lineFeed,
+        ...noResultFoundMessage
+      ]);
     } else {
+      copy.add(AsciiControl.lineFeed);
       int start = currentIndex - 2 >= 0 ? currentIndex - 2 : 0;
       if (currentIndex >= filteredArr.length - 2) {
         start = filteredArr.length - 5;
@@ -165,14 +207,14 @@ final class Select<T> with Tools implements Component<T> {
       for (int i = start; i < end; i++) {
         final value = onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
         if (i == currentIndex) {
-          copy.add(selectedLineStyle(value));
+          copy.addAll([...selectedLineStyle(value), AsciiControl.lineFeed]);
         } else {
-          copy.add(unselectedLineStyle(value));
+          copy.addAll([...unselectedLineStyle(value), AsciiControl.lineFeed]);
         }
       }
 
       while (copy.isNotEmpty) {
-        buffer.writeln(copy.removeAt(0));
+        buffer.writeAnsi(copy.removeAt(0));
       }
     }
 
