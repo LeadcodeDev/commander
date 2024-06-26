@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:commander_ui/src/application/stdin_buffer.dart';
 import 'package:commander_ui/src/commons/ansi_character.dart';
 import 'package:commander_ui/src/commons/cli.dart';
 import 'package:commander_ui/src/commons/color.dart';
@@ -33,6 +34,8 @@ class Input with Tools implements Component<Result<String>> {
     Result Function(String value)? validate,
     String? exitMessage,
   }) {
+    StdinBuffer.initialize();
+
     this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     this.validate = validate ?? (value) => Ok(null);
   }

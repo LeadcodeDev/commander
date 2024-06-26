@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:commander_ui/commander_ui.dart';
 import 'package:commander_ui/src/commons/ansi_character.dart';
 import 'package:commander_ui/src/commons/cli.dart';
 import 'package:commander_ui/src/commons/color.dart';
@@ -35,6 +36,8 @@ class Switch with Tools implements Component<Result<bool>> {
     List<String>? allowedYesValues,
     List<String>? allowedNoValues,
   }) {
+    StdinBuffer.initialize();
+
     this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     if (defaultValue != null) {
       value = defaultValue!;

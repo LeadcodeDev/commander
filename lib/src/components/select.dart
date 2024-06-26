@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:commander_ui/commander_ui.dart';
 import 'package:commander_ui/src/commons/ansi_character.dart';
 import 'package:commander_ui/src/commons/cli.dart';
 import 'package:commander_ui/src/commons/color.dart';
@@ -47,6 +48,8 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
     String Function(String)? selectedLineStyle,
     String Function(String)? unselectedLineStyle,
   }) {
+    StdinBuffer.initialize();
+
     this.noResultFoundMessage = noResultFoundMessage ?? AsciiColors.dim('No result found');
     this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     this.selectedLineStyle =
