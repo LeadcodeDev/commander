@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:commander_ui/src/application/stdin_buffer.dart';
 import 'package:commander_ui/src/commons/ansi_character.dart';
 import 'package:commander_ui/src/commons/cli.dart';
-import 'package:commander_ui/src/commons/color.dart';
 import 'package:commander_ui/src/component.dart';
 import 'package:commander_ui/src/key_down_event_listener.dart';
 import 'package:commander_ui/src/result.dart';
+import 'package:mansion/mansion.dart';
 
 /// A class that represents an input component.
 /// This component handles user input and provides validation and error handling.
@@ -15,7 +15,7 @@ class Input with Tools implements Component<String> {
   final String answer;
   final String? placeholder;
   final bool secure;
-  late final String exitMessage;
+  late final List<Sequence> exitMessage;
   String value = '';
   String? errorMessage;
   late Result Function(String value) validate;
@@ -32,11 +32,17 @@ class Input with Tools implements Component<String> {
     this.placeholder,
     this.secure = false,
     Result Function(String value)? validate,
-    String? exitMessage,
+    List<Sequence>? exitMessage,
   }) {
     StdinBuffer.initialize();
 
-    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
+    this.exitMessage = exitMessage ?? [
+      SetStyles(Style.foreground(Color.brightRed)),
+      Print('✘'),
+      SetStyles.reset,
+      Print(' Operation canceled by user'),
+    ];
+
     this.validate = validate ?? (value) => Ok(null);
   }
 
@@ -74,10 +80,17 @@ class Input with Tools implements Component<String> {
 
     dispose();
 
-    final computedValue =
-        secure ? AsciiColors.dim(generateValue()) : AsciiColors.lightGreen(generateValue());
+    stdout.writeAnsiAll([
+      SetStyles(Style.foreground(Color.green)),
+      Print('✔'),
+      SetStyles.reset,
+      Print(' $answer '),
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print(generateValue()),
+      SetStyles.reset,
+    ]);
 
-    stdout.writeln('${AsciiColors.green('✔')} $answer · $computedValue');
+    stdout.writeln();
 
     saveCursorPosition();
     _completer.complete(value);
@@ -90,7 +103,7 @@ class Input with Tools implements Component<String> {
     clearFromCursorToEnd();
     showInput();
 
-    stdout.writeln(exitMessage);
+    stdout.writeAnsiAll(exitMessage);
     exit(1);
   }
 
@@ -98,9 +111,9 @@ class Input with Tools implements Component<String> {
     errorMessage = null;
     if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key)) {
       if (key == '\x7F' && value.isNotEmpty) {
-        value = value.substring(0, value.length - 1); // Supprimer le dernier caractère
+        value = value.substring(0, value.length - 1);
       } else if (key != '\x7F') {
-        value = value + key; // Ajouter le caractère tapé
+        value = value + key;
       }
 
       render();
@@ -111,10 +124,22 @@ class Input with Tools implements Component<String> {
 
   void render() async {
     final buffer = StringBuffer();
+    buffer.writeAnsiAll([
+      SetStyles(Style.foreground(Color.yellow)),
+      Print('?'),
+      SetStyles.reset,
+      Print(' $answer '),
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print(value.isEmpty && errorMessage == null ? placeholder ?? generateValue() :  generateValue()),
+      SetStyles.reset,
+    ]);
 
-    buffer.writeln('${AsciiColors.yellow('?')} $answer : ${AsciiColors.dim(generateValue())}');
     if (errorMessage != null) {
-      buffer.writeln(AsciiColors.lightRed(errorMessage!));
+      buffer.writeAnsiAll([
+        SetStyles(Style.foreground(Color.brightRed)),
+        Print(errorMessage!),
+        SetStyles.reset,
+      ]);
     }
 
     final availableLines = await getAvailableLinesBelowCursor();
