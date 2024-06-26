@@ -74,7 +74,7 @@ class Input with Tools implements Component<Result<String>> {
     final computedValue =
         secure ? AsciiColors.dim(generateValue()) : AsciiColors.lightGreen(generateValue());
 
-    stdout.writeln('${AsciiColors.green('✔')} $answer · $computedValue}');
+    stdout.writeln('${AsciiColors.green('✔')} $answer · $computedValue');
 
     saveCursorPosition();
     _completer.complete(Ok(value));

@@ -50,8 +50,8 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
     this.noResultFoundMessage = noResultFoundMessage ?? AsciiColors.dim('No result found');
     this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     this.selectedLineStyle =
-        selectedLineStyle ?? (line) => '${AsciiColors.green('❯')} $selectedLineStyle(line)';
-    this.unselectedLineStyle = unselectedLineStyle ?? (line) => '  $unselectedLineStyle(line)';
+        selectedLineStyle ?? (line) => '${AsciiColors.green('❯')} $line';
+    this.unselectedLineStyle = unselectedLineStyle ?? (line) => '  $line';
   }
 
   /// Handles the select component and returns a [Future] that completes with the result of the selection.
