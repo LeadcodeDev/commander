@@ -11,7 +11,7 @@ import 'package:commander_ui/src/result.dart';
 
 /// A class that represents an input component.
 /// This component handles user input and provides validation and error handling.
-class Input with Tools implements Component<Result<String>> {
+class Input with Tools implements Component<String> {
   final String answer;
   final String? placeholder;
   final bool secure;
@@ -20,7 +20,7 @@ class Input with Tools implements Component<Result<String>> {
   String? errorMessage;
   late Result Function(String value) validate;
 
-  final _completer = Completer<Result<String>>();
+  final _completer = Completer<String>();
 
   /// * The [answer] parameter is the answer that the user provides.
   /// * The [placeholder] parameter is an optional placeholder for the input.
@@ -42,7 +42,7 @@ class Input with Tools implements Component<Result<String>> {
 
   /// Handles the input component and returns a [Future] that completes with the result of the input.
   @override
-  Future<Result<String>> handle() async {
+  Future<String> handle() async {
     saveCursorPosition();
     hideCursor();
     hideInput();
@@ -80,7 +80,7 @@ class Input with Tools implements Component<Result<String>> {
     stdout.writeln('${AsciiColors.green('✔')} $answer · $computedValue');
 
     saveCursorPosition();
-    _completer.complete(Ok(value));
+    _completer.complete(value);
   }
 
   void onExit(void Function() dispose) {

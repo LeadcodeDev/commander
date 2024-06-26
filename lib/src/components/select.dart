@@ -2,16 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/commons/ansi_character.dart';
-import 'package:commander_ui/src/commons/cli.dart';
-import 'package:commander_ui/src/commons/color.dart';
-import 'package:commander_ui/src/component.dart';
-import 'package:commander_ui/src/key_down_event_listener.dart';
-import 'package:commander_ui/src/result.dart';
 
 /// A class that represents a select component.
 /// This component handles user selection from a list of options.
-final class Select<T, R extends dynamic> with Tools implements Component<Result<T>> {
+final class Select<T> with Tools implements Component<T> {
   String filter = '';
   int currentIndex = 0;
   bool isRendering = false;
@@ -26,7 +20,7 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
   late final String Function(String) selectedLineStyle;
   late final String Function(String) unselectedLineStyle;
 
-  final _completer = Completer<Result<T>>();
+  final _completer = Completer<T>();
 
   /// Creates a new instance of [Select].
   ///
@@ -59,7 +53,7 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
 
   /// Handles the select component and returns a [Future] that completes with the result of the selection.
   @override
-  Future<Result<T>> handle() async {
+  Future<T> handle() async {
     saveCursorPosition();
     hideCursor();
     hideInput();
@@ -108,8 +102,7 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
     dispose();
 
     if (options.elementAtOrNull(currentIndex) == null) {
-      _completer.complete(Err('No result found'));
-      return;
+      throw Exception('No result found');
     }
 
     final value = onDisplay?.call(options[currentIndex]) ?? options[currentIndex].toString();
@@ -117,7 +110,7 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
     stdout.writeln('${AsciiColors.green('✔')} $answer · ${AsciiColors.lightGreen(value)}');
     saveCursorPosition();
     showCursor();
-    _completer.complete(Ok(options[currentIndex]));
+    _completer.complete(options[currentIndex]);
   }
 
   void onExit(void Function() dispose) {
@@ -128,7 +121,6 @@ final class Select<T, R extends dynamic> with Tools implements Component<Result<
     showInput();
 
     stdout.writeln(exitMessage);
-    _completer.complete(Err(exitMessage));
     exit(1);
   }
 

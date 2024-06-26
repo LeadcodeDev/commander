@@ -2,16 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/commons/ansi_character.dart';
-import 'package:commander_ui/src/commons/cli.dart';
-import 'package:commander_ui/src/commons/color.dart';
-import 'package:commander_ui/src/component.dart';
-import 'package:commander_ui/src/key_down_event_listener.dart';
-import 'package:commander_ui/src/result.dart';
 
 /// A class that represents a switch component.
 /// This component handles user input as a boolean value.
-class Switch with Tools implements Component<Result<bool>> {
+class Switch with Tools implements Component<bool> {
   final String answer;
   final bool? defaultValue;
   late bool value;
@@ -22,7 +16,7 @@ class Switch with Tools implements Component<Result<bool>> {
   final List<String> allowedYesValues = ['yes', 'y'];
   final List<String> allowedNoValues = ['no', 'n'];
 
-  final _completer = Completer<Result<bool>>();
+  final _completer = Completer<bool>();
 
   /// Creates a new instance of [Switch].
   ///
@@ -48,7 +42,7 @@ class Switch with Tools implements Component<Result<bool>> {
 
   /// Handles the switch component and returns a [Future] that completes with the result of the switch.
   @override
-  Future<Result<bool>> handle() async {
+  Future<bool> handle() async {
     saveCursorPosition();
     hideCursor();
     hideInput();
@@ -95,7 +89,7 @@ class Switch with Tools implements Component<Result<bool>> {
     stdout.writeln('${AsciiColors.green('✔')} $answer · $computedValue');
 
     saveCursorPosition();
-    _completer.complete(Ok(value));
+    _completer.complete(value);
   }
 
   void onExit(void Function() dispose) {

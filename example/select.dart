@@ -7,5 +7,5 @@ Future<void> main() async {
   );
 
   final value = await select.handle();
-  print(value.unwrap());
+  print(value);
 }
