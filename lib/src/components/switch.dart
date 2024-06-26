@@ -41,7 +41,6 @@ class Switch with Tools implements Component<bool> {
   }
 
   /// Handles the switch component and returns a [Future] that completes with the result of the switch.
-  @override
   Future<bool> handle() async {
     saveCursorPosition();
     hideCursor();

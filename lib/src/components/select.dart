@@ -72,7 +72,6 @@ final class Select<T> with Tools implements Component<T> {
   }
 
   /// Handles the select component and returns a [Future] that completes with the result of the selection.
-  @override
   Future<T> handle() async {
     saveCursorPosition();
     hideCursor();
@@ -194,7 +193,8 @@ final class Select<T> with Tools implements Component<T> {
     if (filteredArr.isEmpty) {
       buffer.writeAnsiAll([
         AsciiControl.lineFeed,
-        ...noResultFoundMessage
+        ...noResultFoundMessage,
+        AsciiControl.lineFeed,
       ]);
     } else {
       copy.add(AsciiControl.lineFeed);
@@ -217,6 +217,13 @@ final class Select<T> with Tools implements Component<T> {
         buffer.writeAnsi(copy.removeAt(0));
       }
     }
+
+    buffer.writeAnsiAll([
+      AsciiControl.lineFeed,
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print('(Type to filter, press ↑/↓ to navigate, enter to select)'),
+      SetStyles.reset,
+    ]);
 
     final availableLines = await getAvailableLinesBelowCursor();
     final linesNeeded = buffer.toString().split('\n').length;

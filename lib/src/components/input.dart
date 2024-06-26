@@ -47,7 +47,6 @@ class Input with Tools implements Component<String> {
   }
 
   /// Handles the input component and returns a [Future] that completes with the result of the input.
-  @override
   Future<String> handle() async {
     saveCursorPosition();
     hideCursor();
