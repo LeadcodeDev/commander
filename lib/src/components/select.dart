@@ -9,6 +9,7 @@ import 'package:mansion/mansion.dart';
 final class Select<T> with Tools implements Component<T> {
   String filter = '';
   int currentIndex = 0;
+  int displayElementCount;
   bool isRendering = false;
 
   final List<T> options;
@@ -36,6 +37,7 @@ final class Select<T> with Tools implements Component<T> {
   Select({
     required this.answer,
     required this.options,
+    this.displayElementCount = 5,
     this.onDisplay,
     this.placeholder,
     List<Sequence>? noResultFoundMessage,
@@ -45,30 +47,35 @@ final class Select<T> with Tools implements Component<T> {
   }) {
     StdinBuffer.initialize();
 
-    this.noResultFoundMessage = noResultFoundMessage ?? [
-      SetStyles(Style.foreground(Color.brightBlack)),
-      Print('No result found'),
-      SetStyles.reset,
-    ];
+    this.noResultFoundMessage = noResultFoundMessage ??
+        [
+          SetStyles(Style.foreground(Color.brightBlack)),
+          Print('No result found'),
+          SetStyles.reset,
+        ];
 
-    this.exitMessage = exitMessage ?? [
-      SetStyles(Style.foreground(Color.brightRed)),
-      Print('✘'),
-      SetStyles.reset,
-      Print(' Operation canceled by user'),
-    ];
+    this.exitMessage = exitMessage ??
+        [
+          SetStyles(Style.foreground(Color.brightRed)),
+          Print('✘'),
+          SetStyles.reset,
+          Print(' Operation canceled by user'),
+          AsciiControl.lineFeed,
+        ];
 
-    this.selectedLineStyle = selectedLineStyle ?? (line) => [
-      SetStyles(Style.foreground(Color.brightGreen)),
-      Print('❯'),
-      SetStyles.reset,
-      Print(' $line'),
-    ];
+    this.selectedLineStyle = selectedLineStyle ??
+        (line) => [
+              SetStyles(Style.foreground(Color.brightGreen)),
+              Print('❯'),
+              SetStyles.reset,
+              Print(' $line'),
+            ];
 
-    this.unselectedLineStyle = unselectedLineStyle ?? (line) => [
-      Print(''.padRight(2)),
-      Print(line),
-    ];
+    this.unselectedLineStyle = unselectedLineStyle ??
+        (line) => [
+              Print(''.padRight(2)),
+              Print(line),
+            ];
   }
 
   /// Handles the select component and returns a [Future] that completes with the result of the selection.
@@ -150,7 +157,7 @@ final class Select<T> with Tools implements Component<T> {
     clearFromCursorToEnd();
     showInput();
 
-    stdout.writeln(exitMessage);
+    stdout.writeAnsiAll(exitMessage);
     exit(1);
   }
 
@@ -198,11 +205,16 @@ final class Select<T> with Tools implements Component<T> {
       ]);
     } else {
       copy.add(AsciiControl.lineFeed);
-      int start = currentIndex - 2 >= 0 ? currentIndex - 2 : 0;
-      if (currentIndex >= filteredArr.length - 2) {
-        start = filteredArr.length - 5;
+
+      int start = currentIndex - displayElementCount + 1 >= 0 ? currentIndex - displayElementCount + 1 : 0;
+      if (currentIndex >= filteredArr.length && filteredArr.length > displayElementCount) {
+        start = filteredArr.length - displayElementCount;
+      } else {
       }
-      int end = start + 5 <= filteredArr.length ? start + 5 : filteredArr.length;
+
+      int end = start + displayElementCount <= filteredArr.length
+          ? start + displayElementCount
+          : filteredArr.length;
 
       for (int i = start; i < end; i++) {
         final value = onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
@@ -229,12 +241,9 @@ final class Select<T> with Tools implements Component<T> {
     final linesNeeded = buffer.toString().split('\n').length;
 
     if (availableLines < linesNeeded) {
-      for (int i = 0; i < linesNeeded - availableLines; i++) {
-        stdout.writeln();
-      }
-
       moveCursorUp(count: linesNeeded - availableLines);
       saveCursorPosition();
+      clearFromCursorToEnd();
     }
 
     clearFromCursorToEnd();
