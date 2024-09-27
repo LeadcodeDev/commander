@@ -5,6 +5,7 @@ enum AnsiCharacter {
   rightArrow('\u001b[C'),
   leftArrow('\u001b[D'),
   del('\u007f'),
+  space('\x20'),
   enter('\n');
 
   final String value;

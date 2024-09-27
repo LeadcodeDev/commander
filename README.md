@@ -121,7 +121,7 @@ A simple example of using Commander to create a progress component :
 
 ```dart
 void main() async {
-  final progress = ProgressBar(max: 50);
+  final progress = Progress(max: 50);
 
   for (int i = 0; i < 50; i++) {
     progress.next(message: [Print('Downloading file ${i + 1}/50...')]);
@@ -134,5 +134,20 @@ void main() async {
     SetStyles.reset,
     Print(' Download complete!')
   ]);
+}
+```
+
+### Checkbox component
+A simple example of using Commander to create a checkbox component :
+
+```dart
+Future<void> main() async {
+  final checkbox = Checkbox(
+    answer: 'What is your favorite pet ?',
+    options: ['cat', 'dog', 'bird'],
+  );
+
+  final value = await checkbox.handle();
+  print(value);
 }
 ```

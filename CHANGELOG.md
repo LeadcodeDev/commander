@@ -1,3 +1,8 @@
+## 1.4.0
+
+- Add `hidden` property on `input` component
+- Implement `checkbox` component
+
 ## 1.3.0
 
 - Add select max result into configurable option
