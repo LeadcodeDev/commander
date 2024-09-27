@@ -36,12 +36,13 @@ class Input with Tools implements Component<String> {
   }) {
     StdinBuffer.initialize();
 
-    this.exitMessage = exitMessage ?? [
-      SetStyles(Style.foreground(Color.brightRed)),
-      Print('✘'),
-      SetStyles.reset,
-      Print(' Operation canceled by user'),
-    ];
+    this.exitMessage = exitMessage ??
+        [
+          SetStyles(Style.foreground(Color.brightRed)),
+          Print('✘'),
+          SetStyles.reset,
+          Print(' Operation canceled by user'),
+        ];
 
     this.validate = validate ?? (value) => Ok(null);
   }
@@ -119,7 +120,8 @@ class Input with Tools implements Component<String> {
     }
   }
 
-  String generateValue() => secure ? value.replaceAll(RegExp(r'.'), '*') : value;
+  String generateValue() =>
+      secure ? value.replaceAll(RegExp(r'.'), '*') : value;
 
   void render() async {
     final buffer = StringBuffer();
@@ -129,7 +131,9 @@ class Input with Tools implements Component<String> {
       SetStyles.reset,
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(value.isEmpty && errorMessage == null ? placeholder ?? generateValue() :  generateValue()),
+      Print(value.isEmpty && errorMessage == null
+          ? placeholder ?? generateValue()
+          : generateValue()),
       SetStyles.reset,
     ]);
 

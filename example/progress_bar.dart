@@ -6,7 +6,7 @@ import 'package:mansion/mansion.dart';
 void main() async {
   final progress = ProgressBar(max: 50);
 
-  for(int i = 0; i < 50; i++) {
+  for (int i = 0; i < 50; i++) {
     progress.next(message: [Print('Downloading file ${i + 1}/50...')]);
     await Future.delayed(Duration(milliseconds: 50));
   }
