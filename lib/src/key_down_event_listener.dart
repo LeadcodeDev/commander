@@ -17,7 +17,8 @@ class KeyDownEventListener {
   /// Creates a new instance of [KeyDownEventListener] and starts listening to key down events.
   KeyDownEventListener() {
     subscription = StdinBuffer.stream.transform(utf8.decoder).listen((data) {
-      final listener = listeners.firstWhereOrNull((listener) => listener.key.value == data);
+      final listener =
+          listeners.firstWhereOrNull((listener) => listener.key.value == data);
       if (listener case KeyDownListener listener) {
         listener.callback(data, dispose);
         return;
@@ -31,12 +32,14 @@ class KeyDownEventListener {
 
   /// Adds a new listener for the specified [key].
   /// When the [key] is pressed, the [callback] is executed.
-  void match(AnsiCharacter key, void Function(String, void Function() dispose) callback) {
+  void match(AnsiCharacter key,
+      void Function(String, void Function() dispose) callback) {
     listeners.add(KeyDownListener(key, callback));
   }
 
   /// Sets a fallback listener that is called when a key is pressed that does not have a specific listener.
-  void catchAll(FutureOr<void> Function(String, void Function() dispose) callback) {
+  void catchAll(
+      FutureOr<void> Function(String, void Function() dispose) callback) {
     fallback = callback;
   }
 

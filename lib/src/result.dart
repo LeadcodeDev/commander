@@ -5,7 +5,9 @@ abstract class Result<T> {
   /// Executes one of the provided functions based on whether this instance is `Ok` or `Err`.
   /// If this instance is [Ok], the `ok` function is called with the value.
   /// If this instance is [Err], the `err` function is called with the error.
-  R when<R>({required R Function(T value) ok, required String Function(Object error) err});
+  R when<R>(
+      {required R Function(T value) ok,
+      required String Function(Object error) err});
 
   /// Returns the value if this instance is `Ok`.
   /// Throws an exception if this instance is `Err`.
@@ -31,7 +33,9 @@ class Err<T> extends Result<T> with ResultWhen {
 /// Provides default implementations for the `when` and `unwrap` methods of `Result`.
 mixin ResultWhen<T> on Result<T> {
   @override
-  R when<R>({required R Function(T value) ok, required String Function(Object error) err}) {
+  R when<R>(
+      {required R Function(T value) ok,
+      required String Function(Object error) err}) {
     if (this is Ok<T>) {
       return ok((this as Ok<T>).value);
     } else {

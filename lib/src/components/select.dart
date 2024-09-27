@@ -131,7 +131,8 @@ final class Select<T> with Tools implements Component<T> {
       throw Exception('No result found');
     }
 
-    final value = onDisplay?.call(options[currentIndex]) ?? options[currentIndex].toString();
+    final value = onDisplay?.call(options[currentIndex]) ??
+        options[currentIndex].toString();
 
     stdout.writeAnsiAll([
       SetStyles(Style.foreground(Color.green)),
@@ -184,7 +185,9 @@ final class Select<T> with Tools implements Component<T> {
 
     List<T> filteredArr = options.where((item) {
       final value = onDisplay?.call(item) ?? item.toString();
-      return filter.isNotEmpty ? value.toLowerCase().contains(filter.toLowerCase()) : true;
+      return filter.isNotEmpty
+          ? value.toLowerCase().contains(filter.toLowerCase())
+          : true;
     }).toList();
 
     buffer.writeAnsiAll([
@@ -206,18 +209,21 @@ final class Select<T> with Tools implements Component<T> {
     } else {
       copy.add(AsciiControl.lineFeed);
 
-      int start = currentIndex - displayElementCount + 1 >= 0 ? currentIndex - displayElementCount + 1 : 0;
-      if (currentIndex >= filteredArr.length && filteredArr.length > displayElementCount) {
+      int start = currentIndex - displayElementCount + 1 >= 0
+          ? currentIndex - displayElementCount + 1
+          : 0;
+      if (currentIndex >= filteredArr.length &&
+          filteredArr.length > displayElementCount) {
         start = filteredArr.length - displayElementCount;
-      } else {
-      }
+      } else {}
 
       int end = start + displayElementCount <= filteredArr.length
           ? start + displayElementCount
           : filteredArr.length;
 
       for (int i = start; i < end; i++) {
-        final value = onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
+        final value =
+            onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
         if (i == currentIndex) {
           copy.addAll([...selectedLineStyle(value), AsciiControl.lineFeed]);
         } else {

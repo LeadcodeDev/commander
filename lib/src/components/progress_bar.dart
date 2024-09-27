@@ -13,12 +13,12 @@ final class ProgressBar implements Component {
     _render();
   }
 
-  next({ List<Sequence>? message }) {
+  next({List<Sequence>? message}) {
     if (message != null) {
       _buffer.clear();
       _buffer.writeAnsiAll(message);
     }
-    if(_currentValue < max) {
+    if (_currentValue < max) {
       _currentValue++;
       _render();
     }
@@ -37,7 +37,7 @@ final class ProgressBar implements Component {
 
     buffer.writeAnsi(Print('${((100 / max) * _currentValue).toInt()}% '));
 
-    for(int i = 0; i < _currentValue; i++) {
+    for (int i = 0; i < _currentValue; i++) {
       buffer.writeAnsiAll([
         SetStyles(Style.foreground(Color.brightBlack)),
         Print('█'),

@@ -20,4 +20,5 @@ Future<void> main() async {
   delayed.success('Data are available !');
 }
 
-Future<void> wait() => Future.delayed(Duration(seconds: Random().nextInt(3) + 1));
+Future<void> wait() =>
+    Future.delayed(Duration(seconds: Random().nextInt(3) + 1));

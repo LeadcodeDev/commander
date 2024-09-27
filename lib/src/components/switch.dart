@@ -32,7 +32,8 @@ class Switch with Tools implements Component<bool> {
   }) {
     StdinBuffer.initialize();
 
-    this.exitMessage = exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
+    this.exitMessage =
+        exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';
     if (defaultValue != null) {
       value = defaultValue!;
     }
@@ -58,7 +59,8 @@ class Switch with Tools implements Component<bool> {
 
   void onSubmit(String key, void Function() dispose) {
     // TODO add case when value isn't selected and default value was not provide
-    if (![...allowedYesValues, ...allowedNoValues].contains(temporaryValue.trim())) {
+    if (![...allowedYesValues, ...allowedNoValues]
+        .contains(temporaryValue.trim())) {
       errorMessage = 'error';
       render();
 

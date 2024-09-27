@@ -10,7 +10,18 @@ enum Status {
 }
 
 class Delayed with Tools implements Component<void> {
-  final List<String> _loadingSteps = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+  final List<String> _loadingSteps = [
+    '⠋',
+    '⠙',
+    '⠹',
+    '⠸',
+    '⠼',
+    '⠴',
+    '⠦',
+    '⠧',
+    '⠇',
+    '⠏'
+  ];
   int _currentStep = 0;
   Status _status = Status.online;
 
