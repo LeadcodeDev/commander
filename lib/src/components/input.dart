@@ -15,6 +15,7 @@ class Input with Tools implements Component<String> {
   final String answer;
   final String? placeholder;
   final bool secure;
+  final bool hidden;
   late final List<Sequence> exitMessage;
   String value = '';
   String? errorMessage;
@@ -31,6 +32,7 @@ class Input with Tools implements Component<String> {
     required this.answer,
     this.placeholder,
     this.secure = false,
+    this.hidden = false,
     Result Function(String value)? validate,
     List<Sequence>? exitMessage,
   }) {
@@ -120,8 +122,11 @@ class Input with Tools implements Component<String> {
     }
   }
 
-  String generateValue() =>
-      secure ? value.replaceAll(RegExp(r'.'), '*') : value;
+  String generateValue() => secure
+      ? value.replaceAll(RegExp(r'.'), '*')
+      : !hidden
+          ? value
+          : '';
 
   void render() async {
     final buffer = StringBuffer();
@@ -131,9 +136,8 @@ class Input with Tools implements Component<String> {
       SetStyles.reset,
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(value.isEmpty && errorMessage == null
-          ? placeholder ?? generateValue()
-          : generateValue()),
+      Print(
+          value.isEmpty && errorMessage == null ? placeholder ?? generateValue() : generateValue()),
       SetStyles.reset,
     ]);
 
