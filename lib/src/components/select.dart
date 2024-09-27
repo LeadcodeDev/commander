@@ -9,7 +9,7 @@ import 'package:mansion/mansion.dart';
 final class Select<T> with Tools implements Component<T> {
   String filter = '';
   int currentIndex = 0;
-  int displayElementCount;
+  int displayCount;
   bool isRendering = false;
 
   final List<T> options;
@@ -37,7 +37,7 @@ final class Select<T> with Tools implements Component<T> {
   Select({
     required this.answer,
     required this.options,
-    this.displayElementCount = 5,
+    this.displayCount = 5,
     this.onDisplay,
     this.placeholder,
     List<Sequence>? noResultFoundMessage,
@@ -209,16 +209,16 @@ final class Select<T> with Tools implements Component<T> {
     } else {
       copy.add(AsciiControl.lineFeed);
 
-      int start = currentIndex - displayElementCount + 1 >= 0
-          ? currentIndex - displayElementCount + 1
+      int start = currentIndex - displayCount + 1 >= 0
+          ? currentIndex - displayCount + 1
           : 0;
       if (currentIndex >= filteredArr.length &&
-          filteredArr.length > displayElementCount) {
-        start = filteredArr.length - displayElementCount;
+          filteredArr.length > displayCount) {
+        start = filteredArr.length - displayCount;
       } else {}
 
-      int end = start + displayElementCount <= filteredArr.length
-          ? start + displayElementCount
+      int end = start + displayCount <= filteredArr.length
+          ? start + displayCount
           : filteredArr.length;
 
       for (int i = start; i < end; i++) {
