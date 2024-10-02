@@ -145,8 +145,11 @@ final class Checkbox<T> with Tools implements Component<T> {
 
     dispose();
 
-    final selectedValues = options.whereIndexed((index, _) => _selectedIndexes.contains(index)).toList();
-    final values = selectedValues.map((value) => onDisplay?.call(value) ?? value).toList();
+    final selectedValues = options
+        .whereIndexed((index, _) => _selectedIndexes.contains(index))
+        .toList();
+    final values =
+        selectedValues.map((value) => onDisplay?.call(value) ?? value).toList();
 
     stdout.writeAnsiAll([
       SetStyles(Style.foreground(Color.green)),
@@ -163,8 +166,9 @@ final class Checkbox<T> with Tools implements Component<T> {
     saveCursorPosition();
     showCursor();
 
-    final selectedOptions =
-        options.whereIndexed((index, _) => _selectedIndexes.contains(index)).toList();
+    final selectedOptions = options
+        .whereIndexed((index, _) => _selectedIndexes.contains(index))
+        .toList();
     _completer.complete(selectedOptions);
   }
 
@@ -220,13 +224,17 @@ final class Checkbox<T> with Tools implements Component<T> {
 
       if (_selectedIndexes.contains(i)) {
         if (currentIndex == i) {
-          copy.addAll([...highlightedSelectedLineStyle(value), AsciiControl.lineFeed]);
+          copy.addAll(
+              [...highlightedSelectedLineStyle(value), AsciiControl.lineFeed]);
         } else {
           copy.addAll([...selectedLineStyle(value), AsciiControl.lineFeed]);
         }
       } else {
         if (currentIndex == i) {
-          copy.addAll([...highlightedUnselectedLineStyle(value), AsciiControl.lineFeed]);
+          copy.addAll([
+            ...highlightedUnselectedLineStyle(value),
+            AsciiControl.lineFeed
+          ]);
         } else {
           copy.addAll([...unselectedLineStyle(value), AsciiControl.lineFeed]);
         }
@@ -240,7 +248,8 @@ final class Checkbox<T> with Tools implements Component<T> {
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Type to filter, press ↑/↓ to navigate, space to select, enter to submit)'),
+      Print(
+          '(Type to filter, press ↑/↓ to navigate, space to select, enter to submit)'),
       SetStyles.reset,
     ]);
 

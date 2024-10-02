@@ -136,8 +136,9 @@ class Input with Tools implements Component<String> {
       SetStyles.reset,
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(
-          value.isEmpty && errorMessage == null ? placeholder ?? generateValue() : generateValue()),
+      Print(value.isEmpty && errorMessage == null
+          ? placeholder ?? generateValue()
+          : generateValue()),
       SetStyles.reset,
     ]);
 

@@ -1,3 +1,8 @@
+## 1.4.1
+
+- Add `max` property on `checkbox` component
+- Fix displayed value on `checkbox` when user submit component 
+
 ## 1.4.0
 
 - Add `hidden` property on `input` component
