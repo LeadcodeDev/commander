@@ -15,6 +15,7 @@ final class Checkbox<T> with Tools implements Component<T> {
   final List<int> _selectedIndexes = [];
   final String answer;
   final String? placeholder;
+  final int? max;
   late final List<Sequence> noResultFoundMessage;
   late final List<Sequence> exitMessage;
 
@@ -43,6 +44,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     required this.options,
     this.onDisplay,
     this.placeholder,
+    this.max,
     List<Sequence>? noResultFoundMessage,
     List<Sequence>? exitMessage,
     List<Sequence> Function(String)? selectedLineStyle,
@@ -143,11 +145,8 @@ final class Checkbox<T> with Tools implements Component<T> {
 
     dispose();
 
-    if (options.elementAtOrNull(currentIndex) == null) {
-      throw Exception('No result found');
-    }
-
-    final value = onDisplay?.call(options[currentIndex]) ?? options[currentIndex].toString();
+    final selectedValues = options.whereIndexed((index, _) => _selectedIndexes.contains(index)).toList();
+    final values = selectedValues.map((value) => onDisplay?.call(value) ?? value).toList();
 
     stdout.writeAnsiAll([
       SetStyles(Style.foreground(Color.green)),
@@ -155,7 +154,7 @@ final class Checkbox<T> with Tools implements Component<T> {
       SetStyles.reset,
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(value),
+      Print(values.join(', ')),
       SetStyles.reset
     ]);
 
@@ -182,6 +181,10 @@ final class Checkbox<T> with Tools implements Component<T> {
 
   void onSpace(String key, void Function() dispose) {
     saveCursorPosition();
+
+    if (max case int value when _selectedIndexes.length >= value) {
+      return;
+    }
 
     if (_selectedIndexes.contains(currentIndex)) {
       _selectedIndexes.remove(currentIndex);
@@ -237,7 +240,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Type to filter, press ↑/↓ to navigate, enter to select)'),
+      Print('(Type to filter, press ↑/↓ to navigate, space to select, enter to submit)'),
       SetStyles.reset,
     ]);
 
