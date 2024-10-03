@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:commander_ui/commander_ui.dart';
+import 'package:mansion/mansion.dart';
 
 /// A class that represents a table component.
 /// This component handles displaying a table with ASCII symbols.
@@ -80,14 +81,21 @@ final class Table with Tools implements Component {
 
   void _drawHeader(StringBuffer buffer) {
     final maxColWidths = getMaxCellWidths();
+    final headerBuffer = StringBuffer();
 
-    String line = '│';
+    headerBuffer.write('│');
+
+
     for (var i = 0; i < columns.length; i++) {
-      line += ' ${columns[i].padRight(maxColWidths[i])}';
-      line += ' │';
+      headerBuffer.writeAnsiAll([
+        SetStyles(Style.bold),
+        Print(' ${columns[i].padRight(maxColWidths[i])}'),
+        SetStyles.reset,
+        Print(' │'),
+      ]);
     }
 
-    buffer.writeln(line); // Ligne de contenu
+    buffer.writeln(headerBuffer.toString());
   }
 
   void _drawLine(StringBuffer buffer, int currentIndex, List<String> row) {
