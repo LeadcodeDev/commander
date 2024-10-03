@@ -18,6 +18,7 @@ class Input with Tools implements Component<String> {
   final bool hidden;
   late final List<Sequence> exitMessage;
   String value = '';
+  String defaultValue;
   String? errorMessage;
   late Result Function(String value) validate;
 
@@ -33,6 +34,7 @@ class Input with Tools implements Component<String> {
     this.placeholder,
     this.secure = false,
     this.hidden = false,
+    this.defaultValue = '',
     Result Function(String value)? validate,
     List<Sequence>? exitMessage,
   }) {
@@ -66,7 +68,7 @@ class Input with Tools implements Component<String> {
   }
 
   void onSubmit(String key, void Function() dispose) {
-    final result = validate(value);
+    final result = validate(value.isEmpty ? defaultValue : value);
     if (result case Err(:final String error)) {
       errorMessage = error;
       render();
@@ -88,14 +90,16 @@ class Input with Tools implements Component<String> {
       SetStyles.reset,
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(generateValue()),
+      Print(defaultValue.isNotEmpty
+          ? defaultValue
+          : placeholder ?? generateValue()),
       SetStyles.reset,
     ]);
 
     stdout.writeln();
 
     saveCursorPosition();
-    _completer.complete(value);
+    _completer.complete(value.isEmpty ? defaultValue : value);
   }
 
   void onExit(void Function() dispose) {
@@ -137,7 +141,9 @@ class Input with Tools implements Component<String> {
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(value.isEmpty && errorMessage == null
-          ? placeholder ?? generateValue()
+          ? defaultValue.isNotEmpty
+              ? defaultValue
+              : placeholder ?? generateValue()
           : generateValue()),
       SetStyles.reset,
     ]);

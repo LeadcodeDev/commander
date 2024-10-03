@@ -1,3 +1,7 @@
+## 1.5.0
+
+- Add `defaultValue` property on `input` component
+
 ## 1.4.1
 
 - Add `max` property on `checkbox` component

@@ -4,6 +4,7 @@ Future<void> main() async {
   final input = Input(
     answer: 'What is your name?',
     placeholder: 'Name',
+    defaultValue: 'John Doe',
     validate: (value) {
       if (value.isEmpty) {
         return Err('Name cannot be empty');

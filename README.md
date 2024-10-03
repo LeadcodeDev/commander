@@ -10,7 +10,7 @@ user input.
 To use Commander in your Dart project, add this to your `pubspec.yaml` file :
 ```yaml
 dependencies:
-  commander_ui: ^1.3.0
+  commander_ui: ^1.5.0
 ```
 
 Then run `pub get` to install the dependencies.
@@ -23,7 +23,7 @@ A simple example of using Commander to create an input component :
 
 - ✅ Placeholder
 - ✅ Validator with error message as callback 
-- ❌ Default value
+- ✅ Default value
 
 ```dart
 Future<void> main() async {
