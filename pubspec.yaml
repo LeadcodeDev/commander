@@ -1,6 +1,6 @@
 name: commander_ui
 description: Commander is a Dart library for creating user interfaces within the terminal.
-version: 1.5.0
+version: 1.5.1
 repository: https://github.com/LeadcodeDev/commander
 
 topics:

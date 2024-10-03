@@ -46,6 +46,7 @@ class Input with Tools implements Component<String> {
           Print('✘'),
           SetStyles.reset,
           Print(' Operation canceled by user'),
+          AsciiControl.lineFeed
         ];
 
     this.validate = validate ?? (value) => Ok(null);
@@ -108,6 +109,7 @@ class Input with Tools implements Component<String> {
     restoreCursorPosition();
     clearFromCursorToEnd();
     showInput();
+    showCursor();
 
     stdout.writeAnsiAll(exitMessage);
     exit(1);

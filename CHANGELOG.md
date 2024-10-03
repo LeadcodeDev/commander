@@ -1,3 +1,8 @@
+## 1.5.1
+
+- Fix bad selected value when searching in `select` component
+- Fix hidden cursor on exit in `input` component
+
 ## 1.5.0
 
 - Add `defaultValue` property on `input` component

@@ -22,6 +22,8 @@ final class Select<T> with Tools implements Component<T> {
   late final List<Sequence> Function(String) selectedLineStyle;
   late final List<Sequence> Function(String) unselectedLineStyle;
 
+  List<T> _filteredArr = [];
+
   final _completer = Completer<T>();
 
   /// Creates a new instance of [Select].
@@ -46,6 +48,8 @@ final class Select<T> with Tools implements Component<T> {
     List<Sequence> Function(String)? unselectedLineStyle,
   }) {
     StdinBuffer.initialize();
+
+    _filteredArr = options;
 
     this.noResultFoundMessage = noResultFoundMessage ??
         [
@@ -121,18 +125,20 @@ final class Select<T> with Tools implements Component<T> {
   }
 
   void onSubmit(String key, void Function() dispose) {
+    if (_filteredArr.isEmpty) return;
+
     restoreCursorPosition();
     clearFromCursorToEnd();
     showInput();
 
     dispose();
 
-    if (options.elementAtOrNull(currentIndex) == null) {
+    if (_filteredArr.elementAtOrNull(currentIndex) == null) {
       throw Exception('No result found');
     }
 
-    final value = onDisplay?.call(options[currentIndex]) ??
-        options[currentIndex].toString();
+    final value = onDisplay?.call(_filteredArr[currentIndex]) ??
+        _filteredArr[currentIndex].toString();
 
     stdout.writeAnsiAll([
       SetStyles(Style.foreground(Color.green)),
@@ -148,7 +154,7 @@ final class Select<T> with Tools implements Component<T> {
 
     saveCursorPosition();
     showCursor();
-    _completer.complete(options[currentIndex]);
+    _completer.complete(_filteredArr[currentIndex]);
   }
 
   void onExit(void Function() dispose) {
@@ -157,6 +163,7 @@ final class Select<T> with Tools implements Component<T> {
     restoreCursorPosition();
     clearFromCursorToEnd();
     showInput();
+    showCursor();
 
     stdout.writeAnsiAll(exitMessage);
     exit(1);
@@ -183,7 +190,7 @@ final class Select<T> with Tools implements Component<T> {
     final buffer = StringBuffer();
     final List<Sequence> copy = [];
 
-    List<T> filteredArr = options.where((item) {
+    _filteredArr = options.where((item) {
       final value = onDisplay?.call(item) ?? item.toString();
       return filter.isNotEmpty
           ? value.toLowerCase().contains(filter.toLowerCase())
@@ -200,7 +207,7 @@ final class Select<T> with Tools implements Component<T> {
       SetStyles.reset,
     ]);
 
-    if (filteredArr.isEmpty) {
+    if (_filteredArr.isEmpty) {
       buffer.writeAnsiAll([
         AsciiControl.lineFeed,
         ...noResultFoundMessage,
@@ -212,18 +219,18 @@ final class Select<T> with Tools implements Component<T> {
       int start = currentIndex - displayCount + 1 >= 0
           ? currentIndex - displayCount + 1
           : 0;
-      if (currentIndex >= filteredArr.length &&
-          filteredArr.length > displayCount) {
-        start = filteredArr.length - displayCount;
+      if (currentIndex >= _filteredArr.length &&
+          _filteredArr.length > displayCount) {
+        start = _filteredArr.length - displayCount;
       } else {}
 
-      int end = start + displayCount <= filteredArr.length
+      int end = start + displayCount <= _filteredArr.length
           ? start + displayCount
-          : filteredArr.length;
+          : _filteredArr.length;
 
       for (int i = start; i < end; i++) {
         final value =
-            onDisplay?.call(filteredArr[i]) ?? filteredArr[i].toString();
+            onDisplay?.call(_filteredArr[i]) ?? _filteredArr[i].toString();
         if (i == currentIndex) {
           copy.addAll([...selectedLineStyle(value), AsciiControl.lineFeed]);
         } else {
