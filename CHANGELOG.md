@@ -1,3 +1,8 @@
+## 1.7.0
+
+- Implement `alternative screen` component
+- Add `Table` component in public export
+
 ## 1.6.0
 
 - Add `Table` component

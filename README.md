@@ -178,3 +178,26 @@ Future<void> main() async {
   );
 }
 ```
+
+### Alternative screen component
+A simple example of using Commander to create an alternative screen component :
+
+- ✅ Set title
+- ✅ Clear screen on start
+- ✅ Restore screen on stop
+
+```dart
+Future<void> main() async {
+  final screen = AlternateScreen(title: 'Hello World !');
+  screen.start();
+
+  print('Hello World !');
+
+  await wait();
+  screen.stop();
+}
+
+
+Future<void> wait() =>
+    Future.delayed(Duration(seconds: Random().nextInt(3) + 1));
+```
