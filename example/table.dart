@@ -4,7 +4,7 @@ Future<void> main() async {
   Table(
     columns: ['Name', 'Age', 'Country', 'City'],
     lineSeparator: false,
-    columnSeparator: false,
+    columnSeparator: true,
     data: [
       ['Alice', '20', 'USA', 'New York'],
       ['Bob', '25', 'Canada', 'Toronto'],
