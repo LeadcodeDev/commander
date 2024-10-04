@@ -1,3 +1,7 @@
+## 1.6.0
+
+- Add `Table` component
+
 ## 1.5.1
 
 - Fix bad selected value when searching in `select` component

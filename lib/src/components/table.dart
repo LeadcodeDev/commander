@@ -28,10 +28,16 @@ final class Table with Tools implements Component {
     final buffer = StringBuffer();
 
     _drawLineSeparator(buffer,
-        left: '┌', middle: columnSeparator ? '┬' : '─', right: '┐', separator: '─');
+        left: '┌',
+        middle: columnSeparator ? '┬' : '─',
+        right: '┐',
+        separator: '─');
     _drawHeader(buffer);
     _drawLineSeparator(buffer,
-        left: '├', middle: columnSeparator ? '┼' : '─', right: '┤', separator: '─');
+        left: '├',
+        middle: columnSeparator ? '┼' : '─',
+        right: '┤',
+        separator: '─');
 
     for (var row in data) {
       final currentIndex = data.indexOf(row);
@@ -39,7 +45,10 @@ final class Table with Tools implements Component {
     }
 
     _drawLineSeparator(buffer,
-        left: '└', middle: columnSeparator ? '┴' : '─', right: '┘', separator: '─');
+        left: '└',
+        middle: columnSeparator ? '┴' : '─',
+        right: '┘',
+        separator: '─');
 
     clearFromCursorToEnd();
     restoreCursorPosition();
@@ -114,7 +123,15 @@ final class Table with Tools implements Component {
     final maxColWidths = getMaxCellWidths();
 
     if (![0, data.length].contains(currentIndex) && lineSeparator) {
-      _drawLineSeparator(buffer, left: '├', middle: lineSeparator ? columnSeparator ? '┼' : '─' : '┼', right: '┤', separator: '─');
+      _drawLineSeparator(buffer,
+          left: '├',
+          middle: lineSeparator
+              ? columnSeparator
+                  ? '┼'
+                  : '─'
+              : '┼',
+          right: '┤',
+          separator: '─');
     }
 
     String rowLine = '│';

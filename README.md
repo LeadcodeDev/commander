@@ -151,3 +151,30 @@ Future<void> main() async {
   print(value);
 }
 ```
+
+### Table component
+A simple example of using Commander to create a table component :
+
+- ✅ Without column and line borders
+- ✅ With column and line borders
+- ✅ With column borders and without line borders
+- ✅ With line borders and without column borders
+
+```dart
+Future<void> main() async {
+  Table(
+    columns: ['Name', 'Age', 'Country', 'City'],
+    lineSeparator: false,
+    columnSeparator: false,
+    data: [
+      ['Alice', '20', 'USA', 'New York'],
+      ['Bob', '25', 'Canada', 'Toronto'],
+      ['Charlie', '30', 'France', 'Paris'],
+      ['David', '35', 'Germany', 'Berlin'],
+      ['Eve', '40', 'Italy', 'Rome'],
+      ['Frank', '45', 'Japan', 'Tokyo'],
+      ['John', '50', 'China', 'Beijing'],
+    ],
+  );
+}
+```
