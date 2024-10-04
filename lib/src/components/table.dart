@@ -9,11 +9,13 @@ import 'package:mansion/mansion.dart';
 final class Table with Tools implements Component {
   final List<List<String>> data;
   final List<String> columns;
+  final bool lineSeparator;
 
   /// Creates a new instance of [Table].
   Table({
     this.data = const [],
     this.columns = const [],
+    this.lineSeparator = false,
   }) {
     render();
   }
@@ -101,7 +103,7 @@ final class Table with Tools implements Component {
   void _drawLine(StringBuffer buffer, int currentIndex, List<String> row) {
     final maxColWidths = getMaxCellWidths();
 
-    if (![0, data.length].contains(currentIndex)) {
+    if (![0, data.length].contains(currentIndex) && lineSeparator) {
       _drawLineSeparator(buffer, left: '├', middle: '┼', right: '┤', separator: '─');
     }
 
