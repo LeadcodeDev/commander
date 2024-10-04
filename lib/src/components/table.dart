@@ -10,12 +10,14 @@ final class Table with Tools implements Component {
   final List<List<String>> data;
   final List<String> columns;
   final bool lineSeparator;
+  final bool columnSeparator;
 
   /// Creates a new instance of [Table].
   Table({
     this.data = const [],
     this.columns = const [],
     this.lineSeparator = false,
+    this.columnSeparator = false,
   }) {
     render();
   }
@@ -25,16 +27,19 @@ final class Table with Tools implements Component {
 
     final buffer = StringBuffer();
 
-    _drawLineSeparator(buffer, left: '┌', middle: '┬', right: '┐', separator: '─');
+    _drawLineSeparator(buffer,
+        left: '┌', middle: columnSeparator ? '┬' : '─', right: '┐', separator: '─');
     _drawHeader(buffer);
-    _drawLineSeparator(buffer, left: '├', middle: '┼', right: '┤', separator: '─');
+    _drawLineSeparator(buffer,
+        left: '├', middle: columnSeparator ? '┼' : '─', right: '┤', separator: '─');
 
     for (var row in data) {
       final currentIndex = data.indexOf(row);
       _drawLine(buffer, currentIndex, row);
     }
 
-    _drawLineSeparator(buffer, left: '└', middle: '┴', right: '┘', separator: '─');
+    _drawLineSeparator(buffer,
+        left: '└', middle: columnSeparator ? '┴' : '─', right: '┘', separator: '─');
 
     clearFromCursorToEnd();
     restoreCursorPosition();
@@ -74,6 +79,7 @@ final class Table with Tools implements Component {
     String line = left;
     for (int i = 0; i < maxColWidths.length; i++) {
       final isLast = i == maxColWidths.length - 1;
+
       line += separator * (maxColWidths[i] + 2);
       line += isLast ? right : middle;
     }
@@ -87,14 +93,18 @@ final class Table with Tools implements Component {
 
     headerBuffer.write('│');
 
-
     for (var i = 0; i < columns.length; i++) {
       headerBuffer.writeAnsiAll([
         SetStyles(Style.bold),
         Print(' ${columns[i].padRight(maxColWidths[i])}'),
         SetStyles.reset,
-        Print(' │'),
       ]);
+
+      if (i == columns.length - 1) {
+        headerBuffer.writeAnsi(Print(' │'));
+      } else {
+        headerBuffer.writeAnsi(Print(columnSeparator ? ' │' : '  '));
+      }
     }
 
     buffer.writeln(headerBuffer.toString());
@@ -104,13 +114,20 @@ final class Table with Tools implements Component {
     final maxColWidths = getMaxCellWidths();
 
     if (![0, data.length].contains(currentIndex) && lineSeparator) {
-      _drawLineSeparator(buffer, left: '├', middle: '┼', right: '┤', separator: '─');
+      _drawLineSeparator(buffer, left: '├', middle: lineSeparator ? columnSeparator ? '┼' : '─' : '┼', right: '┤', separator: '─');
     }
 
     String rowLine = '│';
-    for (var col = 0; col < columns.length; col++) {
-      rowLine += ' ${row[col].padRight(maxColWidths[col])}';
-      rowLine += ' │';
+    for (var i = 0; i < columns.length; i++) {
+      rowLine += ' ${row[i].padRight(maxColWidths[i])}';
+
+      if (i == columns.length - 1) {
+        // headerBuffer.writeAnsi(Print(' │'));
+        rowLine += ' │';
+      } else {
+        // headerBuffer.writeAnsi(Print(columnSeparator ? ' │' : '  '));
+        rowLine += columnSeparator ? ' │' : '  ';
+      }
     }
 
     buffer.writeln(rowLine);
