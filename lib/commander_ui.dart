@@ -10,6 +10,8 @@ export '../src/components/checkbox.dart';
 export '../src/components/delayed.dart';
 export '../src/components/progress.dart';
 export '../src/components/switch.dart';
+export '../src/components/table.dart';
+export '../src/components/alternate_screen.dart';
 
 export '../src/key_down_event_listener.dart';
 export '../src/result.dart';
