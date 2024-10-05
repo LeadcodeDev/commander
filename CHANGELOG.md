@@ -1,3 +1,8 @@
+## 1.8.0
+
+- Hide internal component methods
+- Implement `onExit` property on components
+
 ## 1.7.0
 
 - Implement `alternative screen` component
