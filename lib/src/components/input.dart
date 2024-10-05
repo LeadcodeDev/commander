@@ -17,6 +17,7 @@ class Input with Tools implements Component<String> {
   final bool secure;
   final bool hidden;
   late final List<Sequence> exitMessage;
+  final FutureOr Function()? onExit;
   String value = '';
   String defaultValue;
   String? errorMessage;
@@ -34,6 +35,7 @@ class Input with Tools implements Component<String> {
     this.placeholder,
     this.secure = false,
     this.hidden = false,
+    this.onExit,
     this.defaultValue = '',
     Result Function(String value)? validate,
     List<Sequence>? exitMessage,
@@ -59,20 +61,20 @@ class Input with Tools implements Component<String> {
     hideInput();
 
     KeyDownEventListener()
-      ..match(AnsiCharacter.enter, onSubmit)
-      ..catchAll(onTap)
-      ..onExit(onExit);
+      ..match(AnsiCharacter.enter, _onSubmit)
+      ..catchAll(_onTap)
+      ..onExit(_onExit);
 
-    render();
+    _render();
 
     return _completer.future;
   }
 
-  void onSubmit(String key, void Function() dispose) {
+  void _onSubmit(String key, void Function() dispose) {
     final result = validate(value.isEmpty ? defaultValue : value);
     if (result case Err(:final String error)) {
       errorMessage = error;
-      render();
+      _render();
 
       return;
     }
@@ -93,7 +95,7 @@ class Input with Tools implements Component<String> {
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(defaultValue.isNotEmpty
           ? defaultValue
-          : placeholder ?? generateValue()),
+          : placeholder ?? _generateValue()),
       SetStyles.reset,
     ]);
 
@@ -103,7 +105,7 @@ class Input with Tools implements Component<String> {
     _completer.complete(value.isEmpty ? defaultValue : value);
   }
 
-  void onExit(void Function() dispose) {
+  void _onExit(void Function() dispose) {
     dispose();
 
     restoreCursorPosition();
@@ -112,10 +114,11 @@ class Input with Tools implements Component<String> {
     showCursor();
 
     stdout.writeAnsiAll(exitMessage);
+    onExit?.call();
     exit(1);
   }
 
-  void onTap(String key, void Function() dispose) {
+  void _onTap(String key, void Function() dispose) {
     errorMessage = null;
     if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key)) {
       if (key == '\x7F' && value.isNotEmpty) {
@@ -124,17 +127,17 @@ class Input with Tools implements Component<String> {
         value = value + key;
       }
 
-      render();
+      _render();
     }
   }
 
-  String generateValue() => secure
+  String _generateValue() => secure
       ? value.replaceAll(RegExp(r'.'), '*')
       : !hidden
           ? value
           : '';
 
-  void render() async {
+  void _render() async {
     final buffer = StringBuffer();
     buffer.writeAnsiAll([
       SetStyles(Style.foreground(Color.yellow)),
@@ -145,8 +148,8 @@ class Input with Tools implements Component<String> {
       Print(value.isEmpty && errorMessage == null
           ? defaultValue.isNotEmpty
               ? defaultValue
-              : placeholder ?? generateValue()
-          : generateValue()),
+              : placeholder ?? _generateValue()
+          : _generateValue()),
       SetStyles.reset,
     ]);
 

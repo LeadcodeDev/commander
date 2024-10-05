@@ -12,6 +12,7 @@ class Switch with Tools implements Component<bool> {
   String temporaryValue = '';
   String? errorMessage;
   late final String exitMessage;
+  final FutureOr Function()? onExit;
 
   final List<String> allowedYesValues = ['yes', 'y'];
   final List<String> allowedNoValues = ['no', 'n'];
@@ -26,6 +27,7 @@ class Switch with Tools implements Component<bool> {
   Switch({
     required this.answer,
     this.defaultValue,
+    this.onExit,
     String? exitMessage,
     List<String>? allowedYesValues,
     List<String>? allowedNoValues,
@@ -48,21 +50,20 @@ class Switch with Tools implements Component<bool> {
     hideInput();
 
     KeyDownEventListener()
-      ..match(AnsiCharacter.enter, onSubmit)
-      ..catchAll(onTap)
-      ..onExit(onExit);
+      ..match(AnsiCharacter.enter, _onSubmit)
+      ..catchAll(_onTap)
+      ..onExit(_onExit);
 
-    render();
+    _render();
 
     return _completer.future;
   }
 
-  void onSubmit(String key, void Function() dispose) {
-    // TODO add case when value isn't selected and default value was not provide
+  void _onSubmit(String key, void Function() dispose) {
     if (![...allowedYesValues, ...allowedNoValues]
         .contains(temporaryValue.trim())) {
       errorMessage = 'error';
-      render();
+      _render();
 
       return;
     }
@@ -93,7 +94,7 @@ class Switch with Tools implements Component<bool> {
     _completer.complete(value);
   }
 
-  void onExit(void Function() dispose) {
+  void _onExit(void Function() dispose) {
     dispose();
 
     restoreCursorPosition();
@@ -101,10 +102,11 @@ class Switch with Tools implements Component<bool> {
     showInput();
 
     stdout.writeln(exitMessage);
+    onExit?.call();
     exit(1);
   }
 
-  void onTap(String key, void Function() dispose) {
+  void _onTap(String key, void Function() dispose) {
     errorMessage = null;
     if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key)) {
       if (key == '\x7F' && temporaryValue.isNotEmpty) {
@@ -114,11 +116,11 @@ class Switch with Tools implements Component<bool> {
         temporaryValue += key;
       }
 
-      render();
+      _render();
     }
   }
 
-  void render() async {
+  void _render() async {
     final buffer = StringBuffer();
 
     buffer.writeln(
@@ -142,7 +144,9 @@ class Switch with Tools implements Component<bool> {
     clearFromCursorToEnd();
     restoreCursorPosition();
     saveCursorPosition();
+
     stdout.write(buffer.toString());
+
     restoreCursorPosition();
   }
 }

@@ -17,6 +17,7 @@ final class Select<T> with Tools implements Component<T> {
   final String? placeholder;
   late final List<Sequence> noResultFoundMessage;
   late final List<Sequence> exitMessage;
+  final FutureOr Function()? onExit;
 
   final String Function(T)? onDisplay;
   late final List<Sequence> Function(String) selectedLineStyle;
@@ -42,6 +43,7 @@ final class Select<T> with Tools implements Component<T> {
     this.displayCount = 5,
     this.onDisplay,
     this.placeholder,
+    this.onExit,
     List<Sequence>? noResultFoundMessage,
     List<Sequence>? exitMessage,
     List<Sequence> Function(String)? selectedLineStyle,
@@ -89,19 +91,19 @@ final class Select<T> with Tools implements Component<T> {
     hideInput();
 
     KeyDownEventListener()
-      ..match(AnsiCharacter.downArrow, onKeyDown)
-      ..match(AnsiCharacter.upArrow, onKeyUp)
-      ..match(AnsiCharacter.del, onFilter)
-      ..match(AnsiCharacter.enter, onSubmit)
-      ..catchAll(onTap)
-      ..onExit(onExit);
+      ..match(AnsiCharacter.downArrow, _onKeyDown)
+      ..match(AnsiCharacter.upArrow, _onKeyUp)
+      ..match(AnsiCharacter.del, _onFilter)
+      ..match(AnsiCharacter.enter, _onSubmit)
+      ..catchAll(_onTap)
+      ..onExit(_onExit);
 
     render();
 
     return _completer.future;
   }
 
-  void onKeyDown(String key, void Function() dispose) {
+  void _onKeyDown(String key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex != 0) {
       currentIndex = currentIndex - 1;
@@ -109,7 +111,7 @@ final class Select<T> with Tools implements Component<T> {
     render();
   }
 
-  void onKeyUp(String key, void Function() dispose) {
+  void _onKeyUp(String key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex < options.length - 1) {
       currentIndex = currentIndex + 1;
@@ -117,14 +119,14 @@ final class Select<T> with Tools implements Component<T> {
     render();
   }
 
-  void onFilter(String key, void Function() dispose) {
+  void _onFilter(String key, void Function() dispose) {
     if (filter.isNotEmpty) {
       filter = filter.substring(0, filter.length - 1);
     }
     render();
   }
 
-  void onSubmit(String key, void Function() dispose) {
+  void _onSubmit(String key, void Function() dispose) {
     if (_filteredArr.isEmpty) return;
 
     restoreCursorPosition();
@@ -157,7 +159,7 @@ final class Select<T> with Tools implements Component<T> {
     _completer.complete(_filteredArr[currentIndex]);
   }
 
-  void onExit(void Function() dispose) {
+  void _onExit(void Function() dispose) {
     dispose();
 
     restoreCursorPosition();
@@ -166,10 +168,11 @@ final class Select<T> with Tools implements Component<T> {
     showCursor();
 
     stdout.writeAnsiAll(exitMessage);
+    onExit?.call();
     exit(1);
   }
 
-  void onTap(String key, void Function() dispose) {
+  void _onTap(String key, void Function() dispose) {
     if (RegExp(r'^[\p{L}\p{N}\p{P}\s]*$', unicode: true).hasMatch(key)) {
       currentIndex = 0;
       filter = filter + key;
