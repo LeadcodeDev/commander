@@ -18,7 +18,7 @@ class KeyDownEventListener {
   KeyDownEventListener() {
     subscription = StdinBuffer.stream.transform(utf8.decoder).listen((data) {
       final listener =
-          listeners.firstWhereOrNull((listener) => listener.key.value == data);
+          listeners.firstWhereOrNull((listener) => listener.key.matches(data));
       if (listener case KeyDownListener listener) {
         listener.callback(data, dispose);
         return;
