@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
 
 /// A class that represents a switch component.
 /// This component handles user input as a boolean value.
