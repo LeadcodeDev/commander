@@ -32,8 +32,8 @@ mixin Tools {
 
   void showInput() {
     if (stdin.hasTerminal) {
-      stdin.echoMode = false;
       stdin.lineMode = true;
+      stdin.echoMode = true;
     }
   }
 
