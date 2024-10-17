@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/src/infrastructure/models/key_down.dart';
 import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
 
 /// A class that represents a switch component.
@@ -51,7 +52,7 @@ class Switch with Tools implements Component<bool> {
     hideInput();
 
     KeyDownEventListener()
-      ..match(AnsiCharacter.enter, _onSubmit)
+      ..match([KeyDown.ctrlM, KeyDown.ctrlJ], _onSubmit)
       ..catchAll(_onTap)
       ..onExit(_onExit);
 
@@ -60,7 +61,7 @@ class Switch with Tools implements Component<bool> {
     return _completer.future;
   }
 
-  void _onSubmit(String key, void Function() dispose) {
+  void _onSubmit(KeyDown key, void Function() dispose) {
     if (![...allowedYesValues, ...allowedNoValues]
         .contains(temporaryValue.trim())) {
       errorMessage = 'error';
@@ -107,14 +108,14 @@ class Switch with Tools implements Component<bool> {
     exit(1);
   }
 
-  void _onTap(String key, void Function() dispose) {
+  void _onTap(KeyDown key, void Function() dispose) {
     errorMessage = null;
-    if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key)) {
-      if (key == '\x7F' && temporaryValue.isNotEmpty) {
+    if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
+      if (key == KeyDown.delete && temporaryValue.isNotEmpty) {
         temporaryValue = temporaryValue.substring(
             0, temporaryValue.length - 1); // Supprimer le dernier caractère
-      } else if (key != '\x7F') {
-        temporaryValue += key;
+      } else if (key != KeyDown.delete) {
+        temporaryValue += key.char;
       }
 
       _render();

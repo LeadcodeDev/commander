@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
+import 'package:commander_ui/src/domain/models/terminal.dart';
+import 'package:commander_ui/src/infrastructure/models/key_down.dart';
 import 'package:mansion/mansion.dart';
 
 /// A class that represents a select component.
@@ -50,7 +51,7 @@ final class Select<T> with Tools implements Component<T> {
     List<Sequence> Function(String)? selectedLineStyle,
     List<Sequence> Function(String)? unselectedLineStyle,
   }) {
-    StdinBuffer.initialize();
+    Terminal.init();
 
     _filteredArr = options;
 
@@ -92,10 +93,10 @@ final class Select<T> with Tools implements Component<T> {
     hideInput();
 
     KeyDownEventListener()
-      ..match(AnsiCharacter.downArrow, _onKeyDown)
-      ..match(AnsiCharacter.upArrow, _onKeyUp)
-      ..match(AnsiCharacter.del, _onFilter)
-      ..match(AnsiCharacter.enter, _onSubmit)
+      ..match([KeyDown.downArrow], _onKeyDown)
+      ..match([KeyDown.upArrow], _onKeyUp)
+      ..match([KeyDown.delete], _onFilter)
+      ..match([KeyDown.ctrlM, KeyDown.ctrlJ], _onSubmit)
       ..catchAll(_onTap)
       ..onExit(_onExit);
 
@@ -104,7 +105,7 @@ final class Select<T> with Tools implements Component<T> {
     return _completer.future;
   }
 
-  void _onKeyUp(String key, void Function() dispose) {
+  void _onKeyUp(KeyDown key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex != 0) {
       currentIndex = currentIndex - 1;
@@ -112,7 +113,7 @@ final class Select<T> with Tools implements Component<T> {
     render();
   }
 
-  void _onKeyDown(String key, void Function() dispose) {
+  void _onKeyDown(KeyDown key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex < options.length - 1) {
       currentIndex = currentIndex + 1;
@@ -120,14 +121,14 @@ final class Select<T> with Tools implements Component<T> {
     render();
   }
 
-  void _onFilter(String key, void Function() dispose) {
+  void _onFilter(KeyDown key, void Function() dispose) {
     if (filter.isNotEmpty) {
       filter = filter.substring(0, filter.length - 1);
     }
     render();
   }
 
-  void _onSubmit(String key, void Function() dispose) {
+  void _onSubmit(KeyDown key, void Function() dispose) {
     if (_filteredArr.isEmpty) return;
 
     restoreCursorPosition();
@@ -173,10 +174,10 @@ final class Select<T> with Tools implements Component<T> {
     exit(1);
   }
 
-  void _onTap(String key, void Function() dispose) {
-    if (RegExp(r'^[\p{L}\p{N}\p{P}\s]*$', unicode: true).hasMatch(key)) {
+  void _onTap(KeyDown key, void Function() dispose) {
+    if (RegExp(r'^[\p{L}\p{N}\p{P}\s]*$', unicode: true).hasMatch(key.char)) {
       currentIndex = 0;
-      filter = filter + key;
+      filter = filter + key.char;
 
       if (isRendering) {
         return;
@@ -188,8 +189,6 @@ final class Select<T> with Tools implements Component<T> {
 
   void render() async {
     isRendering = true;
-
-    saveCursorPosition();
 
     final buffer = StringBuffer();
     final List<Sequence> copy = [];
@@ -258,14 +257,15 @@ final class Select<T> with Tools implements Component<T> {
     final linesNeeded = buffer.toString().split('\n').length;
 
     if (availableLines < linesNeeded) {
-      moveCursorUp(count: linesNeeded - availableLines);
+      for (int i = 0; i < linesNeeded - availableLines; i++) {
+        stdout.writeln();
+      }
+      moveCursorUp(count: linesNeeded- availableLines);
       saveCursorPosition();
-      clearFromCursorToEnd();
     }
 
     clearFromCursorToEnd();
     restoreCursorPosition();
-    saveCursorPosition();
 
     stdout.write(buffer.toString());
 

@@ -1,28 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
-import 'package:commander_ui/src/domain/models/terminal.dart';
 import 'package:commander_ui/src/infrastructure/models/key_down.dart';
 
 void main() {
-  final terminal = Terminal.init();
-  terminal.enableRawMode();
-
+  // Désactiver l'affichage et le mode ligne pour lire les entrées directement
   stdin.echoMode = false;
   stdin.lineMode = false;
 
   print('Press any key. Press ESC to exit.');
-  stdin.echoMode = false;
-  stdin.lineMode = false;
 
-  terminal.stream.listen((List<int> input) {
-    print(input);
-    KeyDown key = KeyDown.fromInput(input);
-    if (key == KeyDown.ctrlC) {
-      terminal.disableRawMode();
-      exit(0);
-    }
-    print(key);
+  stdin.transform(utf8.decoder).listen((data) {
+    print([data, KeyDown.match(data)]);
+    // final key = KeyDown.fromInput(data);
+    //
+    // // Affichage des résultats
+    // print('Key: $key, Char: ${key.char}, Data: ${data}');
+    //
+    // // Si ESC est pressé, quitter le programme
+    // if (key == KeyDown.escape) {
+    //   exit(0);
+    // }
   });
 }

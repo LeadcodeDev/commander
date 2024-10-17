@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/commander_ui.dart';
 import 'package:commander_ui/src/domain/models/terminal.dart';
 
 mixin Tools {
@@ -73,20 +73,27 @@ mixin Tools {
   Future<(int, int)> getCurrentCursorPosition() async {
     stdout.write('\x1B[6n');
 
-    List<int> response = await StdinBuffer.stream.first;
-    String responseStr = String.fromCharCodes(response);
+    List<int> input = await Terminal.terminal!.stream.firstWhere((event) => switch(event) {
+      List(:final length, :final firstOrNull) when length > 3 => firstOrNull == 27,
+      _ => false,
+    });
 
-    RegExp cursorPosRegex = RegExp(r'\[(\d+);(\d+)R');
-    Match? match = cursorPosRegex.firstMatch(responseStr);
+    // Convertir la réponse en chaîne de caractères
+    String response = String.fromCharCodes(input);
 
-    if (match == null) {
-      throw Exception('Could not parse cursor position');
+    // Utiliser une expression régulière pour extraire la ligne et la colonne
+    RegExp regExp = RegExp(r'\[(\d+);(\d+)R');
+    Match? match = regExp.firstMatch(response);
+
+    if (match != null) {
+      // Extraire la ligne et la colonne
+      int row = int.parse(match.group(1)!);
+      int col = int.parse(match.group(2)!);
+
+      return (row, col);
+    } else {
+      throw Exception('Impossible d\'extraire la position du curseur $input ${response.split('').map((a) => a ).toList()} ${match?.group(1)}/${match?.group(2)}');
     }
-
-    final line = int.parse(match.group(1)!);
-    final column = int.parse(match.group(2)!);
-
-    return (line, column);
   }
 
   Future<int> getAvailableLinesBelowCursor() async {

@@ -3,7 +3,8 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
+import 'package:commander_ui/src/domain/models/terminal.dart';
+import 'package:commander_ui/src/infrastructure/models/key_down.dart';
 import 'package:mansion/mansion.dart';
 
 /// A class that represents a checkbox component.
@@ -55,7 +56,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     List<Sequence> Function(String)? highlightedSelectedLineStyle,
     List<Sequence> Function(String)? highlightedUnselectedLineStyle,
   }) {
-    StdinBuffer.initialize();
+    Terminal.init();
 
     this.noResultFoundMessage = noResultFoundMessage ??
         [
@@ -114,10 +115,10 @@ final class Checkbox<T> with Tools implements Component<T> {
     hideInput();
 
     KeyDownEventListener()
-      ..match(AnsiCharacter.downArrow, _onKeyDown)
-      ..match(AnsiCharacter.upArrow, _onKeyUp)
-      ..match(AnsiCharacter.enter, _onSubmit)
-      ..match(AnsiCharacter.space, _onSpace)
+      ..match([KeyDown.downArrow], _onKeyDown)
+      ..match([KeyDown.upArrow], _onKeyUp)
+      ..match([KeyDown.ctrlM, KeyDown.ctrlJ], _onSubmit)
+      ..match([KeyDown.space], _onSpace)
       ..onExit(_onExit);
 
     _render();
@@ -125,7 +126,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     return _completer.future;
   }
 
-  void _onKeyUp(String key, void Function() dispose) {
+  void _onKeyUp(KeyDown key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex != 0) {
       currentIndex = currentIndex - 1;
@@ -133,7 +134,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     _render();
   }
 
-  void _onKeyDown(String key, void Function() dispose) {
+  void _onKeyDown(KeyDown key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex < options.length - 1) {
       currentIndex = currentIndex + 1;
@@ -141,7 +142,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     _render();
   }
 
-  void _onSubmit(String key, void Function() dispose) {
+  void _onSubmit(KeyDown key, void Function() dispose) {
     restoreCursorPosition();
     clearFromCursorToEnd();
     showInput();
@@ -187,7 +188,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     exit(1);
   }
 
-  void _onSpace(String key, void Function() dispose) {
+  void _onSpace(KeyDown key, void Function() dispose) {
     saveCursorPosition();
 
     if (max case int value when _selectedIndexes.length >= value) {

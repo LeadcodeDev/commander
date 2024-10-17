@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/src/commons/ansi_character.dart';
 import 'package:commander_ui/src/commons/cli.dart';
 import 'package:commander_ui/src/commons/terminal.dart';
 import 'package:commander_ui/src/domain/models/component.dart';
+import 'package:commander_ui/src/domain/models/terminal.dart';
 import 'package:commander_ui/src/infrastructure/key_down_event_listener.dart';
+import 'package:commander_ui/src/infrastructure/models/key_down.dart';
 import 'package:commander_ui/src/infrastructure/result.dart';
-import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
 import 'package:mansion/mansion.dart';
 
 /// A class that represents an input component.
 /// This component handles user input and provides validation and error handling.
-class Input with TerminalTools, Tools implements Component<String> {
+class Input with Tools, TerminalTools implements Component<String> {
   final String answer;
   final String? placeholder;
   final bool secure;
@@ -41,7 +41,7 @@ class Input with TerminalTools, Tools implements Component<String> {
     Result Function(String value)? validate,
     List<Sequence>? exitMessage,
   }) {
-
+    Terminal.init();
     this.exitMessage = exitMessage ??
         [
           SetStyles(Style.foreground(Color.brightRed)),
@@ -61,7 +61,7 @@ class Input with TerminalTools, Tools implements Component<String> {
     hideInput();
 
     KeyDownEventListener()
-      ..match(AnsiCharacter.enter, _onSubmit)
+      ..match([KeyDown.ctrlJ], _onSubmit)
       ..catchAll(_onTap)
       ..onExit(_onExit);
 
@@ -70,7 +70,7 @@ class Input with TerminalTools, Tools implements Component<String> {
     return _completer.future;
   }
 
-  void _onSubmit(String key, void Function() dispose) {
+  void _onSubmit(KeyDown key, void Function() dispose) {
     final result = validate(value.isEmpty ? defaultValue : value);
     if (result case Err(:final String error)) {
       errorMessage = error;
@@ -115,15 +115,17 @@ class Input with TerminalTools, Tools implements Component<String> {
 
     stdout.writeAnsiAll(exitMessage);
     onExit?.call();
+    exit(1);
   }
 
-  void _onTap(String key, void Function() dispose) {
+  void _onTap(KeyDown key, void Function() dispose) {
     errorMessage = null;
-    if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key)) {
-      if (key == '\x7F' && value.isNotEmpty) {
+
+    if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
+      if (key == KeyDown.delete && value.isNotEmpty) {
         value = value.substring(0, value.length - 1);
-      } else if (key != '\x7F') {
-        value = value + key;
+      } else if (key != KeyDown.delete) {
+        value = value + key.value;
       }
 
       _render();
