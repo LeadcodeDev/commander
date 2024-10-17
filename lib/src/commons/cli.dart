@@ -23,6 +23,10 @@ mixin Tools {
 
   void moveToStart() => stdout.write('\x1B[0;0H');
 
+  String clickable({required String label, required String url}) {
+    return '\x1B]8;;$url\x1B\\$label\x1B]8;;\x1B\\';
+  }
+
   void hideInput() {
     if (stdin.hasTerminal) {
       stdin.echoMode = false;
