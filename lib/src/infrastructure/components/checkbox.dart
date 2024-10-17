@@ -1,33 +1,35 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
 import 'package:mansion/mansion.dart';
 
-/// A class that represents a select component.
+/// A class that represents a checkbox component.
 /// This component handles user selection from a list of options.
-final class Select<T> with Tools implements Component<T> {
-  String filter = '';
+final class Checkbox<T> with Tools implements Component<T> {
   int currentIndex = 0;
-  int displayCount;
   bool isRendering = false;
 
   final List<T> options;
+  final List<int> _selectedIndexes = [];
   final String answer;
   final String? placeholder;
+  final int? max;
   late final List<Sequence> noResultFoundMessage;
   late final List<Sequence> exitMessage;
-  final FutureOr Function()? onExit;
 
   final String Function(T)? onDisplay;
+  final FutureOr Function()? onExit;
   late final List<Sequence> Function(String) selectedLineStyle;
   late final List<Sequence> Function(String) unselectedLineStyle;
+  late final List<Sequence> Function(String) highlightedSelectedLineStyle;
+  late final List<Sequence> Function(String) highlightedUnselectedLineStyle;
 
-  List<T> _filteredArr = [];
+  final _completer = Completer<List<T>>();
 
-  final _completer = Completer<T>();
-
-  /// Creates a new instance of [Select].
+  /// Creates a new instance of [Checkbox].
   ///
   /// * The [answer] parameter is the question that the user is asked.
   /// * The [options] parameter is the list of options that the user can select from.
@@ -37,21 +39,23 @@ final class Select<T> with Tools implements Component<T> {
   /// * The [exitMessage] parameter is an optional message that is displayed when the user exits the input.
   /// * The [selectedLineStyle] parameter is a function that styles the selected line.
   /// * The [unselectedLineStyle] parameter is a function that styles the unselected line.
-  Select({
+  /// * The [highlightedSelectedLineStyle] parameter is a function that styles the highlighted selected line.
+  /// * The [highlightedUnselectedLineStyle] parameter is a function that styles the highlighted unselected line.
+  Checkbox({
     required this.answer,
     required this.options,
-    this.displayCount = 5,
     this.onDisplay,
-    this.placeholder,
     this.onExit,
+    this.placeholder,
+    this.max,
     List<Sequence>? noResultFoundMessage,
     List<Sequence>? exitMessage,
     List<Sequence> Function(String)? selectedLineStyle,
     List<Sequence> Function(String)? unselectedLineStyle,
+    List<Sequence> Function(String)? highlightedSelectedLineStyle,
+    List<Sequence> Function(String)? highlightedUnselectedLineStyle,
   }) {
     StdinBuffer.initialize();
-
-    _filteredArr = options;
 
     this.noResultFoundMessage = noResultFoundMessage ??
         [
@@ -72,20 +76,39 @@ final class Select<T> with Tools implements Component<T> {
     this.selectedLineStyle = selectedLineStyle ??
         (line) => [
               SetStyles(Style.foreground(Color.brightGreen)),
-              Print('❯'),
-              SetStyles.reset,
+              Print('•'),
+              SetStyles(Style.foreground(Color.brightBlack)),
               Print(' $line'),
+              SetStyles.reset,
             ];
 
     this.unselectedLineStyle = unselectedLineStyle ??
         (line) => [
-              Print(''.padRight(2)),
+              SetStyles(Style.foreground(Color.brightBlack)),
+              Print('•'.padRight(2)),
               Print(line),
+              SetStyles.reset,
+            ];
+
+    this.highlightedSelectedLineStyle = highlightedSelectedLineStyle ??
+        (line) => [
+              SetStyles(Style.foreground(Color.brightGreen)),
+              Print('•'),
+              SetStyles.reset,
+              Print(' $line'),
+            ];
+
+    this.highlightedUnselectedLineStyle = highlightedUnselectedLineStyle ??
+        (line) => [
+              SetStyles(Style.foreground(Color.brightBlack)),
+              Print('•'),
+              SetStyles.reset,
+              Print(' $line'),
             ];
   }
 
   /// Handles the select component and returns a [Future] that completes with the result of the selection.
-  Future<T> handle() async {
+  Future<List<T>> handle() async {
     saveCursorPosition();
     hideCursor();
     hideInput();
@@ -93,54 +116,43 @@ final class Select<T> with Tools implements Component<T> {
     KeyDownEventListener()
       ..match(AnsiCharacter.downArrow, _onKeyDown)
       ..match(AnsiCharacter.upArrow, _onKeyUp)
-      ..match(AnsiCharacter.del, _onFilter)
       ..match(AnsiCharacter.enter, _onSubmit)
-      ..catchAll(_onTap)
+      ..match(AnsiCharacter.space, _onSpace)
       ..onExit(_onExit);
 
-    render();
+    _render();
 
     return _completer.future;
   }
 
-  void _onKeyDown(String key, void Function() dispose) {
+  void _onKeyUp(String key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex != 0) {
       currentIndex = currentIndex - 1;
     }
-    render();
+    _render();
   }
 
-  void _onKeyUp(String key, void Function() dispose) {
+  void _onKeyDown(String key, void Function() dispose) {
     saveCursorPosition();
     if (currentIndex < options.length - 1) {
       currentIndex = currentIndex + 1;
     }
-    render();
-  }
-
-  void _onFilter(String key, void Function() dispose) {
-    if (filter.isNotEmpty) {
-      filter = filter.substring(0, filter.length - 1);
-    }
-    render();
+    _render();
   }
 
   void _onSubmit(String key, void Function() dispose) {
-    if (_filteredArr.isEmpty) return;
-
     restoreCursorPosition();
     clearFromCursorToEnd();
     showInput();
 
     dispose();
 
-    if (_filteredArr.elementAtOrNull(currentIndex) == null) {
-      throw Exception('No result found');
-    }
-
-    final value = onDisplay?.call(_filteredArr[currentIndex]) ??
-        _filteredArr[currentIndex].toString();
+    final selectedValues = options
+        .whereIndexed((index, _) => _selectedIndexes.contains(index))
+        .toList();
+    final values =
+        selectedValues.map((value) => onDisplay?.call(value) ?? value).toList();
 
     stdout.writeAnsiAll([
       SetStyles(Style.foreground(Color.green)),
@@ -148,7 +160,7 @@ final class Select<T> with Tools implements Component<T> {
       SetStyles.reset,
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(value),
+      Print(values.join(', ')),
       SetStyles.reset
     ]);
 
@@ -156,7 +168,11 @@ final class Select<T> with Tools implements Component<T> {
 
     saveCursorPosition();
     showCursor();
-    _completer.complete(_filteredArr[currentIndex]);
+
+    final selectedOptions = options
+        .whereIndexed((index, _) => _selectedIndexes.contains(index))
+        .toList();
+    _completer.complete(selectedOptions);
   }
 
   void _onExit(void Function() dispose) {
@@ -165,27 +181,29 @@ final class Select<T> with Tools implements Component<T> {
     restoreCursorPosition();
     clearFromCursorToEnd();
     showInput();
-    showCursor();
 
     stdout.writeAnsiAll(exitMessage);
     onExit?.call();
     exit(1);
   }
 
-  void _onTap(String key, void Function() dispose) {
-    if (RegExp(r'^[\p{L}\p{N}\p{P}\s]*$', unicode: true).hasMatch(key)) {
-      currentIndex = 0;
-      filter = filter + key;
+  void _onSpace(String key, void Function() dispose) {
+    saveCursorPosition();
 
-      if (isRendering) {
-        return;
-      }
-
-      render();
+    if (max case int value when _selectedIndexes.length >= value) {
+      return;
     }
+
+    if (_selectedIndexes.contains(currentIndex)) {
+      _selectedIndexes.remove(currentIndex);
+    } else {
+      _selectedIndexes.add(currentIndex);
+    }
+
+    _render();
   }
 
-  void render() async {
+  void _render() async {
     isRendering = true;
 
     saveCursorPosition();
@@ -193,63 +211,49 @@ final class Select<T> with Tools implements Component<T> {
     final buffer = StringBuffer();
     final List<Sequence> copy = [];
 
-    _filteredArr = options.where((item) {
-      final value = onDisplay?.call(item) ?? item.toString();
-      return filter.isNotEmpty
-          ? value.toLowerCase().contains(filter.toLowerCase())
-          : true;
-    }).toList();
-
     buffer.writeAnsiAll([
       SetStyles(Style.foreground(Color.yellow)),
       Print('?'),
       SetStyles.reset,
       Print(' $answer : '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(filter.isEmpty ? placeholder ?? '' : filter),
+      Print(placeholder ?? ''),
       SetStyles.reset,
     ]);
 
-    if (_filteredArr.isEmpty) {
-      buffer.writeAnsiAll([
-        AsciiControl.lineFeed,
-        ...noResultFoundMessage,
-        AsciiControl.lineFeed,
-      ]);
-    } else {
-      copy.add(AsciiControl.lineFeed);
+    copy.add(AsciiControl.lineFeed);
 
-      int start = currentIndex - displayCount + 1 >= 0
-          ? currentIndex - displayCount + 1
-          : 0;
-      if (currentIndex >= _filteredArr.length &&
-          _filteredArr.length > displayCount) {
-        start = _filteredArr.length - displayCount;
-      } else {}
+    for (int i = 0; i < options.length; i++) {
+      final value = onDisplay?.call(options[i]) ?? options[i].toString();
 
-      int end = start + displayCount <= _filteredArr.length
-          ? start + displayCount
-          : _filteredArr.length;
-
-      for (int i = start; i < end; i++) {
-        final value =
-            onDisplay?.call(_filteredArr[i]) ?? _filteredArr[i].toString();
-        if (i == currentIndex) {
+      if (_selectedIndexes.contains(i)) {
+        if (currentIndex == i) {
+          copy.addAll(
+              [...highlightedSelectedLineStyle(value), AsciiControl.lineFeed]);
+        } else {
           copy.addAll([...selectedLineStyle(value), AsciiControl.lineFeed]);
+        }
+      } else {
+        if (currentIndex == i) {
+          copy.addAll([
+            ...highlightedUnselectedLineStyle(value),
+            AsciiControl.lineFeed
+          ]);
         } else {
           copy.addAll([...unselectedLineStyle(value), AsciiControl.lineFeed]);
         }
       }
+    }
 
-      while (copy.isNotEmpty) {
-        buffer.writeAnsi(copy.removeAt(0));
-      }
+    while (copy.isNotEmpty) {
+      buffer.writeAnsi(copy.removeAt(0));
     }
 
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Type to filter, press ↑/↓ to navigate, enter to select)'),
+      Print(
+          '(Type to filter, press ↑/↓ to navigate, space to select, enter to submit)'),
       SetStyles.reset,
     ]);
 

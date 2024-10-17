@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:commander_ui/src/commons/cli.dart';
-import 'package:commander_ui/src/component.dart';
+import 'package:commander_ui/src/domain/models/component.dart';
 import 'package:mansion/mansion.dart' as mansion;
 
 class AlternateScreen with Tools implements Component<void> {

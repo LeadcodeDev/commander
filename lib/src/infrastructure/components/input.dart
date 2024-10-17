@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/src/application/stdin_buffer.dart';
 import 'package:commander_ui/src/commons/ansi_character.dart';
 import 'package:commander_ui/src/commons/cli.dart';
-import 'package:commander_ui/src/component.dart';
-import 'package:commander_ui/src/key_down_event_listener.dart';
-import 'package:commander_ui/src/result.dart';
+import 'package:commander_ui/src/commons/terminal.dart';
+import 'package:commander_ui/src/domain/models/component.dart';
+import 'package:commander_ui/src/infrastructure/key_down_event_listener.dart';
+import 'package:commander_ui/src/infrastructure/result.dart';
+import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
 import 'package:mansion/mansion.dart';
 
 /// A class that represents an input component.
 /// This component handles user input and provides validation and error handling.
-class Input with Tools implements Component<String> {
+class Input with TerminalTools, Tools implements Component<String> {
   final String answer;
   final String? placeholder;
   final bool secure;
@@ -40,7 +41,6 @@ class Input with Tools implements Component<String> {
     Result Function(String value)? validate,
     List<Sequence>? exitMessage,
   }) {
-    StdinBuffer.initialize();
 
     this.exitMessage = exitMessage ??
         [
@@ -115,7 +115,6 @@ class Input with Tools implements Component<String> {
 
     stdout.writeAnsiAll(exitMessage);
     onExit?.call();
-    exit(1);
   }
 
   void _onTap(String key, void Function() dispose) {
