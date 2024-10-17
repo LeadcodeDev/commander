@@ -51,7 +51,7 @@ final class Select<T> with Tools implements Component<T> {
     List<Sequence> Function(String)? selectedLineStyle,
     List<Sequence> Function(String)? unselectedLineStyle,
   }) {
-    Terminal.init();
+    Terminal.init().enableRawMode();
 
     _filteredArr = options;
 
@@ -141,8 +141,8 @@ final class Select<T> with Tools implements Component<T> {
       throw Exception('No result found');
     }
 
-    final value = onDisplay?.call(_filteredArr[currentIndex]) ??
-        _filteredArr[currentIndex].toString();
+    final value =
+        onDisplay?.call(_filteredArr[currentIndex]) ?? _filteredArr[currentIndex].toString();
 
     stdout.writeAnsiAll([
       SetStyles(Style.foreground(Color.green)),
@@ -195,9 +195,7 @@ final class Select<T> with Tools implements Component<T> {
 
     _filteredArr = options.where((item) {
       final value = onDisplay?.call(item) ?? item.toString();
-      return filter.isNotEmpty
-          ? value.toLowerCase().contains(filter.toLowerCase())
-          : true;
+      return filter.isNotEmpty ? value.toLowerCase().contains(filter.toLowerCase()) : true;
     }).toList();
 
     buffer.writeAnsiAll([
@@ -219,21 +217,16 @@ final class Select<T> with Tools implements Component<T> {
     } else {
       copy.add(AsciiControl.lineFeed);
 
-      int start = currentIndex - displayCount + 1 >= 0
-          ? currentIndex - displayCount + 1
-          : 0;
-      if (currentIndex >= _filteredArr.length &&
-          _filteredArr.length > displayCount) {
+      int start = currentIndex - displayCount + 1 >= 0 ? currentIndex - displayCount + 1 : 0;
+      if (currentIndex >= _filteredArr.length && _filteredArr.length > displayCount) {
         start = _filteredArr.length - displayCount;
       } else {}
 
-      int end = start + displayCount <= _filteredArr.length
-          ? start + displayCount
-          : _filteredArr.length;
+      int end =
+          start + displayCount <= _filteredArr.length ? start + displayCount : _filteredArr.length;
 
       for (int i = start; i < end; i++) {
-        final value =
-            onDisplay?.call(_filteredArr[i]) ?? _filteredArr[i].toString();
+        final value = onDisplay?.call(_filteredArr[i]) ?? _filteredArr[i].toString();
         if (i == currentIndex) {
           copy.addAll([...selectedLineStyle(value), AsciiControl.lineFeed]);
         } else {
@@ -260,7 +253,7 @@ final class Select<T> with Tools implements Component<T> {
       for (int i = 0; i < linesNeeded - availableLines; i++) {
         stdout.writeln();
       }
-      moveCursorUp(count: linesNeeded- availableLines);
+      moveCursorUp(count: linesNeeded - availableLines);
       saveCursorPosition();
     }
 

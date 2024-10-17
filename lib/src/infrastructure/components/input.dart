@@ -41,7 +41,7 @@ class Input with Tools, TerminalTools implements Component<String> {
     Result Function(String value)? validate,
     List<Sequence>? exitMessage,
   }) {
-    Terminal.init();
+    Terminal.init().enableRawMode();
     this.exitMessage = exitMessage ??
         [
           SetStyles(Style.foreground(Color.brightRed)),

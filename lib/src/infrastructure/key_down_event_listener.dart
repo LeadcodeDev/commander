@@ -62,5 +62,7 @@ class KeyDownEventListener with TerminalTools {
 
     sigintSubscription?.cancel();
     sigintSubscription = null;
+
+    terminal.disableRawMode();
   }
 }

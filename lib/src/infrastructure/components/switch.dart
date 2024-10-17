@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/src/domain/models/terminal.dart';
 import 'package:commander_ui/src/infrastructure/models/key_down.dart';
-import 'package:commander_ui/src/infrastructure/stdin_buffer.dart';
 
 /// A class that represents a switch component.
 /// This component handles user input as a boolean value.
@@ -34,7 +34,7 @@ class Switch with Tools implements Component<bool> {
     List<String>? allowedYesValues,
     List<String>? allowedNoValues,
   }) {
-    StdinBuffer.initialize();
+    Terminal.init().enableRawMode();
 
     this.exitMessage =
         exitMessage ?? '${AsciiColors.red('✘')} Operation canceled by user';

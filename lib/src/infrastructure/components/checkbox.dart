@@ -56,7 +56,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     List<Sequence> Function(String)? highlightedSelectedLineStyle,
     List<Sequence> Function(String)? highlightedUnselectedLineStyle,
   }) {
-    Terminal.init();
+    Terminal.init().enableRawMode();
 
     this.noResultFoundMessage = noResultFoundMessage ??
         [
