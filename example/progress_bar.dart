@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:commander_ui/src/components/progress.dart';
+import 'package:commander_ui/commander_ui.dart';
 import 'package:mansion/mansion.dart';
 
 void main() async {

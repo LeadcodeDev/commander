@@ -9,7 +9,13 @@ Future<void> main() async {
   print('Hello World !');
 
   await wait();
-  screen.stop();
+
+  final screen2 = AlternateScreen(title: 'Hello World !');
+  screen2.start();
+
+  print('Hello World ! 2');
+
+  await wait();
 }
 
 Future<void> wait() =>

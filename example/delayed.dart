@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:commander_ui/src/components/delayed.dart';
+import 'package:commander_ui/commander_ui.dart';
 
 Future<void> main() async {
   final delayed = Delayed();
