@@ -100,7 +100,7 @@ final class Select<T> with Tools implements Component<T> {
       ..catchAll(_onTap)
       ..onExit(_onExit);
 
-    render();
+    render(initialRender: true);
 
     return _completer.future;
   }
@@ -187,7 +187,7 @@ final class Select<T> with Tools implements Component<T> {
     }
   }
 
-  void render() async {
+  void render({bool initialRender = false}) async {
     isRendering = true;
 
     final buffer = StringBuffer();
@@ -246,19 +246,24 @@ final class Select<T> with Tools implements Component<T> {
       SetStyles.reset,
     ]);
 
-    final availableLines = await getAvailableLinesBelowCursor();
-    final linesNeeded = buffer.toString().split('\n').length;
+    if (initialRender) {
+      final availableLines = await getAvailableLinesBelowCursor();
+      final linesNeeded = buffer.toString().split('\x0A').length;
 
-    if (availableLines < linesNeeded) {
-      for (int i = 0; i < linesNeeded - availableLines; i++) {
-        stdout.writeln();
+      final int requiredLines = linesNeeded - availableLines;
+
+      if (!requiredLines.isNegative) {
+        for (int i = 0; i < requiredLines; i++) {
+          stdout.writeln();
+        }
+        moveCursorUp(count: linesNeeded);
       }
-      moveCursorUp(count: linesNeeded - availableLines);
+
       saveCursorPosition();
     }
 
-    clearFromCursorToEnd();
     restoreCursorPosition();
+    clearFromCursorToEnd();
 
     stdout.write(buffer.toString());
 
