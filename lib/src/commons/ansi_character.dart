@@ -6,7 +6,7 @@ enum AnsiCharacter {
   leftArrow('\u001b[D'),
   del('\u007f'),
   space('\x20'),
-  enter('\n');
+  enter('\u000D');
 
   final String value;
   const AnsiCharacter(this.value);
