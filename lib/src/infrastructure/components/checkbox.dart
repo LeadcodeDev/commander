@@ -27,6 +27,7 @@ final class Checkbox<T> with Tools implements Component<T> {
   late final List<Sequence> Function(String) unselectedLineStyle;
   late final List<Sequence> Function(String) highlightedSelectedLineStyle;
   late final List<Sequence> Function(String) highlightedUnselectedLineStyle;
+  late Result Function(String value) validate;
 
   final _completer = Completer<List<T>>();
 
@@ -51,6 +52,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     this.max,
     List<Sequence>? noResultFoundMessage,
     List<Sequence>? exitMessage,
+    Result Function(String value)? validate,
     List<Sequence> Function(String)? selectedLineStyle,
     List<Sequence> Function(String)? unselectedLineStyle,
     List<Sequence> Function(String)? highlightedSelectedLineStyle,
@@ -106,6 +108,8 @@ final class Checkbox<T> with Tools implements Component<T> {
               SetStyles.reset,
               Print(' $line'),
             ];
+
+    this.validate = validate ?? (value) => Ok(value);
   }
 
   /// Handles the select component and returns a [Future] that completes with the result of the selection.
@@ -121,7 +125,7 @@ final class Checkbox<T> with Tools implements Component<T> {
       ..match([KeyDown.space], _onSpace)
       ..onExit(_onExit);
 
-    _render();
+    _render(initialRender: true);
 
     return _completer.future;
   }
@@ -204,7 +208,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     _render();
   }
 
-  void _render() async {
+  void _render({bool initialRender = false}) async {
     isRendering = true;
 
     saveCursorPosition();
@@ -258,16 +262,24 @@ final class Checkbox<T> with Tools implements Component<T> {
       SetStyles.reset,
     ]);
 
-    final availableLines = await getAvailableLinesBelowCursor();
-    final linesNeeded = buffer.toString().split('\n').length;
+    if (initialRender) {
+      final availableLines = await getAvailableLinesBelowCursor();
+      final linesNeeded = buffer
+          .toString()
+          .split('\x0A')
+          .length;
 
-    if (availableLines < linesNeeded) {
-      moveCursorUp(count: linesNeeded - availableLines);
+      final int requiredLines = linesNeeded - availableLines;
+      if (!requiredLines.isNegative) {
+        for (int i = 0; i < requiredLines; i++) {
+          stdout.writeln();
+        }
+        moveCursorUp(count: linesNeeded);
+      }
+
       saveCursorPosition();
-      clearFromCursorToEnd();
     }
 
-    clearFromCursorToEnd();
     restoreCursorPosition();
     saveCursorPosition();
 

@@ -175,12 +175,12 @@ final class Select<T> with Tools implements Component<T> {
   }
 
   void _onTap(KeyDown key, void Function() dispose) {
-    if (RegExp(r'^[\p{L}\p{N}\p{P}\s]*$', unicode: true).hasMatch(key.char)) {
+    if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
       currentIndex = 0;
-      filter = filter + key.char;
-
-      if (isRendering) {
-        return;
+      if (key == KeyDown.backspace && filter.isNotEmpty) {
+        filter = filter.substring(0, filter.length - 1);
+      } else if (key != KeyDown.backspace) {
+        filter = filter + key.char;
       }
 
       render();

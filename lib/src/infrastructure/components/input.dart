@@ -51,7 +51,7 @@ class Input with Tools, TerminalTools implements Component<String> {
           AsciiControl.lineFeed
         ];
 
-    this.validate = validate ?? (value) => Ok(null);
+    this.validate = validate ?? (value) => Ok(value);
   }
 
   /// Handles the input component and returns a [Future] that completes with the result of the input.
@@ -93,9 +93,11 @@ class Input with Tools, TerminalTools implements Component<String> {
       SetStyles.reset,
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(defaultValue.isNotEmpty
-          ? defaultValue
-          : placeholder ?? _generateValue()),
+      Print(value.isNotEmpty
+          ? _generateValue()
+          : defaultValue.isNotEmpty
+              ? defaultValue
+              : placeholder ?? ''),
       SetStyles.reset,
     ]);
 
@@ -122,9 +124,9 @@ class Input with Tools, TerminalTools implements Component<String> {
     errorMessage = null;
 
     if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
-      if (key == KeyDown.delete && value.isNotEmpty) {
+      if (key == KeyDown.backspace && value.isNotEmpty) {
         value = value.substring(0, value.length - 1);
-      } else if (key != KeyDown.delete) {
+      } else if (key != KeyDown.backspace) {
         value = value + key.value;
       }
 
@@ -170,7 +172,7 @@ class Input with Tools, TerminalTools implements Component<String> {
         stdout.writeln();
       }
 
-      moveCursorUp(count: linesNeeded - availableLines);
+      moveCursorUp(count: linesNeeded);
       saveCursorPosition();
     }
 
