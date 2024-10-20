@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/domain/models/terminal.dart';
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/models/key_down.dart';
 import 'package:mansion/mansion.dart';
 
 /// A class that represents a select component.
@@ -247,17 +247,17 @@ final class Select<T> with Tools implements Component<T> {
     ]);
 
     if (initialRender) {
-      final availableLines = await getAvailableLinesBelowCursor();
+      // final availableLines = await getAvailableLinesBelowCursor();
       final linesNeeded = buffer.toString().split('\x0A').length;
 
-      final int requiredLines = linesNeeded - availableLines;
+      // final int requiredLines = linesNeeded - availableLines;
 
-      if (!requiredLines.isNegative) {
-        for (int i = 0; i < requiredLines; i++) {
+      // if (!requiredLines.isNegative) {
+        for (int i = 0; i < linesNeeded; i++) {
           stdout.writeln();
         }
         moveCursorUp(count: linesNeeded);
-      }
+      // }
 
       saveCursorPosition();
     }

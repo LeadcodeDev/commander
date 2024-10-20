@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
 
 class UnixTerminal implements Terminal {
   final _streamController = StreamController<List<int>>.broadcast();

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/domain/models/terminal.dart';
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/models/key_down.dart';
 
 /// A class that represents a switch component.
 /// This component handles user input as a boolean value.

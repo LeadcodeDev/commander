@@ -1,25 +1,18 @@
-import 'dart:convert';
-import 'dart:io';
+import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/src/commander.dart';
+import 'package:commander_ui/src/level.dart';
 
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
+enum Shape { square, circle, triangle }
 
-void main() {
-  // Désactiver l'affichage et le mode ligne pour lire les entrées directement
-  stdin.echoMode = false;
-  stdin.lineMode = false;
+Future<void> main() async {
+  final commander = Commander(level: Level.verbose);
+  print('Hello World !');
 
-  print('Press any key. Press ESC to exit.');
-
-  stdin.transform(utf8.decoder).listen((data) {
-    print([data, KeyDown.match(data)]);
-    // final key = KeyDown.fromInput(data);
-    //
-    // // Affichage des résultats
-    // print('Key: $key, Char: ${key.char}, Data: ${data}');
-    //
-    // // Si ESC est pressé, quitter le programme
-    // if (key == KeyDown.escape) {
-    //   exit(0);
-    // }
-  });
+  final value = await commander.ask('What is your name ?',
+      // defaultValue: 'John Doe',
+      validate: (value) => switch (value) {
+            String(:final isEmpty) when isEmpty => Err('Name cannot be empty'),
+            _ => Ok(value),
+          });
+  // print(value);
 }

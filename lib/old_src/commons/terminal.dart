@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:commander_ui/src/domain/models/terminal.dart';
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/models/key_down.dart';
 
 mixin TerminalTools {
   Terminal get terminal => _switch((terminal) => terminal);

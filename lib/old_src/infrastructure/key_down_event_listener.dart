@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:commander_ui/src/commons/terminal.dart';
-import 'package:commander_ui/src/infrastructure/key_down_listener.dart';
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
+import 'package:commander_ui/old_src/commons/terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/key_down_listener.dart';
+import 'package:commander_ui/old_src/infrastructure/models/key_down.dart';
 
 /// Listens to key down events and executes the corresponding callbacks.
 class KeyDownEventListener with TerminalTools {
@@ -13,12 +13,18 @@ class KeyDownEventListener with TerminalTools {
   late StreamSubscription<String>? subscription;
   final List<KeyDownListener> listeners = [];
   FutureOr<void> Function(KeyDown key, void Function())? fallback;
+  Function(void Function() dispose)? exitHandler;
 
   /// Creates a new instance of [KeyDownEventListener] and starts listening to key down events.
   KeyDownEventListener() {
     subscription = terminal.stream.transform(utf8.decoder).listen((data) {
       final key = KeyDown.match(data);
       if (key case KeyDown.unknown) {
+        return;
+      }
+
+      if (key == KeyDown.ctrlC) {
+        exitHandler?.call(dispose);
         return;
       }
 
@@ -50,9 +56,7 @@ class KeyDownEventListener with TerminalTools {
 
   /// Sets a listener that is called when the application is about to exit.
   onExit(Function(void Function() dispose) callback) {
-    sigintSubscription = ProcessSignal.sigint.watch().listen((event) {
-      callback(dispose);
-    });
+    exitHandler = callback;
   }
 
   /// Disposes the listener, stopping it from listening to key down events.

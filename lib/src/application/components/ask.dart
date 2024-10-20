@@ -1,0 +1,138 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/src/application/utils/terminal_tools.dart';
+import 'package:mansion/mansion.dart';
+
+List<Sequence> askSequence = [
+  SetStyles(Style.foreground(Color.yellow)),
+  Print('? '),
+  SetStyles.reset,
+];
+
+final class Ask with TerminalTools {
+  final _completer = Completer<String?>();
+
+  late final String _message;
+  late final String? _defaultValue;
+  late final bool _hidden;
+  late final Result Function(String value)? _validate;
+
+  bool get hasDefault => _defaultValue != null && '$_defaultValue'.isNotEmpty;
+
+  String get resolvedDefaultValue => hasDefault ? '$_defaultValue' : '';
+
+  List<Sequence> get baseDefaultSequence {
+    return [
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print(' ($_defaultValue)'),
+      SetStyles.reset,
+      Print(' :'),
+    ];
+  }
+
+  Ask(
+      {required String message,
+      String? defaultValue,
+      bool hidden = false,
+      Result Function(String value)? validate}) {
+    _message = message;
+    _defaultValue = defaultValue;
+    _hidden = hidden;
+    _validate = validate;
+  }
+
+  Future<String?> handle() {
+    _defaultRendering();
+    _waitResponse();
+    return _completer.future;
+  }
+
+  void _waitResponse() {
+    final input = _hidden ? readLineHiddenSync() : readLineSync();
+    final response = input == null || input.isEmpty ? resolvedDefaultValue : input;
+
+    if (_validate != null) {
+      final result = _validate!(response);
+      if (result case Err(:final String error)) {
+        _onError(error);
+
+        return;
+      }
+    }
+
+    _onSuccess(response);
+  }
+
+  void _defaultRendering() {
+    final buffer = StringBuffer();
+
+    buffer.writeAnsiAll([
+      ...askSequence,
+      Print(_message),
+      if (hasDefault) ...baseDefaultSequence,
+      const CursorPosition.moveRight(1)
+    ]);
+
+    stdout.write(buffer.toString());
+  }
+
+  void _onError(String error) {
+    final buffer = StringBuffer();
+
+    buffer.writeAnsiAll([
+      ...askSequence,
+      Print(_message),
+      if (hasDefault) ...baseDefaultSequence,
+      const CursorPosition.moveRight(1)
+    ]);
+
+    buffer.writeAnsiAll([
+      AsciiControl.lineFeed,
+      SetStyles(Style.foreground(Color.brightRed)),
+      Print(error),
+      SetStyles.reset,
+    ]);
+
+    resetCursor();
+    stdout.write(buffer.toString());
+
+    stdout.writeAnsiAll([
+      const CursorPosition.moveUp(1),
+      const CursorPosition.moveRight(2),
+    ]);
+
+    _waitResponse();
+  }
+
+  void _onSuccess(String response) {
+    final buffer = StringBuffer();
+
+    List<Sequence> successSequence = [
+      SetStyles(Style.foreground(Color.green)),
+      Print('✔ '),
+      SetStyles.reset,
+    ];
+
+    buffer.writeAnsiAll([
+      ...successSequence,
+      Print(_message),
+      Print(' '),
+      SetStyles(Style.foreground(Color.brightBlack)),
+      Print(_hidden ? '******' : response),
+      SetStyles.reset,
+      AsciiControl.lineFeed,
+    ]);
+
+    resetCursor();
+    stdout.write(buffer.toString());
+
+    _completer.complete(response);
+  }
+
+  void resetCursor() {
+    restoreCursorPosition();
+    clearFromCursorToEnd();
+  }
+}

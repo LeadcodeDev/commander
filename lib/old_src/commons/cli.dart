@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
 
 mixin Tools {
   /// Hide the cursor
@@ -55,7 +55,7 @@ mixin Tools {
   void scrollDown({int count = 1}) => stdout.write('\x1B[${count}T');
 
   void hideInput() {
-    if (stdin.hasTerminal) {
+    if (Platform.isWindows && stdin.hasTerminal) {
       stdin.echoMode = false;
       stdin.lineMode = false;
     }
@@ -73,9 +73,12 @@ mixin Tools {
   Future<(int, int)> getCurrentCursorPosition() async {
     stdout.write('\x1B[6n');
 
-    List<int> input = await Terminal.terminal!.stream.firstWhere((event) => switch(event) {
-      List(:final length, :final firstOrNull) when length > 3 => firstOrNull == 27,
-      _ => false,
+    List<int> input = await Terminal.terminal!.stream.firstWhere((event) {
+
+      return switch(event) {
+        List(:final length, :final firstOrNull) when length > 3 => firstOrNull == 27,
+        _ => false,
+      };
     });
 
     // Convertir la réponse en chaîne de caractères

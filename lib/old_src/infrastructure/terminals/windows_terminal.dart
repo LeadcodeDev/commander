@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
 import 'package:win32/win32.dart';
 
 final class WindowsTerminal implements Terminal {
@@ -23,9 +23,10 @@ final class WindowsTerminal implements Terminal {
   @override
   void enableRawMode() {
     const dwMode = (~CONSOLE_MODE.ENABLE_ECHO_INPUT) &
-    (~CONSOLE_MODE.ENABLE_PROCESSED_INPUT) &
+    // (~CONSOLE_MODE.ENABLE_PROCESSED_INPUT) &
     (~CONSOLE_MODE.ENABLE_LINE_INPUT) &
-    (~CONSOLE_MODE.ENABLE_WINDOW_INPUT);
+    CONSOLE_MODE.ENABLE_VIRTUAL_TERMINAL_INPUT;
+    // (~CONSOLE_MODE.ENABLE_WINDOW_INPUT);
     SetConsoleMode(inputHandle, dwMode);
   }
 
@@ -41,5 +42,20 @@ final class WindowsTerminal implements Terminal {
     CONSOLE_MODE.ENABLE_VIRTUAL_TERMINAL_INPUT;
 
     SetConsoleMode(inputHandle, dwMode);
+  }
+}
+
+
+final class User {
+  final String name;
+  final String email;
+
+  User({required this.name, required this.email});
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      name: json['name'],
+      email: json['email'],
+    );
   }
 }

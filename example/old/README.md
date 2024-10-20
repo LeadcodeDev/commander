@@ -89,7 +89,7 @@ Future<void> main() async {
 import 'dart:io';
 
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/components/switch.dart';
+import 'package:commander_ui/old_src/components/switch.dart';
 
 Future<void> main() async {
   StdinBuffer.initialize();

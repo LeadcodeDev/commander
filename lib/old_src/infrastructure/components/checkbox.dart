@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/domain/models/terminal.dart';
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/models/key_down.dart';
 import 'package:mansion/mansion.dart';
 
 /// A class that represents a checkbox component.
@@ -156,6 +156,7 @@ final class Checkbox<T> with Tools implements Component<T> {
     final selectedValues = options
         .whereIndexed((index, _) => _selectedIndexes.contains(index))
         .toList();
+
     final values =
         selectedValues.map((value) => onDisplay?.call(value) ?? value).toList();
 
@@ -166,18 +167,14 @@ final class Checkbox<T> with Tools implements Component<T> {
       Print(' $answer '),
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(values.join(', ')),
-      SetStyles.reset
+      SetStyles.reset,
+      AsciiControl.lineFeed,
     ]);
-
-    stdout.writeln();
 
     saveCursorPosition();
     showCursor();
 
-    final selectedOptions = options
-        .whereIndexed((index, _) => _selectedIndexes.contains(index))
-        .toList();
-    _completer.complete(selectedOptions);
+    _completer.complete(selectedValues);
   }
 
   void _onExit(void Function() dispose) {

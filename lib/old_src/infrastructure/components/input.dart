@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/src/commons/cli.dart';
-import 'package:commander_ui/src/commons/terminal.dart';
-import 'package:commander_ui/src/domain/models/component.dart';
-import 'package:commander_ui/src/domain/models/terminal.dart';
-import 'package:commander_ui/src/infrastructure/key_down_event_listener.dart';
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
-import 'package:commander_ui/src/infrastructure/result.dart';
+import 'package:commander_ui/old_src/commons/cli.dart';
+import 'package:commander_ui/old_src/commons/terminal.dart';
+import 'package:commander_ui/old_src/domain/models/component.dart';
+import 'package:commander_ui/old_src/domain/models/terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/key_down_event_listener.dart';
+import 'package:commander_ui/old_src/infrastructure/models/key_down.dart';
+import 'package:commander_ui/old_src/infrastructure/result.dart';
 import 'package:mansion/mansion.dart';
 
 /// A class that represents an input component.

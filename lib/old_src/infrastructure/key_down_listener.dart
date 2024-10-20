@@ -1,4 +1,4 @@
-import 'package:commander_ui/src/infrastructure/models/key_down.dart';
+import 'package:commander_ui/old_src/infrastructure/models/key_down.dart';
 
 /// Represents a listener for a specific key.
 final class KeyDownListener {

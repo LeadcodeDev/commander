@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/src/infrastructure/terminals/unix_terminal.dart';
-import 'package:commander_ui/src/infrastructure/terminals/windows_terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/terminals/unix_terminal.dart';
+import 'package:commander_ui/old_src/infrastructure/terminals/windows_terminal.dart';
 
 abstract class Terminal {
   /// A terminal instance.
