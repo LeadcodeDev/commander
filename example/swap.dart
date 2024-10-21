@@ -9,7 +9,7 @@ Future<void> main() async {
 
   final value = await commander.swap(
     'What is your name ?',
-    defaultValue: true,
+    defaultValue: true,placeholder: 'ff'
   );
 
   print(value);
