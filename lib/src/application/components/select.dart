@@ -56,15 +56,15 @@ final class Select<T> with TerminalTools implements Component<T> {
       if (key.controlChar == ControlCharacter.arrowUp || key.char == 'k') {
         if (_currentIndex != 0) {
           _currentIndex = _currentIndex - 1;
+          _render();
         }
       } else if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
-        if (_currentIndex < _options.length - 1) {
+        if (_currentIndex < _filteredOptions.length - 1) {
           _currentIndex = _currentIndex + 1;
+          _render();
         }
       } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
-        _selectedOption = _filteredOptions[_currentIndex];
         _onSubmit();
-        break;
       } else {
         if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
           _currentIndex = 0;
@@ -78,8 +78,6 @@ final class Select<T> with TerminalTools implements Component<T> {
           _render();
         }
       }
-
-      _render();
     }
 
     return _completer.future;
@@ -112,7 +110,9 @@ final class Select<T> with TerminalTools implements Component<T> {
     _filteredOptions.clear();
     _filteredOptions.addAll(_filterOptions());
 
-    for (final choice in _filteredOptions) {
+    int start = _currentIndex - _displayCount >= 0 ? _currentIndex - _displayCount + 1 : 0;
+
+    for (final choice in _filteredOptions.skip(start).take(_displayCount)) {
       final isCurrent = _filteredOptions.indexOf(choice) == _currentIndex;
       if (isCurrent) {
         buffer.writeAnsiAll([
@@ -145,6 +145,9 @@ final class Select<T> with TerminalTools implements Component<T> {
   }
 
   void _onSubmit() {
+    if (_filteredOptions.isEmpty) return;
+    _selectedOption = _filteredOptions[_currentIndex];
+
     final buffer = StringBuffer();
 
     restoreCursorPosition();
