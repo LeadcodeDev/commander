@@ -1,11 +1,16 @@
-import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/src/commander.dart';
+import 'package:commander_ui/src/level.dart';
+
+enum Shape { square, circle, triangle }
 
 Future<void> main() async {
-  final select = Select(
-      answer: 'What is your name?',
-      options: ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'John'],
-      displayCount: 5);
+  final commander = Commander(level: Level.verbose);
+  print('Hello World !');
 
-  final value = await select.handle();
+  final value = await commander.select('What is your name ?',
+      defaultValue: 'Charlie',
+      options: ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'John']
+  );
+
   print(value);
 }
