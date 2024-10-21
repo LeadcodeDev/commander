@@ -3,9 +3,10 @@ import 'dart:io';
 
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
+import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:mansion/mansion.dart';
 
-final class Ask with TerminalTools {
+final class Ask with TerminalTools implements Component<String?> {
   final _completer = Completer<String?>();
 
   final Terminal _terminal;
@@ -39,6 +40,7 @@ final class Ask with TerminalTools {
     _validate = validate;
   }
 
+  @override
   Future<String?> handle() {
     saveCursorPosition();
 
