@@ -7,7 +7,7 @@ import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
-final class Swap<T> with TerminalTools implements Component<bool> {
+final class Swap<T> with TerminalTools implements Component<Future<bool>> {
   final _completer = Completer<bool>();
 
   final Terminal _terminal;
@@ -31,7 +31,7 @@ final class Swap<T> with TerminalTools implements Component<bool> {
   }
 
   @override
-  Future<bool> handle() async {
+  Future<bool> handle() {
     saveCursorPosition();
     hideCursor();
 

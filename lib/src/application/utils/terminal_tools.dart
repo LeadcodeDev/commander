@@ -114,7 +114,10 @@ mixin TerminalTools {
     final key = _readKey();
     terminal.disableRawMode();
 
-    if (key.controlChar == ControlCharacter.ctrlC) exit(130);
+    if (key.controlChar == ControlCharacter.ctrlC) {
+      showCursor();
+      exit(130);
+    }
     return key;
   }
 

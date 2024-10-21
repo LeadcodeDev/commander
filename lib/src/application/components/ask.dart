@@ -6,7 +6,7 @@ import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:mansion/mansion.dart';
 
-final class Ask with TerminalTools implements Component<String?> {
+final class Ask with TerminalTools implements Component<Future<String?>> {
   final _completer = Completer<String?>();
 
   final Terminal _terminal;

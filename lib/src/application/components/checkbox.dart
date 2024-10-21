@@ -7,7 +7,7 @@ import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
-final class Checkbox<T> with TerminalTools implements Component<List<T>> {
+final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>> {
   final _completer = Completer<List<T>>();
 
   final Terminal _terminal;
