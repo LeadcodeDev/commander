@@ -9,7 +9,7 @@ Future<void> main() async {
 
   final value = await commander.checkbox('What is your name ?',
       defaultValue: 'Charlie',
-      options: ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'John']
+      options: ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'John'],
   );
 
   print(value);
