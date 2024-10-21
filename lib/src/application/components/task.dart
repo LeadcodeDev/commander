@@ -8,7 +8,7 @@ import 'package:mansion/mansion.dart';
 
 final List<String> _loadingSteps = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
-final class Task with TerminalTools implements Component<StepManager> {
+final class Task with TerminalTools implements Component<Future<StepManager>> {
   final Terminal _terminal;
   final bool _colored;
 

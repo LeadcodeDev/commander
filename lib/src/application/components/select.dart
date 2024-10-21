@@ -7,7 +7,7 @@ import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
-final class Select<T> with TerminalTools implements Component<T> {
+final class Select<T> with TerminalTools implements Component<Future<T>> {
   final _completer = Completer<T>();
 
   final Terminal _terminal;

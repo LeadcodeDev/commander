@@ -4,6 +4,7 @@ import 'dart:io' as io;
 import 'package:commander_ui/src/application/components/ask.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
 import 'package:commander_ui/src/application/components/select.dart';
+import 'package:commander_ui/src/application/components/table.dart';
 import 'package:commander_ui/src/application/components/task.dart';
 import 'package:commander_ui/src/application/components/swap.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
@@ -79,4 +80,16 @@ class Commander with TerminalTools {
 
   Future<StepManager> task<T>(String message, {bool colored = false}) =>
       Task(_terminal, colored: colored).handle();
+
+  void table(
+          {required List<List<String>> data,
+          required List<String> columns,
+          bool lineSeparator = false,
+          bool columnSeparator = false}) =>
+      Table(
+              data: data,
+              columns: columns,
+              lineSeparator: lineSeparator,
+              columnSeparator: columnSeparator)
+          .handle();
 }
