@@ -4,6 +4,7 @@ import 'dart:io' as io;
 import 'package:commander_ui/src/application/components/ask.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
 import 'package:commander_ui/src/application/components/select.dart';
+import 'package:commander_ui/src/application/components/swap.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/level.dart';
@@ -70,5 +71,9 @@ class Commander with TerminalTools {
               placeholder: placeholder,
               multiple: multiple,
               onDisplay: onDisplay)
+          .handle();
+
+  Future<bool> swap<T>(String message, {bool defaultValue = false, String placeholder = ''}) =>
+      Swap<T>(_terminal, message: message, defaultValue: defaultValue, placeholder: placeholder)
           .handle();
 }
