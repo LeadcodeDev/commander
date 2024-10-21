@@ -4,6 +4,7 @@ import 'dart:io' as io;
 import 'package:commander_ui/src/application/components/ask.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
 import 'package:commander_ui/src/application/components/select.dart';
+import 'package:commander_ui/src/application/components/task.dart';
 import 'package:commander_ui/src/application/components/swap.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
@@ -30,7 +31,6 @@ class Commander with TerminalTools {
 
   final _queue = <String?>[];
 
-  Never _exit(int code) => io.exit(code);
   final _terminal = Terminal();
 
   /// Write message via `stdout.write`.
@@ -76,4 +76,7 @@ class Commander with TerminalTools {
   Future<bool> swap<T>(String message, {bool defaultValue = false, String placeholder = ''}) =>
       Swap<T>(_terminal, message: message, defaultValue: defaultValue, placeholder: placeholder)
           .handle();
+
+  Future<StepManager> task<T>(String message, {bool colored = false}) =>
+      Task(_terminal, colored: colored).handle();
 }
