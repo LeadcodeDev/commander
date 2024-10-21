@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:commander_ui/src/application/components/ask.dart';
+import 'package:commander_ui/src/application/components/checkbox.dart';
 import 'package:commander_ui/src/application/components/select.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
@@ -53,6 +54,21 @@ class Commander with TerminalTools {
               defaultValue: defaultValue,
               options: options,
               placeholder: placeholder,
+              onDisplay: onDisplay)
+          .handle();
+
+  Future<List<T>> checkbox<T>(String message,
+          {T? defaultValue,
+          required List<T> options,
+          String placeholder = '',
+          bool multiple = false,
+          String Function(T)? onDisplay}) =>
+      Checkbox<T>(_terminal,
+              message: message,
+              defaultValue: defaultValue,
+              options: options,
+              placeholder: placeholder,
+              multiple: multiple,
               onDisplay: onDisplay)
           .handle();
 }

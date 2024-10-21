@@ -17,6 +17,7 @@ final class Checkbox<T> with TerminalTools implements Component<List<T>> {
   late final String _message;
   late final T? _defaultValue;
   late final String _placeholder;
+  late final bool _multiple;
   late final String Function(T)? _onDisplay;
   late final List<T> _options;
   final List<int> _selectedOptions = [];
@@ -28,11 +29,13 @@ final class Checkbox<T> with TerminalTools implements Component<List<T>> {
       required List<T> options,
       T? defaultValue,
       String placeholder = '',
+      bool multiple = false,
       String Function(T)? onDisplay}) {
     _message = message;
     _options = options;
     _defaultValue = defaultValue;
     _placeholder = placeholder;
+    _multiple = multiple;
     _onDisplay = onDisplay;
 
     if (_defaultValue case T value) {
@@ -76,6 +79,20 @@ final class Checkbox<T> with TerminalTools implements Component<List<T>> {
 
     final buffer = StringBuffer();
 
+    buffer.writeAnsiAll([
+      SetStyles(Style.foreground(Color.yellow)),
+      Print('?'),
+      SetStyles.reset,
+      Print(' $_message'),
+      if(_placeholder.isNotEmpty) ...[
+        Print(' : '),
+        SetStyles(Style.foreground(Color.brightBlack)),
+        Print('($_placeholder)'),
+        SetStyles.reset,
+      ],
+      AsciiControl.lineFeed,
+    ]);
+
     for (final choice in _options) {
       final index = _options.indexOf(choice);
       final isSelected = _selectedOptions.contains(index);
@@ -106,7 +123,7 @@ final class Checkbox<T> with TerminalTools implements Component<List<T>> {
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Type to filter, press ↑/↓ to navigate, enter to select)'),
+      Print('(Type to filter, press ↑/↓ to navigate, space to select, enter to confirm)'),
       SetStyles.reset,
     ]);
 
@@ -118,7 +135,12 @@ final class Checkbox<T> with TerminalTools implements Component<List<T>> {
   }
 
   void _onSelect() {
-    _selectedOptions.add(_currentIndex);
+    if (_multiple) {
+      _selectedOptions.add(_currentIndex);
+    } else {
+      _selectedOptions.clear();
+      _selectedOptions.add(_currentIndex);
+    }
     _render();
   }
 
