@@ -9,9 +9,12 @@ Future<void> main() async {
 
   final value = await commander.ask('What is your name ?',
       // defaultValue: 'John Doe',
-      validate: (value) => switch (value) {
-            String(:final isEmpty) when isEmpty => 'Name cannot be empty',
-            _ => null,
-          });
-  // print(value);
+      validate: (value) {
+    return switch (value) {
+      String(:final isEmpty) when isEmpty => 'Name cannot be empty',
+      _ => null,
+    };
+  });
+
+  print(value);
 }

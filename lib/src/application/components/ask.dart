@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:commander_ui/commander_ui.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:mansion/mansion.dart';
