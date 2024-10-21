@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:commander_ui/src/application/components/ask.dart';
-import 'package:commander_ui/src/application/components/select.dart';
 import 'package:commander_ui/src/application/errors/no_terminal_attached_error.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/io.dart';
