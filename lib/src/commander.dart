@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:commander_ui/src/application/components/ask.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
@@ -10,6 +10,7 @@ import 'package:commander_ui/src/application/components/task.dart';
 import 'package:commander_ui/src/application/components/swap.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
+import 'package:commander_ui/src/domains/models/commander_theme.dart';
 import 'package:commander_ui/src/level.dart';
 
 /// Type definition for a function which accepts a log message
@@ -17,26 +18,46 @@ import 'package:commander_ui/src/level.dart';
 ///
 /// Generally, [AnsiCode] values are used to generate a [LogStyle].
 ///
-/// ```dart
-/// final alertStyle = (m) => backgroundRed.wrap(styleBold.wrap(white.wrap(m)));
-/// ```
-typedef LogStyle = String? Function(String? message);
-
 /// A basic Logger which wraps `stdio` and applies various styles.
 class Commander with TerminalTools {
-  Commander({
-    this.level = Level.info,
-  });
+  late final CommanderTheme _theme;
 
-  /// The current log level for this logger.
   Level level;
 
   final _queue = <String?>[];
 
   final _terminal = Terminal();
 
+  Commander({
+    this.level = Level.info,
+    CommanderTheme? theme,
+  }) {
+    _theme = theme ?? CommanderTheme.initial();
+  }
+
   /// Write message via `stdout.write`.
-  void write(String? message) => io.stdout.write(message);
+  void write(String? message) => stdout.write(message);
+
+  /// Write message via `stdout.write`.
+  void writeln(String? message) => stdout.writeln(message);
+
+  /// Write info message to stdout.
+  void info(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.info)(message));
+
+  /// Write success message to stdout.
+  void success(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.success)(message));
+
+  /// Write warning message to stdout.
+  void warn(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.warn)(message));
+
+  /// Write error message to stdout.
+  void error(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.error)(message));
+
+  /// Write alert message to stdout.
+  void alert(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.alert)(message));
+
+  /// Write debug message to stdout.
+  void debug(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.debug)(message));
 
   /// Writes delayed message to stdout.
   void delayed(String? message) => _queue.add(message);
