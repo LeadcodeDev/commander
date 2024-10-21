@@ -3,6 +3,7 @@ import 'dart:io' as io;
 
 import 'package:commander_ui/src/application/components/ask.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
+import 'package:commander_ui/src/application/components/screen.dart';
 import 'package:commander_ui/src/application/components/select.dart';
 import 'package:commander_ui/src/application/components/table.dart';
 import 'package:commander_ui/src/application/components/task.dart';
@@ -92,4 +93,6 @@ class Commander with TerminalTools {
               lineSeparator: lineSeparator,
               columnSeparator: columnSeparator)
           .handle();
+
+  ScreenManager screen({String? title}) => Screen(title: title).handle();
 }
