@@ -10,7 +10,11 @@ Future<void> main() async {
   final screen = commander.screen(title: 'First screen');
 
   screen.enter();
+
+  await sleep(1);
   print('Hello screen !');
+  await sleep(2);
+
   screen.leave();
 
   print('Goodbye screen !');
