@@ -43,6 +43,12 @@ class Commander with TerminalTools {
               message: message, defaultValue: defaultValue, hidden: hidden, validate: validate)
           .handle();
 
-  Future<T> select<T>(String message, {T? defaultValue, required List<T> options}) =>
-      Select<T>(_terminal, message: message, defaultValue: defaultValue, options: options).handle();
+  Future<T> select<T>(String message,
+          {T? defaultValue, required List<T> options, String placeholder = ''}) =>
+      Select<T>(_terminal,
+              message: message,
+              defaultValue: defaultValue,
+              options: options,
+              placeholder: placeholder)
+          .handle();
 }

@@ -3,10 +3,11 @@ import 'dart:io';
 
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
+import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
-final class Select<T> with TerminalTools {
+final class Select<T> with TerminalTools implements Component<T> {
   final _completer = Completer<T>();
 
   final Terminal _terminal;
@@ -14,28 +15,33 @@ final class Select<T> with TerminalTools {
 
   int _currentIndex = 0;
   T? _selectedOption;
+  String _filter = '';
 
   late final String _message;
   late final T? _defaultValue;
+  late final String _placeholder;
   late final List<T> _options;
+  final List<T> _filteredOptions = [];
 
   Select(this._terminal,
-      {required String message, required List<T> options, int displayCount = 5, T? defaultValue}) {
+      {required String message, required List<T> options, int displayCount = 5, T? defaultValue, String placeholder = ''}) {
     _message = message;
     _options = options;
     _displayCount = displayCount;
     _defaultValue = defaultValue;
+    _placeholder = placeholder;
 
     if (_defaultValue case T value) {
       _currentIndex = _options.indexOf(value);
     }
   }
 
+  @override
   Future<T> handle() async {
     saveCursorPosition();
     hideCursor();
 
-    _render();
+    _render(isInitialRender: true);
 
     while (_selectedOption == null) {
       final key = readKey(_terminal);
@@ -44,18 +50,26 @@ final class Select<T> with TerminalTools {
         if (_currentIndex != 0) {
           _currentIndex = _currentIndex - 1;
         }
-      }
-
-      if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
+      } else if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
         if (_currentIndex < _options.length - 1) {
           _currentIndex = _currentIndex + 1;
         }
-      }
-
-      if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
-        _selectedOption = _options[_currentIndex];
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
+        _selectedOption = _filteredOptions[_currentIndex];
         _onSubmit();
         break;
+      } else {
+        if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
+          _currentIndex = 0;
+
+          if (key.controlChar == ControlCharacter.backspace && _filter.isNotEmpty) {
+            _filter = _filter.substring(0, _filter.length - 1);
+          } else if (key.controlChar != ControlCharacter.backspace) {
+            _filter = _filter + key.char;
+          }
+
+          _render();
+        }
       }
 
       _render();
@@ -64,11 +78,16 @@ final class Select<T> with TerminalTools {
     return _completer.future;
   }
 
-  void _render() {
+  List<T> _filterOptions() {
+    return _options.where((item) {
+      // final value = onDisplay?.call(item) ?? item.toString();
+      return _options.isNotEmpty ? item.toString().toLowerCase().contains(_filter.toLowerCase()) : true;
+    }).toList();
+  }
+
+  void _render({bool isInitialRender = false}) {
     restoreCursorPosition();
     clearFromCursorToEnd();
-
-    showCursor();
 
     final buffer = StringBuffer();
 
@@ -78,13 +97,16 @@ final class Select<T> with TerminalTools {
       SetStyles.reset,
       Print(' $_message : '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      // Print(filter.isEmpty ? placeholder ?? '' : filter),
+      Print(_filter.isEmpty ? _placeholder : _filter),
       SetStyles.reset,
       AsciiControl.lineFeed,
     ]);
 
-    for (final choice in _options) {
-      final isCurrent = _options.indexOf(choice) == _currentIndex;
+    _filteredOptions.clear();
+    _filteredOptions.addAll(_filterOptions());
+
+    for (final choice in _filteredOptions) {
+      final isCurrent = _filteredOptions.indexOf(choice) == _currentIndex;
       if (isCurrent) {
         buffer.writeAnsiAll([
           SetStyles(Style.foreground(Color.brightGreen)),
@@ -108,7 +130,9 @@ final class Select<T> with TerminalTools {
       SetStyles.reset,
     ]);
 
-    createSpace(_terminal, buffer.toString().split('\x0A').length);
+    if (isInitialRender) {
+      createSpace(_terminal, buffer.toString().split('\x0A').length);
+    }
 
     stdout.write(buffer.toString());
   }
@@ -132,6 +156,6 @@ final class Select<T> with TerminalTools {
     ]);
 
     stdout.write(buffer.toString());
-    _completer.complete(_options.first);
+    _completer.complete(_selectedOption);
   }
 }
