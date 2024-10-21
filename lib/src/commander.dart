@@ -44,11 +44,15 @@ class Commander with TerminalTools {
           .handle();
 
   Future<T> select<T>(String message,
-          {T? defaultValue, required List<T> options, String placeholder = ''}) =>
+          {T? defaultValue,
+          required List<T> options,
+          String placeholder = '',
+          String Function(T)? onDisplay}) =>
       Select<T>(_terminal,
               message: message,
               defaultValue: defaultValue,
               options: options,
-              placeholder: placeholder)
+              placeholder: placeholder,
+              onDisplay: onDisplay)
           .handle();
 }
