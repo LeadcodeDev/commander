@@ -66,9 +66,8 @@ final class Swap<T> with TerminalTools implements Component<bool> {
       SetStyles.reset,
       Print(' $_message'),
       if (_placeholder.isNotEmpty) ...[
-        Print(' : '),
         SetStyles(Style.foreground(Color.brightBlack)),
-        Print('($_placeholder)'),
+        Print(' ($_placeholder)'),
         SetStyles.reset,
       ],
       Print(' : '),
@@ -87,7 +86,7 @@ final class Swap<T> with TerminalTools implements Component<bool> {
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Type to filter, press ←/→ to navigate, enter to confirm)'),
+      Print('(Press ←/→ to select, enter to confirm)'),
       SetStyles.reset,
     ]);
 
