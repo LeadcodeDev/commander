@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:commander_ui/commander_ui.dart';
+import 'package:commander_ui/old_src/infrastructure/result.dart';
 import 'package:commander_ui/src/application/components/ask.dart';
-import 'package:commander_ui/src/application/utils/terminal_tools.dart';
+import 'package:commander_ui/src/application/components/select.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
-import 'package:commander_ui/src/io.dart';
+import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/level.dart';
 
 /// Type definition for a function which accepts a log message
@@ -43,4 +42,7 @@ class Commander with TerminalTools {
           {String? defaultValue, bool hidden = false, Result Function(String)? validate}) =>
       Ask(message: message, defaultValue: defaultValue, hidden: hidden, validate: validate)
           .handle();
+
+  Future<T> select<T>(String message, {T? defaultValue, required List<T> options}) =>
+      Select<T>(_terminal, message: message, defaultValue: defaultValue, options: options).handle();
 }

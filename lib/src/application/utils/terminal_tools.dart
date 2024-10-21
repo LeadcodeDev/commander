@@ -88,15 +88,24 @@ mixin TerminalTools {
     if (!stdout.hasTerminal) throw NoTerminalAttachedError();
   }
 
-  KeyStroke Function() readKey(Terminal terminal) {
-    return () {
-      _ensureTerminalAttached();
-      terminal.enableRawMode();
-      final key = _readKey();
-      terminal.disableRawMode();
-      if (key.controlChar == ControlCharacter.ctrlC) exit(130);
-      return key;
-    };
+  KeyStroke readKey(Terminal terminal) {
+    _ensureTerminalAttached();
+    terminal.enableRawMode();
+    final key = _readKey();
+    terminal.disableRawMode();
+
+    if (key.controlChar == ControlCharacter.ctrlC) exit(130);
+    return key;
+  }
+
+  (int, int) readCursorPosition(Terminal terminal) {
+    _ensureTerminalAttached();
+
+    terminal.enableRawMode();
+    final position = terminal.getCursorPosition();
+    terminal.disableRawMode();
+
+    return position;
   }
 
   KeyStroke _readKey() {

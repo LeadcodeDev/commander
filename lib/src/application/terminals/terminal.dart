@@ -11,6 +11,9 @@ abstract class Terminal {
   /// Disables raw mode and restores the terminal’s original attributes.
   void disableRawMode();
 
+  /// Reads current cursor position.
+  (int, int) getCursorPosition();
+
   /// Returns the appropriate terminal implementation based on the platform.
   factory Terminal() => Platform.isWindows ? WindowsTerminal() : UnixTerminal();
 }

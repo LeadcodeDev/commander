@@ -5,12 +5,6 @@ import 'package:commander_ui/commander_ui.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:mansion/mansion.dart';
 
-List<Sequence> askSequence = [
-  SetStyles(Style.foreground(Color.yellow)),
-  Print('? '),
-  SetStyles.reset,
-];
-
 final class Ask with TerminalTools {
   final _completer = Completer<String?>();
 
@@ -44,8 +38,11 @@ final class Ask with TerminalTools {
   }
 
   Future<String?> handle() {
+    saveCursorPosition();
+
     _defaultRendering();
     _waitResponse();
+
     return _completer.future;
   }
 
@@ -68,6 +65,12 @@ final class Ask with TerminalTools {
   void _defaultRendering() {
     final buffer = StringBuffer();
 
+    List<Sequence> askSequence = [
+      SetStyles(Style.foreground(Color.yellow)),
+      Print('? '),
+      SetStyles.reset,
+    ];
+
     buffer.writeAnsiAll([
       ...askSequence,
       Print(_message),
@@ -81,8 +84,14 @@ final class Ask with TerminalTools {
   void _onError(String error) {
     final buffer = StringBuffer();
 
+    List<Sequence> errorSequence = [
+      SetStyles(Style.foreground(Color.brightRed)),
+      Print('✘ '),
+      SetStyles.reset,
+    ];
+
     buffer.writeAnsiAll([
-      ...askSequence,
+      ...errorSequence,
       Print(_message),
       if (hasDefault) ...baseDefaultSequence,
       const CursorPosition.moveRight(1)

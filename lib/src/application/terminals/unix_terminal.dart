@@ -55,6 +55,32 @@ class UnixTerminal implements Terminal {
     if (nullptr == _origTermIOSPointer.cast()) return;
     _tcSetAttr(_STDIN_FILENO, LocalMode.TCSANOW, _origTermIOSPointer);
   }
+
+  @override
+  (int, int) getCursorPosition() {
+    stdout.write('\x1B[6n');
+
+    final input = <int>[];
+    int char = 0;
+
+    while (char != 82) {
+      char = stdin.readByteSync();
+      input.add(char);
+    }
+
+    String response = String.fromCharCodes(input);
+    RegExp regExp = RegExp(r'\[(\d+);(\d+)R');
+    Match? match = regExp.firstMatch(response);
+
+    if (match != null) {
+      int row = int.parse(match.group(1)!);
+      int col = int.parse(match.group(2)!);
+
+      return (col, row);
+    } else {
+      throw Exception('Impossible d\'extraire la position du curseur $input ${response.split('').map((a) => a ).toList()} ${match?.group(1)}/${match?.group(2)}');
+    }
+  }
 }
 
 typedef tcflag_t = UnsignedLong;
