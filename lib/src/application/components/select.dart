@@ -20,16 +20,23 @@ final class Select<T> with TerminalTools implements Component<T> {
   late final String _message;
   late final T? _defaultValue;
   late final String _placeholder;
+  late final String Function(T)? _onDisplay;
   late final List<T> _options;
   final List<T> _filteredOptions = [];
 
   Select(this._terminal,
-      {required String message, required List<T> options, int displayCount = 5, T? defaultValue, String placeholder = ''}) {
+      {required String message,
+      required List<T> options,
+      int displayCount = 5,
+      T? defaultValue,
+      String placeholder = '',
+      String Function(T)? onDisplay}) {
     _message = message;
     _options = options;
     _displayCount = displayCount;
     _defaultValue = defaultValue;
     _placeholder = placeholder;
+    _onDisplay = onDisplay;
 
     if (_defaultValue case T value) {
       _currentIndex = _options.indexOf(value);
@@ -80,8 +87,8 @@ final class Select<T> with TerminalTools implements Component<T> {
 
   List<T> _filterOptions() {
     return _options.where((item) {
-      // final value = onDisplay?.call(item) ?? item.toString();
-      return _options.isNotEmpty ? item.toString().toLowerCase().contains(_filter.toLowerCase()) : true;
+      final value = _onDisplay?.call(item) ?? item.toString();
+      return _options.isNotEmpty ? value.toLowerCase().contains(_filter.toLowerCase()) : true;
     }).toList();
   }
 
