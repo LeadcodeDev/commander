@@ -1,3 +1,7 @@
+## 2.1.0
+- Add missing exports
+- Change `ask` return type for an generic to allow nullable value 
+
 ## 2.0.0
 - Rework the whole library
 - Change `input` to `ask` component

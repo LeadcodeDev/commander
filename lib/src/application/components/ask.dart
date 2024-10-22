@@ -7,8 +7,8 @@ import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:mansion/mansion.dart';
 
 /// A component that asks the user for input.
-final class Ask with TerminalTools implements Component<Future<String?>> {
-  final _completer = Completer<String?>();
+final class Ask<T> with TerminalTools implements Component<Future<T>> {
+  final _completer = Completer<T>();
 
   final Terminal _terminal;
 
@@ -43,7 +43,7 @@ final class Ask with TerminalTools implements Component<Future<String?>> {
   }
 
   @override
-  Future<String?> handle() {
+  Future<T> handle() {
     saveCursorPosition();
 
     createSpace(_terminal, 1);
@@ -152,7 +152,7 @@ final class Ask with TerminalTools implements Component<Future<String?>> {
     resetCursor();
     stdout.write(buffer.toString());
 
-    _completer.complete(response);
+    _completer.complete(response as T);
   }
 
   void resetCursor() {

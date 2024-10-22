@@ -60,11 +60,11 @@ class Commander with TerminalTools {
   void debug(String? message, {StdoutStyle? style}) =>
       writeln((style ?? _theme.debug)(message));
 
-  Future<String?> ask(String message,
+  Future<T> ask<T>(String message,
           {String? defaultValue,
           bool hidden = false,
           String? Function(String)? validate}) =>
-      Ask(_terminal,
+      Ask<T>(_terminal,
               message: message,
               defaultValue: defaultValue,
               hidden: hidden,
