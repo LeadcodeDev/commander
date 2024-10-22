@@ -1,3 +1,7 @@
+# 2.2.0
+- Add `select` display handler
+- Fix bad FutureOr execution
+
 ## 2.1.0
 - Add missing exports
 - Change `ask` return type for an generic to allow nullable value 

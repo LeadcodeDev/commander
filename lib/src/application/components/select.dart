@@ -176,7 +176,8 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
       SetStyles.reset,
       Print(' $_message '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(_onDisplay?.call(_selectedOption as T) ?? _selectedOption.toString()),
+      Print(
+          _onDisplay?.call(_selectedOption as T) ?? _selectedOption.toString()),
       SetStyles.reset,
       AsciiControl.lineFeed,
     ]);

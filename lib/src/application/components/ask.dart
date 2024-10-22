@@ -158,5 +158,3 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
     _completer.complete(response as T);
   }
 }
-
-
