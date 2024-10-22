@@ -1,17 +1,16 @@
 import 'package:commander_ui/src/commander.dart';
 import 'package:commander_ui/src/level.dart';
 
-enum Shape { square, circle, triangle }
-
 Future<void> sleep() => Future.delayed(Duration(seconds: 1));
 
-Future<String> sleepWithValue() => Future.delayed(Duration(seconds: 1), () => 'Hello World !');
+Future<String> sleepWithValue() =>
+    Future.delayed(Duration(seconds: 1), () => 'Hello World !');
 
 Future<void> main() async {
   final commander = Commander(level: Level.verbose);
-  print('Hello World !');
 
-  final successTask = await commander.task('I am an success task', colored: true);
+  final successTask =
+      await commander.task('I am an success task', colored: true);
   await successTask.step('Success step 1', callback: sleepWithValue);
   await successTask.step('Success step 2', callback: sleep);
   successTask.success('Success task data are available !');

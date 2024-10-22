@@ -58,18 +58,22 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
           _currentIndex = _currentIndex - 1;
           _render();
         }
-      } else if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
+      } else if (key.controlChar == ControlCharacter.arrowDown ||
+          key.char == 'j') {
         if (_currentIndex < _filteredOptions.length - 1) {
           _currentIndex = _currentIndex + 1;
           _render();
         }
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
+          .contains(key.controlChar)) {
         _onSubmit();
       } else {
-        if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
+        if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true)
+            .hasMatch(key.char)) {
           _currentIndex = 0;
 
-          if (key.controlChar == ControlCharacter.backspace && _filter.isNotEmpty) {
+          if (key.controlChar == ControlCharacter.backspace &&
+              _filter.isNotEmpty) {
             _filter = _filter.substring(0, _filter.length - 1);
           } else if (key.controlChar != ControlCharacter.backspace) {
             _filter = _filter + key.char;
@@ -86,7 +90,9 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
   List<T> _filterOptions() {
     return _options.where((item) {
       final value = _onDisplay?.call(item) ?? item.toString();
-      return _options.isNotEmpty ? value.toLowerCase().contains(_filter.toLowerCase()) : true;
+      return _options.isNotEmpty
+          ? value.toLowerCase().contains(_filter.toLowerCase())
+          : true;
     }).toList();
   }
 
@@ -110,7 +116,9 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
     _filteredOptions.clear();
     _filteredOptions.addAll(_filterOptions());
 
-    int start = _currentIndex - _displayCount >= 0 ? _currentIndex - _displayCount + 1 : 0;
+    int start = _currentIndex - _displayCount >= 0
+        ? _currentIndex - _displayCount + 1
+        : 0;
 
     for (final choice in _filteredOptions.skip(start).take(_displayCount)) {
       final isCurrent = _filteredOptions.indexOf(choice) == _currentIndex;

@@ -6,7 +6,18 @@ import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:mansion/mansion.dart';
 
-final List<String> _loadingSteps = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+final List<String> _loadingSteps = [
+  '⠋',
+  '⠙',
+  '⠹',
+  '⠸',
+  '⠼',
+  '⠴',
+  '⠦',
+  '⠧',
+  '⠇',
+  '⠏'
+];
 
 final class Task with TerminalTools implements Component<Future<StepManager>> {
   final Terminal _terminal;

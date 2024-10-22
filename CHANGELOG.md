@@ -1,9 +1,16 @@
+## 2.0.0
+- Rework the whole library
+- Change `input` to `ask` component
+- Change `delayed` to `task` component
+- Implement `swap` component
+- Implement logger methods
+
 ## 1.8.0
 
 - Hide internal component methods
 - Implement `onExit` property on components
 
-## 1.7.0
+## 1.7.0[CHANGELOG.md](CHANGELOG.md)
 
 - Implement `alternative screen` component
 - Add `Table` component in public export

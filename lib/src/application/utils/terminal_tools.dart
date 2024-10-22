@@ -35,7 +35,8 @@ mixin TerminalTools {
   void moveToStart() => stdout.write('\x1B[0;0H');
 
   /// Move the cursor to a specific position (line, column)
-  void moveCursorTo(int line, int column) => stdout.write('\x1B[$line;${column}H');
+  void moveCursorTo(int line, int column) =>
+      stdout.write('\x1B[$line;${column}H');
 
   /// Clear the entire current line where the cursor is
   void clearCurrentLine() => stdout.write('\x1B[2K');
@@ -232,8 +233,8 @@ mixin TerminalTools {
         if (charCode == -1) return keyStroke;
         escapeSequence.add(String.fromCharCode(charCode));
         assert(
-        escapeSequence.length == 2,
-        'escape sequence consist of 2 characters',
+          escapeSequence.length == 2,
+          'escape sequence consist of 2 characters',
         );
         switch (escapeSequence[1]) {
           case 'H':
