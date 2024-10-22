@@ -43,6 +43,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
 
   @override
   Future<T> handle() {
+    createSpace(_terminal, 1);
     saveCursorPosition();
 
     _defaultRendering();
@@ -85,7 +86,6 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       SetStyles(Style.foreground(Color.brightBlack)),
     ]);
 
-    createSpace(_terminal, 1);
     stdout.write(buffer.toString());
   }
 
@@ -114,7 +114,6 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       SetStyles.reset,
     ]);
 
-    createSpace(_terminal, 2);
     stdout.write(buffer.toString());
 
     stdout.writeAnsiAll([
@@ -146,7 +145,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       SetStyles.reset,
       AsciiControl.lineFeed,
     ]);
-    createSpace(_terminal, 1);
+
     stdout.write(buffer.toString());
 
     _completer.complete(response as T);

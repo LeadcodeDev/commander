@@ -1,3 +1,6 @@
+# 2.2.2
+- Remove `createSpace` method in `ask` component
+
 # 2.2.1
 - The ask component disappeared after the validation stage
 - Calling `createSpace` method in all rendering cases for `ask` component
