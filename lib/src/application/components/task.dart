@@ -19,6 +19,7 @@ final List<String> _loadingSteps = [
   '⠏'
 ];
 
+/// A component that represents a task.
 final class Task with TerminalTools implements Component<Future<StepManager>> {
   final Terminal _terminal;
   final bool _colored;
@@ -31,6 +32,7 @@ final class Task with TerminalTools implements Component<Future<StepManager>> {
   }
 }
 
+/// A manager that handles the steps of a task.
 final class StepManager with TerminalTools {
   final Terminal _terminal;
   (int, int)? _position;
@@ -41,6 +43,7 @@ final class StepManager with TerminalTools {
 
   StepManager(this._terminal, this._colored);
 
+  /// Add new step to the task.
   Future<T> step<T>(String message, {FutureOr<T> Function()? callback}) {
     if (isInitialStep) {
       createSpace(_terminal, 1);
@@ -66,13 +69,14 @@ final class StepManager with TerminalTools {
           SetStyles.reset
         ]);
 
-        task.render(buffer);
+        task._render(buffer);
       });
     });
 
-    return task.start();
+    return task._start();
   }
 
+  /// Finishes the task with a success message.
   void success(String message) {
     final buffer = StringBuffer();
 
@@ -88,6 +92,7 @@ final class StepManager with TerminalTools {
     stdout.write(buffer.toString());
   }
 
+  /// Finishes the task with an error message.
   void warn(String message) {
     final buffer = StringBuffer();
 
@@ -103,6 +108,7 @@ final class StepManager with TerminalTools {
     stdout.write(buffer.toString());
   }
 
+  /// Finishes the task with an error message.
   void error(String message) {
     final buffer = StringBuffer();
 
@@ -132,6 +138,7 @@ final class StepManager with TerminalTools {
   }
 }
 
+/// A task step.
 final class StepTask<T> {
   final _completer = Completer<T>();
 
@@ -140,7 +147,7 @@ final class StepTask<T> {
 
   StepTask(this._message, this._callback);
 
-  Future<T> start() async {
+  Future<T> _start() async {
     if (_callback case Future<void> Function() callback) {
       callback().then((value) {
         _completer.complete(value as T);
@@ -152,7 +159,7 @@ final class StepTask<T> {
     return _completer.future;
   }
 
-  void render(StringBuffer buffer) {
+  void _render(StringBuffer buffer) {
     buffer.writeAnsiAll([
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(' $_message'),

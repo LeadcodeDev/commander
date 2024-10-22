@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:mansion/mansion.dart';
 
+/// A component that represents an alternate screen.
 final class Screen implements Component<ScreenManager> {
   String? _title;
 

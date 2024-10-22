@@ -1,7 +1,4 @@
-export 'package:io/io.dart' show ExitCode;
-
 /// Non-printable characters that can be entered from the keyboard.
-///
 enum ControlCharacter {
   /// null
   none,
