@@ -148,10 +148,9 @@ final class StepTask<T> {
   StepTask(this._message, this._callback);
 
   Future<T> _start() async {
-    if (_callback case Future<void> Function() callback) {
-      callback().then((value) {
-        _completer.complete(value as T);
-      });
+    if (_callback case FutureOr<T> Function() callback) {
+      final value = await callback();
+      _completer.complete(value);
     } else {
       await Future.delayed(Duration(milliseconds: 100), _completer.complete);
     }
