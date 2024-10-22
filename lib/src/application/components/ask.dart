@@ -6,6 +6,7 @@ import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:mansion/mansion.dart';
 
+/// A component that asks the user for input.
 final class Ask with TerminalTools implements Component<Future<String?>> {
   final _completer = Completer<String?>();
 
@@ -16,11 +17,12 @@ final class Ask with TerminalTools implements Component<Future<String?>> {
   late final bool _hidden;
   late final String? Function(String value)? _validate;
 
-  bool get hasDefault => _defaultValue != null && '$_defaultValue'.isNotEmpty;
+  /// Creates a new instance of [Ask].
+  bool get _hasDefault => _defaultValue != null && '$_defaultValue'.isNotEmpty;
 
-  String get resolvedDefaultValue => hasDefault ? '$_defaultValue' : '';
+  String get _resolvedDefaultValue => _hasDefault ? '$_defaultValue' : '';
 
-  List<Sequence> get baseDefaultSequence {
+  List<Sequence> get _baseDefaultSequence {
     return [
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(' ($_defaultValue)'),
@@ -55,7 +57,7 @@ final class Ask with TerminalTools implements Component<Future<String?>> {
   void _waitResponse() {
     final input = _hidden ? readLineHiddenSync() : readLineSync();
     final response =
-        input == null || input.isEmpty ? resolvedDefaultValue : input;
+        input == null || input.isEmpty ? _resolvedDefaultValue : input;
 
     if (_validate != null) {
       final result = _validate!(response);
@@ -81,7 +83,7 @@ final class Ask with TerminalTools implements Component<Future<String?>> {
     buffer.writeAnsiAll([
       ...askSequence,
       Print(_message),
-      if (hasDefault) ...baseDefaultSequence,
+      if (_hasDefault) ..._baseDefaultSequence,
       const CursorPosition.moveRight(1),
       SetStyles(Style.foreground(Color.brightBlack)),
     ]);
@@ -101,7 +103,7 @@ final class Ask with TerminalTools implements Component<Future<String?>> {
     buffer.writeAnsiAll([
       ...errorSequence,
       Print(_message),
-      if (hasDefault) ...baseDefaultSequence,
+      if (_hasDefault) ..._baseDefaultSequence,
       const CursorPosition.moveRight(1),
     ]);
 

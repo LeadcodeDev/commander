@@ -7,6 +7,7 @@ import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
+/// A component that asks the user to select one or more options.
 final class Checkbox<T>
     with TerminalTools
     implements Component<Future<List<T>>> {

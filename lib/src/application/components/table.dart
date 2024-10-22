@@ -5,6 +5,7 @@ import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:mansion/mansion.dart';
 
+/// A component that renders a table.
 final class Table with TerminalTools implements Component<void> {
   final List<List<String>> data;
   final List<String> columns;
