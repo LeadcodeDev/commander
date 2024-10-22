@@ -54,7 +54,13 @@ final class Checkbox<T>
     _render(isInitialRender: true);
 
     while (_keepAlive) {
-      final key = readKey(_terminal);
+      final key = readKey(_terminal, onExit: () {
+        stdout.writeAnsiAll([
+          CursorVisibility.show,
+          CursorPosition.restore,
+          Clear.afterCursor,
+        ]);
+      });
 
       if (key.controlChar == ControlCharacter.arrowUp || key.char == 'k') {
         if (_currentIndex != 0) {

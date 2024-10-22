@@ -52,7 +52,13 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
     _render(isInitialRender: true);
 
     while (_selectedOption == null) {
-      final key = readKey(_terminal);
+      final key = readKey(_terminal, onExit: () {
+        stdout.writeAnsiAll([
+          CursorVisibility.show,
+          CursorPosition.restore,
+          Clear.afterCursor,
+        ]);
+      });
 
       if (key.controlChar == ControlCharacter.arrowUp || key.char == 'k') {
         if (_currentIndex != 0) {
@@ -107,7 +113,7 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
       SetStyles(Style.foreground(Color.yellow)),
       Print('?'),
       SetStyles.reset,
-      Print(' $_message : '),
+      Print(' $_message '),
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(_filter.isEmpty ? _placeholder : _filter),
       SetStyles.reset,

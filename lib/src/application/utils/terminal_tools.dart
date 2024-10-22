@@ -109,14 +109,16 @@ mixin TerminalTools {
     if (!stdout.hasTerminal) throw NoTerminalAttachedError();
   }
 
-  KeyStroke readKey(Terminal terminal) {
+  KeyStroke readKey(Terminal terminal, {Function()? onExit}) {
     _ensureTerminalAttached();
     terminal.enableRawMode();
     final key = _readKey();
+    print(key.controlChar);
     terminal.disableRawMode();
 
     if (key.controlChar == ControlCharacter.ctrlC) {
-      showCursor();
+      stdout.writeAnsi(CursorVisibility.show);
+      onExit?.call();
       exit(130);
     }
     return key;

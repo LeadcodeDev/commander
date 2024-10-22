@@ -41,7 +41,13 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
     _render(isInitialRender: true);
 
     while (_keepAlive) {
-      final key = readKey(_terminal);
+      final key = readKey(_terminal, onExit: () {
+        stdout.writeAnsiAll([
+          CursorVisibility.show,
+          CursorPosition.restore,
+          Clear.afterCursor,
+        ]);
+      });
 
       if (key.controlChar == ControlCharacter.arrowLeft) {
         _value = true;

@@ -27,7 +27,6 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(' ($_defaultValue)'),
       SetStyles.reset,
-      Print(' :'),
     ];
   }
 
@@ -112,13 +111,16 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       SetStyles(Style.foreground(Color.brightRed)),
       Print(error),
       SetStyles.reset,
+      CursorPosition.restore,
+      Clear.afterCursor,
     ]);
 
-    resetCursor();
-
-    buffer.writeAnsi(
+    buffer.writeAnsiAll([
+      CursorPosition.restore,
+      Clear.afterCursor,
       SetStyles(Style.foreground(Color.brightBlack)),
-    );
+    ]);
+
     stdout.write(buffer.toString());
 
     stdout.writeAnsiAll([
@@ -147,16 +149,14 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       Print(_hidden ? '******' : response),
       SetStyles.reset,
       AsciiControl.lineFeed,
+      CursorPosition.restore,
+      Clear.afterCursor,
     ]);
 
-    resetCursor();
     stdout.write(buffer.toString());
 
     _completer.complete(response as T);
   }
-
-  void resetCursor() {
-    restoreCursorPosition();
-    clearFromCursorToEnd();
-  }
 }
+
+
