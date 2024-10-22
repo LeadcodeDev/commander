@@ -20,7 +20,9 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
   bool _keepAlive = true;
 
   Swap(this._terminal,
-      {required String message, bool defaultValue = false, String placeholder = ''}) {
+      {required String message,
+      bool defaultValue = false,
+      String placeholder = ''}) {
     _message = message;
     _placeholder = placeholder;
     _defaultValue = defaultValue;
@@ -46,7 +48,8 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
       } else if (key.controlChar == ControlCharacter.arrowRight) {
         _value = false;
         _render();
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
+          .contains(key.controlChar)) {
         _onSubmit();
       }
     }
@@ -77,7 +80,8 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
 
     for (final value in values) {
       buffer.writeAnsiAll([
-        SetStyles(Style.foreground(value == _value ? Color.reset : Color.brightBlack)),
+        SetStyles(Style.foreground(
+            value == _value ? Color.reset : Color.brightBlack)),
         Print(value ? 'Yes' : ' No'),
         SetStyles.reset,
       ]);

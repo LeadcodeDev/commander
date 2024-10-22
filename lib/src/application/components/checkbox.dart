@@ -7,7 +7,9 @@ import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
-final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>> {
+final class Checkbox<T>
+    with TerminalTools
+    implements Component<Future<List<T>>> {
   final _completer = Completer<List<T>>();
 
   final Terminal _terminal;
@@ -58,14 +60,16 @@ final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>>
           _currentIndex = _currentIndex - 1;
           _render();
         }
-      } else if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
+      } else if (key.controlChar == ControlCharacter.arrowDown ||
+          key.char == 'j') {
         if (_currentIndex < _options.length - 1) {
           _currentIndex = _currentIndex + 1;
           _render();
         }
       } else if (key.char == ' ') {
         _onSelect();
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
+          .contains(key.controlChar)) {
         _onSubmit();
       }
     }
@@ -84,7 +88,7 @@ final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>>
       Print('?'),
       SetStyles.reset,
       Print(' $_message'),
-      if(_placeholder.isNotEmpty) ...[
+      if (_placeholder.isNotEmpty) ...[
         Print(' : '),
         SetStyles(Style.foreground(Color.brightBlack)),
         Print('($_placeholder)'),
@@ -123,7 +127,8 @@ final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>>
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Type to filter, press ↑/↓ to navigate, space to select, enter to confirm)'),
+      Print(
+          '(Type to filter, press ↑/↓ to navigate, space to select, enter to confirm)'),
       SetStyles.reset,
     ]);
 
@@ -145,7 +150,8 @@ final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>>
   }
 
   void _onSubmit() {
-    final selectedOptions = _selectedOptions.map((index) => _options[index]).toList();
+    final selectedOptions =
+        _selectedOptions.map((index) => _options[index]).toList();
 
     restoreCursorPosition();
     clearFromCursorToEnd();

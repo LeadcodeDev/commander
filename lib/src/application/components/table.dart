@@ -79,12 +79,12 @@ final class Table with TerminalTools implements Component<void> {
   }
 
   void _drawLineSeparator(
-      StringBuffer buffer, {
-        required String left,
-        required String middle,
-        required String right,
-        required String separator,
-      }) {
+    StringBuffer buffer, {
+    required String left,
+    required String middle,
+    required String right,
+    required String separator,
+  }) {
     final maxColWidths = getMaxCellWidths();
 
     String line = left;
@@ -129,8 +129,8 @@ final class Table with TerminalTools implements Component<void> {
           left: '├',
           middle: lineSeparator
               ? columnSeparator
-              ? '┼'
-              : '─'
+                  ? '┼'
+                  : '─'
               : '┼',
           right: '┤',
           separator: '─');

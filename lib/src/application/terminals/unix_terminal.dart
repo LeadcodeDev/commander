@@ -19,8 +19,10 @@ class UnixTerminal implements Terminal {
         ? DynamicLibrary.open('/usr/lib/libSystem.dylib')
         : DynamicLibrary.open('libc.so.6');
 
-    _tcGetAttr = _lib.lookupFunction<TCGetAttrNative, TCGetAttrDart>('tcgetattr');
-    _tcSetAttr = _lib.lookupFunction<TCSetAttrNative, TCSetAttrDart>('tcsetattr');
+    _tcGetAttr =
+        _lib.lookupFunction<TCGetAttrNative, TCGetAttrDart>('tcgetattr');
+    _tcSetAttr =
+        _lib.lookupFunction<TCSetAttrNative, TCSetAttrDart>('tcsetattr');
 
     _origTermIOSPointer = calloc<TermIOS>();
     _tcGetAttr(_STDIN_FILENO, _origTermIOSPointer);
@@ -37,9 +39,13 @@ class UnixTerminal implements Terminal {
               InputMode.ISTRIP |
               InputMode.IXON)
       ..ref.c_oflag = origTermIOS.c_oflag & ~OutputMode.OPOST
-      ..ref.c_cflag = (origTermIOS.c_cflag & ~ControlMode.CSIZE) | ControlMode.CS8
+      ..ref.c_cflag =
+          (origTermIOS.c_cflag & ~ControlMode.CSIZE) | ControlMode.CS8
       ..ref.c_lflag = origTermIOS.c_lflag &
-          ~(LocalMode.ECHO | LocalMode.ICANON | LocalMode.IEXTEN | LocalMode.ISIG)
+          ~(LocalMode.ECHO |
+              LocalMode.ICANON |
+              LocalMode.IEXTEN |
+              LocalMode.ISIG)
       ..ref.c_cc = origTermIOS.c_cc
       ..ref.c_cc[LocalMode.VMIN] = 0
       ..ref.c_cc[LocalMode.VTIME] = 1
@@ -78,7 +84,8 @@ class UnixTerminal implements Terminal {
 
       return (col, row);
     } else {
-      throw Exception('Impossible d\'extraire la position du curseur $input ${response.split('').map((a) => a ).toList()} ${match?.group(1)}/${match?.group(2)}');
+      throw Exception(
+          'Impossible d\'extraire la position du curseur $input ${response.split('').map((a) => a).toList()} ${match?.group(1)}/${match?.group(2)}');
     }
   }
 }

@@ -16,17 +16,12 @@ import 'package:commander_ui/src/level.dart';
 /// Type definition for a function which accepts a log message
 /// and returns a styled version of that message.
 ///
-/// Generally, [AnsiCode] values are used to generate a [LogStyle].
-///
 /// A basic Logger which wraps `stdio` and applies various styles.
 class Commander with TerminalTools {
   late final CommanderTheme _theme;
+  final _terminal = Terminal();
 
   Level level;
-
-  final _queue = <String?>[];
-
-  final _terminal = Terminal();
 
   Commander({
     this.level = Level.info,
@@ -42,30 +37,38 @@ class Commander with TerminalTools {
   void writeln(String? message) => stdout.writeln(message);
 
   /// Write info message to stdout.
-  void info(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.info)(message));
+  void info(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.info)(message));
 
   /// Write success message to stdout.
-  void success(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.success)(message));
+  void success(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.success)(message));
 
   /// Write warning message to stdout.
-  void warn(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.warn)(message));
+  void warn(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.warn)(message));
 
   /// Write error message to stdout.
-  void error(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.error)(message));
+  void error(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.error)(message));
 
   /// Write alert message to stdout.
-  void alert(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.alert)(message));
+  void alert(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.alert)(message));
 
   /// Write debug message to stdout.
-  void debug(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.debug)(message));
-
-  /// Writes delayed message to stdout.
-  void delayed(String? message) => _queue.add(message);
+  void debug(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.debug)(message));
 
   Future<String?> ask(String message,
-          {String? defaultValue, bool hidden = false, String? Function(String)? validate}) =>
+          {String? defaultValue,
+          bool hidden = false,
+          String? Function(String)? validate}) =>
       Ask(_terminal,
-              message: message, defaultValue: defaultValue, hidden: hidden, validate: validate)
+              message: message,
+              defaultValue: defaultValue,
+              hidden: hidden,
+              validate: validate)
           .handle();
 
   Future<T> select<T>(String message,
@@ -96,8 +99,12 @@ class Commander with TerminalTools {
               onDisplay: onDisplay)
           .handle();
 
-  Future<bool> swap<T>(String message, {bool defaultValue = false, String placeholder = ''}) =>
-      Swap<T>(_terminal, message: message, defaultValue: defaultValue, placeholder: placeholder)
+  Future<bool> swap<T>(String message,
+          {bool defaultValue = false, String placeholder = ''}) =>
+      Swap<T>(_terminal,
+              message: message,
+              defaultValue: defaultValue,
+              placeholder: placeholder)
           .handle();
 
   Future<StepManager> task<T>(String message, {bool colored = false}) =>

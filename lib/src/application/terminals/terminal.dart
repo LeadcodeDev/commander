@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:commander_ui/src/application/terminals/unix_terminal.dart';
 import 'package:commander_ui/src/application/terminals/windows_terminal.dart';
 
-
 abstract class Terminal {
   /// Enables raw mode which allows us to process each keypress as it comes in.
   void enableRawMode();
