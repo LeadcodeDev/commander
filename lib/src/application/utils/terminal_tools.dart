@@ -113,7 +113,6 @@ mixin TerminalTools {
     _ensureTerminalAttached();
     terminal.enableRawMode();
     final key = _readKey();
-    print(key.controlChar);
     terminal.disableRawMode();
 
     if (key.controlChar == ControlCharacter.ctrlC) {

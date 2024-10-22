@@ -45,8 +45,6 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
   Future<T> handle() {
     saveCursorPosition();
 
-    createSpace(_terminal, 1);
-
     _defaultRendering();
     _waitResponse();
 
@@ -87,6 +85,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       SetStyles(Style.foreground(Color.brightBlack)),
     ]);
 
+    createSpace(_terminal, 1);
     stdout.write(buffer.toString());
   }
 
@@ -100,6 +99,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
     ];
 
     buffer.writeAnsiAll([
+      CursorPosition.restore,
+      Clear.afterCursor,
       ...errorSequence,
       Print(_message),
       if (_hasDefault) ..._baseDefaultSequence,
@@ -111,21 +112,14 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       SetStyles(Style.foreground(Color.brightRed)),
       Print(error),
       SetStyles.reset,
-      CursorPosition.restore,
-      Clear.afterCursor,
     ]);
 
-    buffer.writeAnsiAll([
-      CursorPosition.restore,
-      Clear.afterCursor,
-      SetStyles(Style.foreground(Color.brightBlack)),
-    ]);
-
+    createSpace(_terminal, 2);
     stdout.write(buffer.toString());
 
     stdout.writeAnsiAll([
       const CursorPosition.moveUp(1),
-      const CursorPosition.moveRight(2),
+      SetStyles(Style.foreground(Color.brightBlack)),
     ]);
 
     _waitResponse();
@@ -142,6 +136,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
     ];
 
     buffer.writeAnsiAll([
+      CursorPosition.restore,
+      Clear.afterCursor,
       ...successSequence,
       Print(_message),
       Print(' '),
@@ -149,10 +145,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       Print(_hidden ? '******' : response),
       SetStyles.reset,
       AsciiControl.lineFeed,
-      CursorPosition.restore,
-      Clear.afterCursor,
     ]);
-
+    createSpace(_terminal, 1);
     stdout.write(buffer.toString());
 
     _completer.complete(response as T);

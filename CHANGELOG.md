@@ -1,3 +1,8 @@
+# 2.2.1
+- The ask component disappeared after the validation stage
+- Calling `createSpace` method in all rendering cases for `ask` component
+- Remove missing `print` statement in `readKey` function
+
 # 2.2.0
 - Add `select` display handler
 - Fix bad FutureOr execution
