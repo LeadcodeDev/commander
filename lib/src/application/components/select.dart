@@ -134,7 +134,7 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
 
       buffer.writeAnsiAll([
         SetStyles.reset,
-        Print(' $choice'),
+        Print(' ${_onDisplay?.call(choice) ?? choice.toString()}'),
         AsciiControl.lineFeed,
       ]);
     }
@@ -144,6 +144,7 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
       SetStyles(Style.foreground(Color.brightBlack)),
       Print('(Type to filter, press ↑/↓ to navigate, enter to select)'),
       SetStyles.reset,
+      AsciiControl.lineFeed,
     ]);
 
     if (isInitialRender) {
@@ -169,7 +170,7 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
       SetStyles.reset,
       Print(' $_message '),
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(_selectedOption as String),
+      Print(_onDisplay?.call(_selectedOption as T) ?? _selectedOption.toString()),
       SetStyles.reset,
       AsciiControl.lineFeed,
     ]);
