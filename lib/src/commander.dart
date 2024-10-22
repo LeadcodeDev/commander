@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/src/application/components/ask.dart';
+import 'package:commander_ui/src/application/components/board/board.dart';
+import 'package:commander_ui/src/application/components/board/board_manager.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
 import 'package:commander_ui/src/application/components/screen.dart';
 import 'package:commander_ui/src/application/components/select.dart';
@@ -125,4 +127,6 @@ class Commander with TerminalTools {
           .handle();
 
   ScreenManager screen({String? title}) => Screen(title: title).handle();
+
+  BoardManager board() => Board(_terminal).handle();
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,6 +6,8 @@ import 'package:commander_ui/src/application/errors/no_terminal_attached_error.d
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
+
+final class TerminalToolBucket with TerminalTools {}
 
 mixin TerminalTools {
   /// Hide the cursor
@@ -121,6 +124,166 @@ mixin TerminalTools {
       exit(130);
     }
     return key;
+  }
+
+  StreamSubscription readKeyAsync(
+      Terminal terminal, Stream<List<int>> stream, FutureOr<void> Function(KeyStroke) callback) {
+    _ensureTerminalAttached();
+    terminal.enableRawMode();
+
+    return stream.listen((data) {
+      KeyStroke keyStroke;
+
+      final firstByte = data.elementAt(0);
+      if (firstByte >= 0x01 && firstByte <= 0x1a) {
+        // Ctrl+A thru Ctrl+Z are mapped to the 1st-26th entries in the
+        // enum, so it's easy to convert them across
+        keyStroke = KeyStroke.control(ControlCharacter.values[firstByte]);
+      } else if (firstByte == 0x1b) {
+        // escape sequence (e.g. \x1b[A for up arrow)
+        keyStroke = KeyStroke.control(ControlCharacter.escape);
+        if (data.length == 1) {
+          callback(keyStroke);
+          return;
+        }
+
+        final escapeSequence = <String>[];
+
+        final secondByte = data.elementAt(1);
+        if (secondByte == -1) {
+          callback(keyStroke);
+          return;
+        }
+
+        escapeSequence.add(String.fromCharCode(secondByte));
+
+        if (secondByte == 127) {
+          keyStroke = KeyStroke.control(ControlCharacter.wordBackspace);
+        } else if (escapeSequence[0] == '[') {
+          final thirdByte = data.elementAt(2);
+
+          if (thirdByte == -1) {
+            callback(keyStroke);
+            return;
+          }
+
+          escapeSequence.add(String.fromCharCode(thirdByte));
+
+          switch (escapeSequence[1]) {
+            case 'A':
+              keyStroke = KeyStroke.control(ControlCharacter.arrowUp);
+            case 'B':
+              keyStroke = KeyStroke.control(ControlCharacter.arrowDown);
+            case 'C':
+              keyStroke = KeyStroke.control(ControlCharacter.arrowRight);
+            case 'D':
+              keyStroke = KeyStroke.control(ControlCharacter.arrowLeft);
+            case 'H':
+              keyStroke = KeyStroke.control(ControlCharacter.home);
+            case 'F':
+              keyStroke = KeyStroke.control(ControlCharacter.end);
+            default:
+              if (escapeSequence[1].codeUnits[0] > '0'.codeUnits[0] &&
+                  escapeSequence[1].codeUnits[0] < '9'.codeUnits[0]) {
+                final fourthByte = data.elementAt(3);
+                if (fourthByte == -1) {
+                  callback(keyStroke);
+                  return;
+                }
+
+                escapeSequence.add(String.fromCharCode(fourthByte));
+                if (escapeSequence[2] != '~') {
+                  keyStroke = KeyStroke.control(
+                    ControlCharacter.unknown,
+                  );
+                } else {
+                  switch (escapeSequence[1]) {
+                    case '1':
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.home,
+                      );
+                    case '3':
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.delete,
+                      );
+                    case '4':
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.end,
+                      );
+                    case '5':
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.pageUp,
+                      );
+                    case '6':
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.pageDown,
+                      );
+                    case '7':
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.home,
+                      );
+                    case '8':
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.end,
+                      );
+                    default:
+                      keyStroke = KeyStroke.control(
+                        ControlCharacter.unknown,
+                      );
+                  }
+                }
+              } else {
+                keyStroke = KeyStroke.control(ControlCharacter.unknown);
+              }
+          }
+        } else if (escapeSequence[0] == 'O') {
+          final thirdByte = data.elementAt(2);
+          if (thirdByte == -1) {
+            callback(keyStroke);
+            return;
+          }
+
+          escapeSequence.add(String.fromCharCode(thirdByte));
+          assert(
+            escapeSequence.length == 2,
+            'escape sequence consist of 2 characters',
+          );
+          switch (escapeSequence[1]) {
+            case 'H':
+              keyStroke = KeyStroke.control(ControlCharacter.home);
+            case 'F':
+              keyStroke = KeyStroke.control(ControlCharacter.end);
+            case 'P':
+              keyStroke = KeyStroke.control(ControlCharacter.F1);
+            case 'Q':
+              keyStroke = KeyStroke.control(ControlCharacter.F2);
+            case 'R':
+              keyStroke = KeyStroke.control(ControlCharacter.F3);
+            case 'S':
+              keyStroke = KeyStroke.control(ControlCharacter.F4);
+            default:
+          }
+        } else if (escapeSequence[0] == 'b') {
+          keyStroke = KeyStroke.control(ControlCharacter.wordLeft);
+        } else if (escapeSequence[0] == 'f') {
+          keyStroke = KeyStroke.control(ControlCharacter.wordRight);
+        } else {
+          keyStroke = KeyStroke.control(ControlCharacter.unknown);
+        }
+      } else if (firstByte == 0x7f) {
+        keyStroke = KeyStroke.control(ControlCharacter.backspace);
+      } else if (firstByte == 0x00 || (firstByte >= 0x1c && firstByte <= 0x1f)) {
+        keyStroke = KeyStroke.control(ControlCharacter.unknown);
+      } else {
+        // assume other characters are printable
+        keyStroke = KeyStroke.char(String.fromCharCode(firstByte));
+      }
+
+      callback(keyStroke);
+    },
+        onDone: terminal.enableRawMode,
+        onError: (error) => terminal.enableRawMode(),
+        cancelOnError: true);
   }
 
   (int, int) readCursorPosition(Terminal terminal) {
