@@ -36,7 +36,15 @@ final class CommanderTheme {
 }
 
 String infoFormatter(String? message) {
-  final buffer = StringBuffer()..writeAnsi(Print(' $message'));
+  final buffer = StringBuffer()
+    ..writeAnsiAll([
+      SetStyles(Style.foreground(Color.green)),
+      Print('ℹ'),
+      SetStyles.reset,
+      Print(' $message'),
+      SetStyles.reset,
+    ]);
+
   return buffer.toString();
 }
 

@@ -148,7 +148,11 @@ final class Checkbox<T>
 
   void _onSelect() {
     if (_multiple) {
-      _selectedOptions.add(_currentIndex);
+      if (_selectedOptions.contains(_currentIndex)) {
+        _selectedOptions.remove(_currentIndex);
+      } else {
+        _selectedOptions.add(_currentIndex);
+      }
     } else {
       _selectedOptions.clear();
       _selectedOptions.add(_currentIndex);

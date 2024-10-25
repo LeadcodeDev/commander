@@ -75,10 +75,12 @@ class Commander with TerminalTools {
           {T? defaultValue,
           required List<T> options,
           String placeholder = '',
+          int displayCount = 5,
           String Function(T)? onDisplay}) =>
       Select<T>(_terminal,
               message: message,
               defaultValue: defaultValue,
+              displayCount: displayCount,
               options: options,
               placeholder: placeholder,
               onDisplay: onDisplay)

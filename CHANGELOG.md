@@ -1,3 +1,8 @@
+# 2.2.3
+- Add missing properties `select` in select commander entry
+- Fix multiple behaviour instead of single behaviour in `checkbox` component
+- Enhance `info` logger method
+
 # 2.2.2
 - Remove `createSpace` method in `ask` component
 
