@@ -135,7 +135,7 @@ final class Checkbox<T>
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(
-          '(Type to filter, press ↑/↓ to navigate, space to select, enter to confirm)'),
+          '(Press ↑/↓ to navigate, space to select, enter to confirm)'),
       SetStyles.reset,
     ]);
 
