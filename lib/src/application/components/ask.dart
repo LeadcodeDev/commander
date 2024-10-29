@@ -118,6 +118,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
 
     stdout.writeAnsiAll([
       const CursorPosition.moveUp(1),
+      CursorPosition.moveToColumn(_message.length + 2),
+      const CursorPosition.moveRight(2),
       SetStyles(Style.foreground(Color.brightBlack)),
     ]);
 
