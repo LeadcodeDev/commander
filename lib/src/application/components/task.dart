@@ -40,7 +40,7 @@ final class StepManager with TerminalTools {
   int _loadingStep = 0;
   bool isInitialStep = true;
   final bool _colored;
-  int _line_count = 0;
+  int _lineCount = 0;
 
   StepManager(this._terminal, this._colored);
 
@@ -82,11 +82,11 @@ final class StepManager with TerminalTools {
     final buffer = StringBuffer();
 
     if (Platform.isWindows) {
-      _line_count += 1;
+      _lineCount += 1;
     }
 
     buffer.writeAnsiAll([
-      CursorPosition.moveTo(_position!.$2 + _line_count, _position!.$1),
+      CursorPosition.moveTo(_position!.$2 + _lineCount, _position!.$1),
       SetStyles(Style.foreground(Color.green)),
       Print('✔ '),
       if (!_colored) SetStyles.reset,
@@ -102,11 +102,11 @@ final class StepManager with TerminalTools {
     final buffer = StringBuffer();
 
     if (Platform.isWindows) {
-      _line_count += 1;
+      _lineCount += 1;
     }
 
     buffer.writeAnsiAll([
-      CursorPosition.moveTo(_position!.$2 + _line_count, _position!.$1),
+      CursorPosition.moveTo(_position!.$2 + _lineCount, _position!.$1),
       SetStyles(Style.foreground(Color.yellow)),
       Print('⚠ '),
       if (!_colored) SetStyles.reset,
@@ -122,11 +122,11 @@ final class StepManager with TerminalTools {
     final buffer = StringBuffer();
 
     if (Platform.isWindows) {
-      _line_count += 1;
+      _lineCount += 1;
     }
 
     buffer.writeAnsiAll([
-      CursorPosition.moveTo(_position!.$2 + _line_count, _position!.$1),
+      CursorPosition.moveTo(_position!.$2 + _lineCount, _position!.$1),
       SetStyles(Style.foreground(Color.red)),
       Print('✘ '),
       if (!_colored) SetStyles.reset,

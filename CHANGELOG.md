@@ -1,3 +1,9 @@
+# 2.2.4
+- Make `task` component as windows compatible
+- Change default placeholder for `swap` component in example
+- Remove "Tape to search" in `checkbox` component
+- Reset cursor position in enter `screen` component
+
 # 2.2.3
 - Add missing properties `select` in select commander entry
 - Fix multiple behaviour instead of single behaviour in `checkbox` component
