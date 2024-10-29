@@ -40,13 +40,13 @@ final class StepManager with TerminalTools {
   int _loadingStep = 0;
   bool isInitialStep = true;
   final bool _colored;
+  int _line_count = 0;
 
   StepManager(this._terminal, this._colored);
 
   /// Add new step to the task.
   Future<T> step<T>(String message, {FutureOr<T> Function()? callback}) {
     if (isInitialStep) {
-      _terminal.enableRawMode();
       createSpace(_terminal, 1);
       _position = readCursorPosition(_terminal);
       isInitialStep = false;
@@ -81,8 +81,12 @@ final class StepManager with TerminalTools {
   void success(String message) {
     final buffer = StringBuffer();
 
+    if (Platform.isWindows) {
+      _line_count += 1;
+    }
+
     buffer.writeAnsiAll([
-      CursorPosition.moveTo(_position!.$2, _position!.$1),
+      CursorPosition.moveTo(_position!.$2 + _line_count, _position!.$1),
       SetStyles(Style.foreground(Color.green)),
       Print('✔ '),
       if (!_colored) SetStyles.reset,
@@ -91,15 +95,18 @@ final class StepManager with TerminalTools {
 
     _timer?.cancel();
     stdout.write(buffer.toString());
-    _terminal.disableRawMode();
   }
 
   /// Finishes the task with an error message.
   void warn(String message) {
     final buffer = StringBuffer();
 
+    if (Platform.isWindows) {
+      _line_count += 1;
+    }
+
     buffer.writeAnsiAll([
-      CursorPosition.moveTo(_position!.$2, _position!.$1),
+      CursorPosition.moveTo(_position!.$2 + _line_count, _position!.$1),
       SetStyles(Style.foreground(Color.yellow)),
       Print('⚠ '),
       if (!_colored) SetStyles.reset,
@@ -108,15 +115,18 @@ final class StepManager with TerminalTools {
 
     _timer?.cancel();
     stdout.write(buffer.toString());
-    _terminal.disableRawMode();
   }
 
   /// Finishes the task with an error message.
   void error(String message) {
     final buffer = StringBuffer();
 
+    if (Platform.isWindows) {
+      _line_count += 1;
+    }
+
     buffer.writeAnsiAll([
-      CursorPosition.moveTo(_position!.$2, _position!.$1),
+      CursorPosition.moveTo(_position!.$2 + _line_count, _position!.$1),
       SetStyles(Style.foreground(Color.red)),
       Print('✘ '),
       if (!_colored) SetStyles.reset,
@@ -125,7 +135,6 @@ final class StepManager with TerminalTools {
 
     _timer?.cancel();
     stdout.write(buffer.toString());
-    _terminal.disableRawMode();
   }
 
   List<Sequence> _messageSequence(String message) {
