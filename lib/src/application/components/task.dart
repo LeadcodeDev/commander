@@ -46,6 +46,7 @@ final class StepManager with TerminalTools {
   /// Add new step to the task.
   Future<T> step<T>(String message, {FutureOr<T> Function()? callback}) {
     if (isInitialStep) {
+      _terminal.enableRawMode();
       createSpace(_terminal, 1);
       _position = readCursorPosition(_terminal);
       isInitialStep = false;
@@ -63,7 +64,7 @@ final class StepManager with TerminalTools {
         final buffer = StringBuffer();
 
         buffer.writeAnsiAll([
-          CursorPosition.moveTo(_position!.$2, _position!.$1),
+          CursorPosition.moveToColumn(_position!.$1),
           SetStyles(Style.foreground(Color.green)),
           Print(_loadingSteps[_loadingStep]),
           SetStyles.reset
@@ -90,6 +91,7 @@ final class StepManager with TerminalTools {
 
     _timer?.cancel();
     stdout.write(buffer.toString());
+    _terminal.disableRawMode();
   }
 
   /// Finishes the task with an error message.
@@ -106,6 +108,7 @@ final class StepManager with TerminalTools {
 
     _timer?.cancel();
     stdout.write(buffer.toString());
+    _terminal.disableRawMode();
   }
 
   /// Finishes the task with an error message.
@@ -122,10 +125,17 @@ final class StepManager with TerminalTools {
 
     _timer?.cancel();
     stdout.write(buffer.toString());
+    _terminal.disableRawMode();
   }
 
   List<Sequence> _messageSequence(String message) {
-    return [Print(message), SetStyles.reset, AsciiControl.lineFeed];
+    return [
+      Print(message),
+      SetStyles.reset,
+      CursorVisibility.show,
+      AsciiControl.lineFeed,
+      const CursorPosition.moveToColumn(0)
+    ];
   }
 
   void _drawLoader(void Function() render) {
@@ -163,7 +173,6 @@ final class StepTask<T> {
       SetStyles(Style.foreground(Color.brightBlack)),
       Print(' $_message'),
       SetStyles.reset,
-      AsciiControl.lineFeed,
     ]);
 
     stdout.write(buffer.toString());

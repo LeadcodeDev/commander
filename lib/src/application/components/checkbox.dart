@@ -134,8 +134,7 @@ final class Checkbox<T>
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
       SetStyles(Style.foreground(Color.brightBlack)),
-      Print(
-          '(Press ↑/↓ to navigate, space to select, enter to confirm)'),
+      Print('(Press ↑/↓ to navigate, space to select, enter to confirm)'),
       SetStyles.reset,
     ]);
 
