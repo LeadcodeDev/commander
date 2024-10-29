@@ -26,7 +26,12 @@ final class ScreenManager {
   }
 
   void enter() {
-    stdout.writeAnsi(AlternateScreen.enter);
+    stdout.writeAnsiAll([
+      AlternateScreen.enter,
+      CursorPosition.reset,
+      Clear.afterCursor,
+    ]);
+
     if (_screen._title case String title) {
       stdout.writeAnsi(SetTitle(title));
     }
