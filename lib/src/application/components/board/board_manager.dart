@@ -1,4 +1,5 @@
 import 'package:commander_ui/src/application/components/board/board_action.dart';
+import 'package:commander_ui/src/application/components/board/board_body.dart';
 import 'package:commander_ui/src/application/components/board/board_header.dart';
 import 'package:commander_ui/src/application/components/board/board_screen.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
@@ -7,7 +8,10 @@ abstract interface class ScreenView {}
 
 abstract interface class BoardCreateScreen {
   BoardScreen createScreen<T extends ScreenView>(T uid,
-      {String? title, BoardHeader? header, List<BoardAction> actions = const []});
+      {String? title,
+      BoardHeader? header,
+      required BoardBody Function() body,
+      List<BoardAction> actions = const []});
 }
 
 abstract interface class BoardGetScreen {
@@ -30,6 +34,7 @@ final class BoardManager implements BoardCreateScreen, BoardGetScreen {
       {String? title,
       Duration refreshInterval = const Duration(milliseconds: 500),
       BoardHeader? header,
+      required BoardBody Function() body,
       List<BoardAction> actions = const []}) {
     final screen = BoardScreen(this, _stream,
         uid: uid,
@@ -37,7 +42,8 @@ final class BoardManager implements BoardCreateScreen, BoardGetScreen {
         refreshInterval: refreshInterval,
         header: header,
         actions: actions,
-        terminal: _terminal);
+        terminal: _terminal,
+        body: body);
     screens.add(screen);
 
     return screen;

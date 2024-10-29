@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:commander_ui/src/application/components/board/board_action.dart';
+import 'package:commander_ui/src/application/components/board/board_body.dart';
+import 'package:commander_ui/src/application/components/board/board_body_row.dart';
 import 'package:commander_ui/src/application/components/board/board_header.dart';
 import 'package:commander_ui/src/application/components/board/board_header_column.dart';
 import 'package:commander_ui/src/application/components/board/board_header_item.dart';
@@ -34,7 +36,9 @@ Future<void> main() async {
     BoardAction([KeyStroke.control(ControlCharacter.arrowDown)], (screen, output) {
       print('Down');
     }),
-  ]);
+  ], body: () {
+    return BoardBody(header: ['id', 'Row number'], rows: []);
+  });
 
   int count = 0;
   void Function() update(BoardHeaderItem item) {
@@ -96,21 +100,28 @@ Future<void> main() async {
             textFormatter: secondColumnTextFormatter,
           ),
         ]),
-      ]),
-      actions: [
-        BoardAction([KeyStroke.char('0')], (screen, output) async {
-          final pageScreen = screen.screens.get(Screen.page);
-
-          screen.leave();
-          pageScreen.enter();
-        }),
-        BoardAction([KeyStroke.char('1')], (screen, output) async {
-          output.writeln('Go to staging');
-        }),
-        BoardAction([KeyStroke.char('2')], (screen, output) async {
-          output.writeln('Go to develop');
-        }),
+      ]), body: () {
+    final rows = List<BoardBodyRow>.generate(10, (index) {
+      return BoardBodyRow(columns: [
+        '1', 'Row $index',
       ]);
+    });
+
+    return BoardBody(header: ['id', 'Row number'], rows: rows);
+  }, actions: [
+    BoardAction([KeyStroke.char('0')], (screen, output) async {
+      final pageScreen = screen.screens.get(Screen.page);
+
+      screen.leave();
+      pageScreen.enter();
+    }),
+    BoardAction([KeyStroke.char('1')], (screen, output) async {
+      output.writeln('Go to staging');
+    }),
+    BoardAction([KeyStroke.char('2')], (screen, output) async {
+      output.writeln('Go to develop');
+    }),
+  ]);
 
   home.enter();
 }

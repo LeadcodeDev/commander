@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/src/application/components/board/board_action.dart';
+import 'package:commander_ui/src/application/components/board/board_body.dart';
 import 'package:commander_ui/src/application/components/board/board_header.dart';
 import 'package:commander_ui/src/application/components/board/board_header_item.dart';
 import 'package:commander_ui/src/application/components/board/board_manager.dart';
@@ -28,6 +29,8 @@ final class BoardScreen<T extends ScreenView> {
   String? _title;
   late BoardHeader _header;
 
+  late BoardBody Function() _body;
+
   BoardGetScreen get screens => _manager;
 
   BoardScreen(this._manager, this._stream,
@@ -35,12 +38,15 @@ final class BoardScreen<T extends ScreenView> {
       String? title,
       Duration refreshInterval = const Duration(seconds: 1),
       BoardHeader? header,
+      required BoardBody Function() body,
       List<BoardAction> actions = const [],
       required Terminal terminal}) {
     _title = title;
     _header = header ?? BoardHeader();
+    _body = body;
     _terminal = terminal;
     _refreshInterval = refreshInterval;
+
 
     assignActions(actions);
   }
@@ -65,8 +71,8 @@ final class BoardScreen<T extends ScreenView> {
 
     _refreshTimer = Timer.periodic(_refreshInterval, (_) {
       stdout.writeAnsiAll([
-        CursorPosition.restore,
-        Clear.all,
+        const CursorPosition.moveTo(0, 0),
+        Clear.afterCursor,
       ]);
 
       if (_header.columnLength > 0) {
@@ -182,10 +188,43 @@ final class BoardScreen<T extends ScreenView> {
   }
 
   void _drawBody() {
-    // stdout.writeAnsi(AsciiControl.lineFeed);
-    // output.writeAnsi(CursorPosition.moveTo(_header.maxColumnLength + 1, 0));
-    // output.writeAnsi(Print('┌${'─' * (stdout.terminalColumns - 2)}┐'));
-    // ┌──────────────────────────────────────────────────── Pods(prodv3)[35] ────────────────────────────────────────────────────┐
+    stdout.writeAnsi(AsciiControl.lineFeed);
+    stdout.writeAnsi(CursorPosition.moveTo(_header.maxColumnLength + 1, 0));
+    stdout.writeAnsi(Print('┌${'─' * (stdout.terminalColumns - 2)}┐'));
+
+    final body = _body();
+
+    stdout.writeAnsi(Print('│'));
+    for (final headElement in body.header) {
+      stdout.writeAnsi(Print(headElement));
+    }
+    stdout.writeAnsi(Print('│'));
+    stdout.writeAnsi(AsciiControl.lineFeed);
+    stdout.writeAnsi(const CursorPosition.moveToColumn(0));
+
+    for (int i = 0; i < body.rowLength; i++) {
+      final row = body.getRowAt(i);
+      stdout.writeAnsi(Print('│'));
+
+      for (int i = 0; i < row.itemCount; i++) {
+        final column = row.getColumnAt(i);
+        stdout.writeAnsi(Print(column));
+        stdout.writeAnsi(Print(''.padRight(row.maxLabelLength - column.length)));
+      }
+
+      stdout.writeAnsi(Print('│'));
+      stdout.writeAnsi(AsciiControl.lineFeed);
+      stdout.writeAnsi(const CursorPosition.moveToColumn(0));
+    }
+
+    // for (final row in body.rows) {
+    //   for (final column in row.columns) {
+    //     stdout.writeAnsi(Print('│'));
+    //     stdout.writeAnsi(Print(column));
+    //   }
+    //   stdout.writeAnsi(AsciiControl.lineFeed);
+    //   stdout.writeAnsi(const CursorPosition.moveToColumn(0));
+    // }
   }
 
   void _actionOnColumnItems(FutureOr Function(BoardHeaderItem) action) {
