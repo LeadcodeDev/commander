@@ -117,7 +117,7 @@ class Commander with TerminalTools {
               theme: theme ?? _componentTheme.switchTheme)
           .handle();
 
-  Future<StepManager> task<T>({bool colored = false}) => Task(_terminal, colored: colored).handle();
+  Future<StepManager> task<T>() => Task(_terminal).handle();
 
   void table(
           {required List<List<String>> data,
