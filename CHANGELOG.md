@@ -6,6 +6,16 @@
   - Add `TaskTheme` property in `task` component
   - Add `SwapTheme` property in `swap` component
 - Remove useless `message` property in task component
+- Implement validators
+  - `notEmpty` : Check if the value is not empty
+  - `empty` : Check if the value is empty
+  - `email` : Check if the value is an email
+  - `between` : Check if the value is between two values
+  - `lowerThan` : Check if the value is lower than a value
+  - `greaterThan` : Check if the value is greater than a value
+  - `minLength` : Check if the value length is greater than a value
+  - `maxLength` : Check if the value length is lower than a value
+  - `equals` : Check if the value is equals to a value
 
 # 2.2.4
 - Make `task` component as windows compatible

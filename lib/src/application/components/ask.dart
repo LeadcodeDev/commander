@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/themes/default_ask_theme.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
+import 'package:commander_ui/src/application/validators/chain_validator.dart';
+import 'package:commander_ui/src/domains/models/chain_validator.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
 import 'package:commander_ui/src/domains/themes/ask_theme.dart';
 import 'package:mansion/mansion.dart';
@@ -15,10 +17,10 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
   final Terminal _terminal;
   final AskTheme _theme;
 
-  late final String _message;
-  late final String? _defaultValue;
-  late final bool _hidden;
-  late final String? Function(String value)? _validate;
+  final String _message;
+  final String? _defaultValue;
+  final bool _hidden;
+  final Function(TextualChainValidator)? _validate;
 
   /// Creates a new instance of [Ask].
   bool get _hasDefault => _defaultValue != null && '$_defaultValue'.isNotEmpty;
@@ -37,7 +39,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       {required String message,
       String? defaultValue,
       bool hidden = false,
-      String? Function(String value)? validate,
+      Function(TextualChainValidator)? validate,
       AskTheme? theme})
       : _message = message,
         _defaultValue = defaultValue,
@@ -62,7 +64,10 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
         input == null || input.isEmpty ? _resolvedDefaultValue : input;
 
     if (_validate != null) {
-      final result = _validate!(response);
+      final validator = ValidatorChain();
+      _validate!(validator);
+
+      final result = validator.execute(response);
       if (result case String error) {
         _onError(error);
 

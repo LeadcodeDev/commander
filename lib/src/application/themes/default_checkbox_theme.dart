@@ -1,5 +1,4 @@
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
 
 final class DefaultCheckBoxTheme implements CheckboxTheme {
   @override

@@ -1,5 +1,4 @@
 import 'package:commander_ui/commander_ui.dart';
-import 'package:commander_ui/src/domains/themes/select_theme.dart';
 
 final class DefaultSelectTheme implements SelectTheme {
   @override

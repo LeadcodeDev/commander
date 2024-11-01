@@ -2,11 +2,11 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:commander_ui/src/application/ffi/control_mode.dart';
+import 'package:commander_ui/src/application/ffi/input_mode.dart';
 import 'package:commander_ui/src/application/ffi/local_mode.dart';
 import 'package:commander_ui/src/application/ffi/output_mode.dart';
-import 'package:commander_ui/src/application/ffi/input_mode.dart';
-import 'package:ffi/ffi.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
+import 'package:ffi/ffi.dart';
 
 class UnixTerminal implements Terminal {
   late final DynamicLibrary _lib;

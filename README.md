@@ -22,21 +22,24 @@ Then run `pub get` to install the dependencies.
 A simple example of using Commander to create an ask component :
 
 - ✅ Secure
-- ✅ Validator with error message as callback 
+- ✅ Integrated or custom validators
 - ✅ Default value
 
 ```dart
 Future<void> main() async {
   final commander = Commander(level: Level.verbose);
 
+  final value = await commander.ask('What is your email ?',
+    validate: (validator) => validator
+      ..notEmpty(message: 'Name cannot be empty :)')
+      ..email(message: 'Please enter a valid email'));
+
+  // Custom validator
   final value = await commander.ask('What is your name ?',
-      defaultValue: 'John Doe',
-      validate: (value) {
-        return switch (value) {
-          String(:final isEmpty) when isEmpty => 'Name cannot be empty',
-          _ => null,
-        };
-      });
+    validate: (validator) => validator
+      ..validate((value) => value == 'Bob' 
+          ? 'Bob is not allowed' 
+          : null));
 
   print(value);
 }
@@ -201,4 +204,42 @@ Future<void> main() async {
 
 Future<void> wait() =>
     Future.delayed(Duration(seconds: Random().nextInt(3) + 1));
+```
+
+## Theming
+
+Commander provides a theming system to customize the appearance of the components.
+It is possible to define a global theme for all components or a specific theme for each component.
+
+```dart
+Future<void> main() async {
+  final commander = Commander(
+    level: Level.verbose,
+    componentTheme: ComponentTheme(
+      askTheme: DefaultAskTheme.copyWith(askPrefix: '🤖')
+    ));
+
+  final value = await commander.ask('What is your email ?',
+    validate: (validator) => validator
+      ..notEmpty(message: 'Name cannot be empty :)')
+      ..email(message: 'Please enter a valid email'));
+
+  print(value);
+}
+```
+
+Each component that interacts with the user has a `theme` property that allows the appearance to be customised.
+
+```dart
+Future<void> main() async {
+  final commander = Commander(level: Level.verbose);
+
+  final value = await commander.ask('What is your email ?',
+    theme: DefaultAskTheme.copyWith(askPrefix: '🤖'),
+    validate: (validator) => validator
+      ..notEmpty(message: 'Name cannot be empty :)')
+      ..email(message: 'Please enter a valid email'));
+
+  print(value);
+}
 ```

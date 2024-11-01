@@ -5,11 +5,12 @@ import 'package:commander_ui/src/application/components/ask.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
 import 'package:commander_ui/src/application/components/screen.dart';
 import 'package:commander_ui/src/application/components/select.dart';
+import 'package:commander_ui/src/application/components/swap.dart';
 import 'package:commander_ui/src/application/components/table.dart';
 import 'package:commander_ui/src/application/components/task.dart';
-import 'package:commander_ui/src/application/components/swap.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
+import 'package:commander_ui/src/domains/models/chain_validator.dart';
 import 'package:commander_ui/src/domains/models/commander_theme.dart';
 import 'package:commander_ui/src/domains/models/component_theme.dart';
 import 'package:commander_ui/src/domains/themes/ask_theme.dart';
@@ -70,7 +71,7 @@ class Commander with TerminalTools {
   Future<T> ask<T>(String message,
           {String? defaultValue,
           bool hidden = false,
-          String? Function(String)? validate,
+          Function(TextualChainValidator)? validate,
           AskTheme? theme}) =>
       Ask<T>(_terminal,
               message: message,
