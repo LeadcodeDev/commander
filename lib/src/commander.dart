@@ -14,6 +14,7 @@ import 'package:commander_ui/src/domains/models/commander_theme.dart';
 import 'package:commander_ui/src/domains/models/component_theme.dart';
 import 'package:commander_ui/src/domains/themes/ask_theme.dart';
 import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
+import 'package:commander_ui/src/domains/themes/select_theme.dart';
 import 'package:commander_ui/src/domains/themes/swap_theme.dart';
 import 'package:commander_ui/src/level.dart';
 
@@ -78,14 +79,16 @@ class Commander with TerminalTools {
           required List<T> options,
           String placeholder = '',
           int displayCount = 5,
-          String Function(T)? onDisplay}) =>
+          String Function(T)? onDisplay,
+          SelectTheme? theme}) =>
       Select<T>(_terminal,
               message: message,
               defaultValue: defaultValue,
               displayCount: displayCount,
               options: options,
               placeholder: placeholder,
-              onDisplay: onDisplay)
+              onDisplay: onDisplay,
+              theme: theme ?? _componentTheme.selectTheme)
           .handle();
 
   Future<List<T>> checkbox<T>(String message,
