@@ -1,3 +1,12 @@
+# 2.3.0
+- Implement theming components
+  - Add `AskTheme` property in `ask` component
+  - Add `SelectTheme` property in `select` component
+  - Add `CheckboxTheme` property in `checkbox` component
+  - Add `TaskTheme` property in `task` component
+  - Add `SwapTheme` property in `swap` component
+- Remove useless `message` property in task component
+
 # 2.2.4
 - Make `task` component as windows compatible
 - Change default placeholder for `swap` component in example

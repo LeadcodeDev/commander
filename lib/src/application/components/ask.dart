@@ -58,7 +58,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
 
   void _waitResponse() {
     final input = _hidden ? readLineHiddenSync() : readLineSync();
-    final response = input == null || input.isEmpty ? _resolvedDefaultValue : input;
+    final response =
+        input == null || input.isEmpty ? _resolvedDefaultValue : input;
 
     if (_validate != null) {
       final result = _validate!(response);

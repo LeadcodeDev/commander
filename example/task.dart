@@ -3,7 +3,8 @@ import 'package:commander_ui/src/level.dart';
 
 Future<void> sleep() => Future.delayed(Duration(seconds: 1));
 
-Future<String> sleepWithValue() => Future.delayed(Duration(seconds: 1), () => 'Hello World !');
+Future<String> sleepWithValue() =>
+    Future.delayed(Duration(seconds: 1), () => 'Hello World !');
 
 Future<void> main() async {
   final commander = Commander(level: Level.verbose);

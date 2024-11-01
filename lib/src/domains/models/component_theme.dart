@@ -11,5 +11,10 @@ final class ComponentTheme {
   final SelectTheme? selectTheme;
   final TaskTheme? taskTheme;
 
-  ComponentTheme({this.askTheme, this.checkboxTheme, this.switchTheme, this.selectTheme, this.taskTheme});
+  ComponentTheme(
+      {this.askTheme,
+      this.checkboxTheme,
+      this.switchTheme,
+      this.selectTheme,
+      this.taskTheme});
 }

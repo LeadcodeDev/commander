@@ -44,23 +44,28 @@ class Commander with TerminalTools {
   void writeln(String? message) => stdout.writeln(message);
 
   /// Write info message to stdout.
-  void info(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.info)(message));
+  void info(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.info)(message));
 
   /// Write success message to stdout.
   void success(String? message, {StdoutStyle? style}) =>
       writeln((style ?? _theme.success)(message));
 
   /// Write warning message to stdout.
-  void warn(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.warn)(message));
+  void warn(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.warn)(message));
 
   /// Write error message to stdout.
-  void error(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.error)(message));
+  void error(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.error)(message));
 
   /// Write alert message to stdout.
-  void alert(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.alert)(message));
+  void alert(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.alert)(message));
 
   /// Write debug message to stdout.
-  void debug(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.debug)(message));
+  void debug(String? message, {StdoutStyle? style}) =>
+      writeln((style ?? _theme.debug)(message));
 
   Future<T> ask<T>(String message,
           {String? defaultValue,
