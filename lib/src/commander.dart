@@ -13,6 +13,7 @@ import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/commander_theme.dart';
 import 'package:commander_ui/src/domains/models/component_theme.dart';
 import 'package:commander_ui/src/domains/themes/ask_theme.dart';
+import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
 import 'package:commander_ui/src/level.dart';
 
 /// Type definition for a function which accepts a log message
@@ -91,14 +92,16 @@ class Commander with TerminalTools {
           required List<T> options,
           String placeholder = '',
           bool multiple = false,
-          String Function(T)? onDisplay}) =>
+          String Function(T)? onDisplay,
+          CheckboxTheme? theme}) =>
       Checkbox<T>(_terminal,
               message: message,
               defaultValue: defaultValue,
               options: options,
               placeholder: placeholder,
               multiple: multiple,
-              onDisplay: onDisplay)
+              onDisplay: onDisplay,
+              theme: theme ?? _componentTheme.checkboxTheme)
           .handle();
 
   Future<bool> swap<T>(String message, {bool defaultValue = false, String placeholder = ''}) =>

@@ -44,6 +44,7 @@ final class DefaultAskTheme implements AskTheme {
 
   DefaultAskTheme();
 
+  /// Creates a new [AskTheme] with the provided values based on [DefaultAskTheme].
   factory DefaultAskTheme.copyWith(
       {String? askPrefix,
       String? errorSuffix,
