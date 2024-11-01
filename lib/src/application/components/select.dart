@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/src/application/terminals/terminal.dart';
+import 'package:commander_ui/src/application/themes/default_select_theme.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
+import 'package:commander_ui/src/domains/themes/select_theme.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
@@ -12,6 +14,7 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
   final _completer = Completer<T>();
 
   final Terminal _terminal;
+  SelectTheme _theme;
   late int _displayCount;
 
   int _currentIndex = 0;
@@ -31,14 +34,15 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
       int displayCount = 5,
       T? defaultValue,
       String placeholder = '',
-      String Function(T)? onDisplay}) {
-    _message = message;
-    _options = options;
-    _displayCount = displayCount;
-    _defaultValue = defaultValue;
-    _placeholder = placeholder;
-    _onDisplay = onDisplay;
-
+      String Function(T)? onDisplay,
+      SelectTheme? theme})
+      : _message = message,
+        _options = options,
+        _displayCount = displayCount,
+        _defaultValue = defaultValue,
+        _placeholder = placeholder,
+        _onDisplay = onDisplay,
+        _theme = theme ?? DefaultSelectTheme() {
     if (_defaultValue case T value) {
       _currentIndex = _options.indexOf(value);
     }
@@ -65,22 +69,18 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
           _currentIndex = _currentIndex - 1;
           _render();
         }
-      } else if (key.controlChar == ControlCharacter.arrowDown ||
-          key.char == 'j') {
+      } else if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
         if (_currentIndex < _filteredOptions.length - 1) {
           _currentIndex = _currentIndex + 1;
           _render();
         }
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
-          .contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
         _onSubmit();
       } else {
-        if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true)
-            .hasMatch(key.char)) {
+        if (RegExp(r'^[\p{L}\p{N}\p{P}\s\x7F]*$', unicode: true).hasMatch(key.char)) {
           _currentIndex = 0;
 
-          if (key.controlChar == ControlCharacter.backspace &&
-              _filter.isNotEmpty) {
+          if (key.controlChar == ControlCharacter.backspace && _filter.isNotEmpty) {
             _filter = _filter.substring(0, _filter.length - 1);
           } else if (key.controlChar != ControlCharacter.backspace) {
             _filter = _filter + key.char;
@@ -97,9 +97,7 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
   List<T> _filterOptions() {
     return _options.where((item) {
       final value = _onDisplay?.call(item) ?? item.toString();
-      return _options.isNotEmpty
-          ? value.toLowerCase().contains(_filter.toLowerCase())
-          : true;
+      return _options.isNotEmpty ? value.toLowerCase().contains(_filter.toLowerCase()) : true;
     }).toList();
   }
 
@@ -110,12 +108,12 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
     final buffer = StringBuffer();
 
     buffer.writeAnsiAll([
-      SetStyles(Style.foreground(Color.yellow)),
-      Print('?'),
+      ..._theme.askPrefixColor,
+      Print(_theme.askPrefix),
       SetStyles.reset,
       Print(' $_message '),
-      SetStyles(Style.foreground(Color.brightBlack)),
-      Print(_filter.isEmpty ? _placeholder : _filter),
+      ..._filter.isEmpty ? _theme.placeholderColorMessage : _theme.filterColorMessage,
+      _filter.isEmpty ? Print(_placeholder) : Print(_filter),
       SetStyles.reset,
       AsciiControl.lineFeed,
     ]);
@@ -123,19 +121,17 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
     _filteredOptions.clear();
     _filteredOptions.addAll(_filterOptions());
 
-    int start = _currentIndex - _displayCount >= 0
-        ? _currentIndex - _displayCount + 1
-        : 0;
+    int start = _currentIndex - _displayCount >= 0 ? _currentIndex - _displayCount + 1 : 0;
 
     for (final choice in _filteredOptions.skip(start).take(_displayCount)) {
       final isCurrent = _filteredOptions.indexOf(choice) == _currentIndex;
       if (isCurrent) {
         buffer.writeAnsiAll([
-          SetStyles(Style.foreground(Color.brightGreen)),
-          Print('❯'),
+          ..._theme.selectedIconColor,
+          Print(_theme.selectedIcon),
         ]);
       } else {
-        buffer.writeAnsi(Print(' '));
+        buffer.writeAnsi(Print(_theme.unselectedIcon));
       }
 
       buffer.writeAnsiAll([
@@ -147,8 +143,8 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
 
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
-      SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Type to filter, press ↑/↓ to navigate, enter to select)'),
+      ..._theme.helpColorMessage,
+      Print(_theme.helpMessage),
       SetStyles.reset,
       AsciiControl.lineFeed,
     ]);
@@ -171,13 +167,12 @@ final class Select<T> with TerminalTools implements Component<Future<T>> {
     showCursor();
 
     buffer.writeAnsiAll([
-      SetStyles(Style.foreground(Color.green)),
-      Print('✔'),
+      ..._theme.successPrefixColor,
+      Print(_theme.successPrefix),
       SetStyles.reset,
       Print(' $_message '),
-      SetStyles(Style.foreground(Color.brightBlack)),
-      Print(
-          _onDisplay?.call(_selectedOption as T) ?? _selectedOption.toString()),
+      ..._theme.resultMessageColor,
+      Print(_onDisplay?.call(_selectedOption as T) ?? _selectedOption.toString()),
       SetStyles.reset,
       AsciiControl.lineFeed,
     ]);
