@@ -40,7 +40,7 @@ class UnixTerminal implements Terminal {
               InputMode.IXON)
       ..ref.c_oflag = origTermIOS.c_oflag & ~OutputMode.OPOST
       ..ref.c_cflag =
-          (origTermIOS.c_cflag & ~ControlMode.CSIZE) | ControlMode.CS8
+          (origTermIOS.c_cflag & ~ControlMode.cSize) | ControlMode.cS8
       ..ref.c_lflag = origTermIOS.c_lflag &
           ~(LocalMode.ECHO |
               LocalMode.ICANON |

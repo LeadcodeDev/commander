@@ -10,7 +10,9 @@ import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
 /// A component that asks the user to select one or more options.
-final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>> {
+final class Checkbox<T>
+    with TerminalTools
+    implements Component<Future<List<T>>> {
   final _completer = Completer<List<T>>();
 
   final Terminal _terminal;
@@ -69,14 +71,16 @@ final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>>
           _currentIndex = _currentIndex - 1;
           _render();
         }
-      } else if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
+      } else if (key.controlChar == ControlCharacter.arrowDown ||
+          key.char == 'j') {
         if (_currentIndex < _options.length - 1) {
           _currentIndex = _currentIndex + 1;
           _render();
         }
       } else if (key.char == ' ') {
         _onSelect();
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
+          .contains(key.controlChar)) {
         _onSubmit();
       }
     }
@@ -110,8 +114,13 @@ final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>>
 
       buffer.writeAnsiAll([
         if (_currentIndex == index) ..._theme.currentLineColor,
-        if (isSelected) ..._theme.selectedLineColor else ..._theme.defaultLineColor,
-        Print(isSelected || _currentIndex == index ? _theme.selectedIcon : _theme.unselectedIcon),
+        if (isSelected)
+          ..._theme.selectedLineColor
+        else
+          ..._theme.defaultLineColor,
+        Print(isSelected || _currentIndex == index
+            ? _theme.selectedIcon
+            : _theme.unselectedIcon),
         if (_currentIndex == index) SetStyles.reset,
       ]);
 
@@ -157,7 +166,8 @@ final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>>
   }
 
   void _onSubmit() {
-    final selectedOptions = _selectedOptions.map((index) => _options[index]).toList();
+    final selectedOptions =
+        _selectedOptions.map((index) => _options[index]).toList();
 
     restoreCursorPosition();
     clearFromCursorToEnd();

@@ -5,7 +5,6 @@ import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/themes/default_swap_theme.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
-import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
 import 'package:commander_ui/src/domains/themes/swap_theme.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
@@ -60,7 +59,8 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
       } else if (key.controlChar == ControlCharacter.arrowRight) {
         _value = false;
         _render();
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
+          .contains(key.controlChar)) {
         _onSubmit();
       }
     }
@@ -91,7 +91,7 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
 
     for (final value in values) {
       buffer.writeAnsiAll([
-        ...value == _value ? _theme.selected : _theme.unselected,
+        ...value == _value ? _theme.unselected : _theme.selected,
         Print(value ? 'Yes' : ' No'),
         SetStyles.reset,
       ]);

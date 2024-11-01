@@ -15,22 +15,31 @@ final class DefaultSelectTheme implements SelectTheme {
   String unselectedIcon = ' ';
 
   @override
-  String helpMessage = '(Type to filter, press ↑/↓ to navigate, enter to select)';
+  String helpMessage =
+      '(Type to filter, press ↑/↓ to navigate, enter to select)';
 
   @override
-  List<Sequence> selectedIconColor = [SetStyles(Style.foreground(Color.brightGreen))];
+  List<Sequence> selectedIconColor = [
+    SetStyles(Style.foreground(Color.brightGreen))
+  ];
 
   @override
   List<Sequence> unselectedIconColor = [];
 
   @override
-  List<Sequence> placeholderColorMessage = [SetStyles(Style.foreground(Color.brightBlack))];
+  List<Sequence> placeholderColorMessage = [
+    SetStyles(Style.foreground(Color.brightBlack))
+  ];
 
   @override
-  List<Sequence> filterColorMessage = [SetStyles(Style.foreground(Color.brightBlack))];
+  List<Sequence> filterColorMessage = [
+    SetStyles(Style.foreground(Color.brightBlack))
+  ];
 
   @override
-  List<Sequence> helpColorMessage = [SetStyles(Style.foreground(Color.brightBlack))];
+  List<Sequence> helpColorMessage = [
+    SetStyles(Style.foreground(Color.brightBlack))
+  ];
 
   @override
   List<Sequence> currentLineColor = [SetStyles(Style.foreground(Color.white))];
@@ -39,16 +48,22 @@ final class DefaultSelectTheme implements SelectTheme {
   List<Sequence> selectedLineColor = [SetStyles(Style.foreground(Color.white))];
 
   @override
-  List<Sequence> defaultLineColor = [SetStyles(Style.foreground(Color.brightBlack))];
+  List<Sequence> defaultLineColor = [
+    SetStyles(Style.foreground(Color.brightBlack))
+  ];
 
   @override
-  List<Sequence> successPrefixColor = [SetStyles(Style.foreground(Color.green))];
+  List<Sequence> successPrefixColor = [
+    SetStyles(Style.foreground(Color.green))
+  ];
 
   @override
   List<Sequence> askPrefixColor = [SetStyles(Style.foreground(Color.yellow))];
 
   @override
-  List<Sequence> resultMessageColor = [SetStyles(Style.foreground(Color.brightBlack))];
+  List<Sequence> resultMessageColor = [
+    SetStyles(Style.foreground(Color.brightBlack))
+  ];
 
   DefaultSelectTheme();
 
@@ -77,8 +92,10 @@ final class DefaultSelectTheme implements SelectTheme {
     theme.unselectedIcon = unselectedIcon ?? theme.unselectedIcon;
     theme.helpMessage = helpMessage ?? theme.helpMessage;
     theme.selectedIconColor = selectedIconColor ?? theme.selectedIconColor;
-    theme.unselectedIconColor = unselectedIconColor ?? theme.unselectedIconColor;
-    theme.placeholderColorMessage = placeholderColorMessage ?? theme.placeholderColorMessage;
+    theme.unselectedIconColor =
+        unselectedIconColor ?? theme.unselectedIconColor;
+    theme.placeholderColorMessage =
+        placeholderColorMessage ?? theme.placeholderColorMessage;
     theme.filterColorMessage = filterColorMessage ?? theme.filterColorMessage;
     theme.helpColorMessage = helpColorMessage ?? theme.helpColorMessage;
     theme.currentLineColor = currentLineColor ?? theme.currentLineColor;

@@ -16,28 +16,38 @@ final class DefaultAskTheme implements AskTheme {
       (String? value) => value?.replaceAll(RegExp(r'.'), '*') ?? '';
 
   @override
-  String Function(String? value) defaultValueFormatter = (String? value) => switch (value) {
-        String value => ' ($value)',
-        _ => '',
-      };
+  String Function(String? value) defaultValueFormatter =
+      (String? value) => switch (value) {
+            String value => ' ($value)',
+            _ => '',
+          };
 
   @override
   String? Function(String? value) inputFormatter = (String? value) => value;
 
   @override
-  List<Sequence> successPrefixColor = [SetStyles.reset, SetStyles(Style.foreground(Color.green))];
+  List<Sequence> successPrefixColor = [
+    SetStyles.reset,
+    SetStyles(Style.foreground(Color.green))
+  ];
 
   @override
-  List<Sequence> errorPrefixColor = [SetStyles(Style.foreground(Color.brightRed))];
+  List<Sequence> errorPrefixColor = [
+    SetStyles(Style.foreground(Color.brightRed))
+  ];
 
   @override
   List<Sequence> askPrefixColor = [SetStyles(Style.foreground(Color.yellow))];
 
   @override
-  List<Sequence> validatorColorMessage = [SetStyles(Style.foreground(Color.brightRed))];
+  List<Sequence> validatorColorMessage = [
+    SetStyles(Style.foreground(Color.brightRed))
+  ];
 
   @override
-  List<Sequence> defaultValueColorMessage = [SetStyles(Style.foreground(Color.brightBlack))];
+  List<Sequence> defaultValueColorMessage = [
+    SetStyles(Style.foreground(Color.brightBlack))
+  ];
 
   @override
   List<Sequence> inputColor = [SetStyles(Style.foreground(Color.brightBlack))];
@@ -64,13 +74,16 @@ final class DefaultAskTheme implements AskTheme {
     theme.errorSuffix = errorSuffix ?? theme.errorSuffix;
     theme.successSuffix = successSuffix ?? theme.successSuffix;
     theme.secureFormatter = secureFormatter ?? theme.secureFormatter;
-    theme.defaultValueFormatter = defaultValueFormatter ?? theme.defaultValueFormatter;
+    theme.defaultValueFormatter =
+        defaultValueFormatter ?? theme.defaultValueFormatter;
     theme.inputFormatter = inputFormatter ?? theme.inputFormatter;
     theme.successPrefixColor = successPrefixColor ?? theme.successPrefixColor;
     theme.errorPrefixColor = errorPrefixColor ?? theme.errorPrefixColor;
-    theme.validatorColorMessage = validatorColorMessage ?? theme.validatorColorMessage;
+    theme.validatorColorMessage =
+        validatorColorMessage ?? theme.validatorColorMessage;
     theme.askPrefixColor = askPrefixColor ?? theme.askPrefixColor;
-    theme.defaultValueColorMessage = defaultValueColorMessage ?? theme.defaultValueColorMessage;
+    theme.defaultValueColorMessage =
+        defaultValueColorMessage ?? theme.defaultValueColorMessage;
     theme.inputColor = inputColor ?? theme.inputColor;
 
     return theme;

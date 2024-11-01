@@ -17,7 +17,9 @@ final class DefaultTaskTheme implements TaskTheme {
   ];
 
   @override
-  List<Sequence> loadingSymbolColor = [SetStyles(Style.foreground(Color.green))];
+  List<Sequence> loadingSymbolColor = [
+    SetStyles(Style.foreground(Color.green))
+  ];
 
   @override
   String successPrefix = '✔ ';
@@ -29,16 +31,22 @@ final class DefaultTaskTheme implements TaskTheme {
   String warningPrefix = '⚠ ';
 
   @override
-  List<Sequence> successPrefixColor = [SetStyles(Style.foreground(Color.green))];
+  List<Sequence> successPrefixColor = [
+    SetStyles(Style.foreground(Color.green))
+  ];
 
   @override
   List<Sequence> errorPrefixColor = [SetStyles(Style.foreground(Color.red))];
 
   @override
-  List<Sequence> warningPrefixColor = [SetStyles(Style.foreground(Color.yellow))];
+  List<Sequence> warningPrefixColor = [
+    SetStyles(Style.foreground(Color.yellow))
+  ];
 
   @override
-  List<Sequence> defaultColor = [SetStyles(Style.foreground(Color.brightBlack))];
+  List<Sequence> defaultColor = [
+    SetStyles(Style.foreground(Color.brightBlack))
+  ];
 
   DefaultTaskTheme();
 

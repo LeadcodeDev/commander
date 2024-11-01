@@ -13,7 +13,8 @@ final class Task with TerminalTools implements Component<Future<StepManager>> {
   final Terminal _terminal;
   final TaskTheme _theme;
 
-  Task(this._terminal, {TaskTheme? theme}) : _theme = theme ?? DefaultTaskTheme();
+  Task(this._terminal, {TaskTheme? theme})
+      : _theme = theme ?? DefaultTaskTheme();
 
   @override
   Future<StepManager> handle() async {
