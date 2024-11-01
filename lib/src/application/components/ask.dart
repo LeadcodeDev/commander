@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/src/application/terminals/terminal.dart';
+import 'package:commander_ui/src/application/themes/default_ask_theme.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
+import 'package:commander_ui/src/domains/themes/ask_theme.dart';
 import 'package:mansion/mansion.dart';
 
 /// A component that asks the user for input.
@@ -11,6 +13,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
   final _completer = Completer<T>();
 
   final Terminal _terminal;
+  final AskTheme _theme;
 
   late final String _message;
   late final String? _defaultValue;
@@ -24,7 +27,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
 
   List<Sequence> get _baseDefaultSequence {
     return [
-      SetStyles(Style.foreground(Color.brightBlack)),
+      ..._theme.defaultValueColorMessage,
       Print(' ($_defaultValue)'),
       SetStyles.reset,
     ];
@@ -34,12 +37,13 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       {required String message,
       String? defaultValue,
       bool hidden = false,
-      String? Function(String value)? validate}) {
-    _message = message;
-    _defaultValue = defaultValue;
-    _hidden = hidden;
-    _validate = validate;
-  }
+      String? Function(String value)? validate,
+      AskTheme? theme})
+      : _message = message,
+        _defaultValue = defaultValue,
+        _hidden = hidden,
+        _validate = validate,
+        _theme = theme ?? DefaultAskTheme();
 
   @override
   Future<T> handle() {
@@ -54,8 +58,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
 
   void _waitResponse() {
     final input = _hidden ? readLineHiddenSync() : readLineSync();
-    final response =
-        input == null || input.isEmpty ? _resolvedDefaultValue : input;
+    final response = input == null || input.isEmpty ? _resolvedDefaultValue : input;
 
     if (_validate != null) {
       final result = _validate!(response);
@@ -73,8 +76,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
     final buffer = StringBuffer();
 
     List<Sequence> askSequence = [
-      SetStyles(Style.foreground(Color.yellow)),
-      Print('? '),
+      ..._theme.askPrefixColor,
+      Print('${_theme.askPrefix} '),
       SetStyles.reset,
     ];
 
@@ -83,7 +86,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       Print(_message),
       if (_hasDefault) ..._baseDefaultSequence,
       const CursorPosition.moveRight(1),
-      SetStyles(Style.foreground(Color.brightBlack)),
+      ..._theme.inputColor,
     ]);
 
     stdout.write(buffer.toString());
@@ -93,8 +96,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
     final buffer = StringBuffer();
 
     List<Sequence> errorSequence = [
-      SetStyles(Style.foreground(Color.brightRed)),
-      Print('✘ '),
+      ..._theme.errorPrefixColor,
+      Print('${_theme.errorSuffix} '),
       SetStyles.reset,
     ];
 
@@ -109,7 +112,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
 
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
-      SetStyles(Style.foreground(Color.brightRed)),
+      ..._theme.validatorColorMessage,
       Print(error),
       SetStyles.reset,
     ]);
@@ -120,7 +123,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       const CursorPosition.moveUp(1),
       CursorPosition.moveToColumn(_message.length + 2),
       const CursorPosition.moveRight(2),
-      SetStyles(Style.foreground(Color.brightBlack)),
+      ..._theme.inputColor,
     ]);
 
     _waitResponse();
@@ -130,9 +133,8 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
     final buffer = StringBuffer();
 
     List<Sequence> successSequence = [
-      SetStyles.reset,
-      SetStyles(Style.foreground(Color.green)),
-      Print('✔ '),
+      ..._theme.successPrefixColor,
+      Print('${_theme.successSuffix} '),
       SetStyles.reset,
     ];
 
@@ -142,7 +144,7 @@ final class Ask<T> with TerminalTools implements Component<Future<T>> {
       ...successSequence,
       Print(_message),
       Print(' '),
-      SetStyles(Style.foreground(Color.brightBlack)),
+      ..._theme.inputColor,
       Print(_hidden ? '******' : response),
       SetStyles.reset,
       AsciiControl.lineFeed,

@@ -11,6 +11,8 @@ import 'package:commander_ui/src/application/components/swap.dart';
 import 'package:commander_ui/src/application/terminals/terminal.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/commander_theme.dart';
+import 'package:commander_ui/src/domains/models/component_theme.dart';
+import 'package:commander_ui/src/domains/themes/ask_theme.dart';
 import 'package:commander_ui/src/level.dart';
 
 /// Type definition for a function which accepts a log message
@@ -19,6 +21,7 @@ import 'package:commander_ui/src/level.dart';
 /// A basic Logger which wraps `stdio` and applies various styles.
 class Commander with TerminalTools {
   late final CommanderTheme _theme;
+  late final ComponentTheme _componentTheme;
   final _terminal = Terminal();
 
   Level level;
@@ -26,9 +29,9 @@ class Commander with TerminalTools {
   Commander({
     this.level = Level.info,
     CommanderTheme? theme,
-  }) {
-    _theme = theme ?? CommanderTheme.initial();
-  }
+    ComponentTheme? componentTheme,
+  })  : _theme = theme ?? CommanderTheme.initial(),
+        _componentTheme = componentTheme ?? ComponentTheme();
 
   /// Write message via `stdout.write`.
   void write(String? message) => stdout.write(message);
@@ -37,38 +40,35 @@ class Commander with TerminalTools {
   void writeln(String? message) => stdout.writeln(message);
 
   /// Write info message to stdout.
-  void info(String? message, {StdoutStyle? style}) =>
-      writeln((style ?? _theme.info)(message));
+  void info(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.info)(message));
 
   /// Write success message to stdout.
   void success(String? message, {StdoutStyle? style}) =>
       writeln((style ?? _theme.success)(message));
 
   /// Write warning message to stdout.
-  void warn(String? message, {StdoutStyle? style}) =>
-      writeln((style ?? _theme.warn)(message));
+  void warn(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.warn)(message));
 
   /// Write error message to stdout.
-  void error(String? message, {StdoutStyle? style}) =>
-      writeln((style ?? _theme.error)(message));
+  void error(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.error)(message));
 
   /// Write alert message to stdout.
-  void alert(String? message, {StdoutStyle? style}) =>
-      writeln((style ?? _theme.alert)(message));
+  void alert(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.alert)(message));
 
   /// Write debug message to stdout.
-  void debug(String? message, {StdoutStyle? style}) =>
-      writeln((style ?? _theme.debug)(message));
+  void debug(String? message, {StdoutStyle? style}) => writeln((style ?? _theme.debug)(message));
 
   Future<T> ask<T>(String message,
           {String? defaultValue,
           bool hidden = false,
-          String? Function(String)? validate}) =>
+          String? Function(String)? validate,
+          AskTheme? theme}) =>
       Ask<T>(_terminal,
               message: message,
               defaultValue: defaultValue,
               hidden: hidden,
-              validate: validate)
+              validate: validate,
+              theme: theme ?? _componentTheme.askTheme)
           .handle();
 
   Future<T> select<T>(String message,
@@ -101,16 +101,11 @@ class Commander with TerminalTools {
               onDisplay: onDisplay)
           .handle();
 
-  Future<bool> swap<T>(String message,
-          {bool defaultValue = false, String placeholder = ''}) =>
-      Swap<T>(_terminal,
-              message: message,
-              defaultValue: defaultValue,
-              placeholder: placeholder)
+  Future<bool> swap<T>(String message, {bool defaultValue = false, String placeholder = ''}) =>
+      Swap<T>(_terminal, message: message, defaultValue: defaultValue, placeholder: placeholder)
           .handle();
 
-  Future<StepManager> task<T>(String message, {bool colored = false}) =>
-      Task(_terminal, colored: colored).handle();
+  Future<StepManager> task<T>({bool colored = false}) => Task(_terminal, colored: colored).handle();
 
   void table(
           {required List<List<String>> data,
