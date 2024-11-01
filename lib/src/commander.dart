@@ -16,6 +16,7 @@ import 'package:commander_ui/src/domains/themes/ask_theme.dart';
 import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
 import 'package:commander_ui/src/domains/themes/select_theme.dart';
 import 'package:commander_ui/src/domains/themes/swap_theme.dart';
+import 'package:commander_ui/src/domains/themes/task_theme.dart';
 import 'package:commander_ui/src/level.dart';
 
 /// Type definition for a function which accepts a log message
@@ -117,7 +118,8 @@ class Commander with TerminalTools {
               theme: theme ?? _componentTheme.switchTheme)
           .handle();
 
-  Future<StepManager> task<T>() => Task(_terminal).handle();
+  Future<StepManager> task<T>({TaskTheme? theme}) =>
+      Task(_terminal, theme: theme ?? _componentTheme.taskTheme).handle();
 
   void table(
           {required List<List<String>> data,
