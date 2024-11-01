@@ -14,6 +14,7 @@ import 'package:commander_ui/src/domains/models/commander_theme.dart';
 import 'package:commander_ui/src/domains/models/component_theme.dart';
 import 'package:commander_ui/src/domains/themes/ask_theme.dart';
 import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
+import 'package:commander_ui/src/domains/themes/swap_theme.dart';
 import 'package:commander_ui/src/level.dart';
 
 /// Type definition for a function which accepts a log message
@@ -104,8 +105,13 @@ class Commander with TerminalTools {
               theme: theme ?? _componentTheme.checkboxTheme)
           .handle();
 
-  Future<bool> swap<T>(String message, {bool defaultValue = false, String placeholder = ''}) =>
-      Swap<T>(_terminal, message: message, defaultValue: defaultValue, placeholder: placeholder)
+  Future<bool> swap<T>(String message,
+          {bool defaultValue = false, String? placeholder, SwapTheme? theme}) =>
+      Swap<T>(_terminal,
+              message: message,
+              defaultValue: defaultValue,
+              placeholder: placeholder,
+              theme: theme ?? _componentTheme.switchTheme)
           .handle();
 
   Future<StepManager> task<T>({bool colored = false}) => Task(_terminal, colored: colored).handle();
