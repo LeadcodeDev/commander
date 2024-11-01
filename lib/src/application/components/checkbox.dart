@@ -2,18 +2,19 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/src/application/terminals/terminal.dart';
+import 'package:commander_ui/src/application/themes/default_checkbox_theme.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
+import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
 /// A component that asks the user to select one or more options.
-final class Checkbox<T>
-    with TerminalTools
-    implements Component<Future<List<T>>> {
+final class Checkbox<T> with TerminalTools implements Component<Future<List<T>>> {
   final _completer = Completer<List<T>>();
 
   final Terminal _terminal;
+  final CheckboxTheme _theme;
 
   int _currentIndex = 0;
 
@@ -33,14 +34,15 @@ final class Checkbox<T>
       T? defaultValue,
       String placeholder = '',
       bool multiple = false,
-      String Function(T)? onDisplay}) {
-    _message = message;
-    _options = options;
-    _defaultValue = defaultValue;
-    _placeholder = placeholder;
-    _multiple = multiple;
-    _onDisplay = onDisplay;
-
+      String Function(T)? onDisplay,
+      CheckboxTheme? theme})
+      : _message = message,
+        _options = options,
+        _defaultValue = defaultValue,
+        _placeholder = placeholder,
+        _multiple = multiple,
+        _onDisplay = onDisplay,
+        _theme = theme ?? DefaultCheckBoxTheme() {
     if (_defaultValue case T value) {
       _currentIndex = _options.indexOf(value);
     }
@@ -67,16 +69,14 @@ final class Checkbox<T>
           _currentIndex = _currentIndex - 1;
           _render();
         }
-      } else if (key.controlChar == ControlCharacter.arrowDown ||
-          key.char == 'j') {
+      } else if (key.controlChar == ControlCharacter.arrowDown || key.char == 'j') {
         if (_currentIndex < _options.length - 1) {
           _currentIndex = _currentIndex + 1;
           _render();
         }
       } else if (key.char == ' ') {
         _onSelect();
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
-          .contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
         _onSubmit();
       }
     }
@@ -91,14 +91,14 @@ final class Checkbox<T>
     final buffer = StringBuffer();
 
     buffer.writeAnsiAll([
-      SetStyles(Style.foreground(Color.yellow)),
-      Print('?'),
+      ..._theme.askPrefixColor,
+      Print(_theme.askPrefix),
       SetStyles.reset,
       Print(' $_message'),
       if (_placeholder.isNotEmpty) ...[
         Print(' : '),
         SetStyles(Style.foreground(Color.brightBlack)),
-        Print('($_placeholder)'),
+        Print(_theme.placeholderFormatter(_placeholder)),
         SetStyles.reset,
       ],
       AsciiControl.lineFeed,
@@ -109,17 +109,14 @@ final class Checkbox<T>
       final isSelected = _selectedOptions.contains(index);
 
       buffer.writeAnsiAll([
-        if (_currentIndex == index) SetStyles(Style.foreground(Color.white)),
-        if (isSelected)
-          SetStyles(Style.foreground(Color.white))
-        else
-          SetStyles(Style.foreground(Color.brightBlack)),
-        Print(isSelected || _currentIndex == index ? '◉' : '◯'),
+        if (_currentIndex == index) ..._theme.currentLineColor,
+        if (isSelected) ..._theme.selectedLineColor else ..._theme.defaultLineColor,
+        Print(isSelected || _currentIndex == index ? _theme.selectedIcon : _theme.unselectedIcon),
         if (_currentIndex == index) SetStyles.reset,
       ]);
 
       if (_currentIndex == index) {
-        buffer.writeAnsi(SetStyles(Style.foreground(Color.white)));
+        buffer.writeAnsiAll(_theme.currentLineColor);
       } else {
         buffer.writeAnsi(SetStyles(Style.foreground(Color.reset)));
       }
@@ -133,8 +130,8 @@ final class Checkbox<T>
 
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
-      SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Press ↑/↓ to navigate, space to select, enter to confirm)'),
+      ..._theme.helpMessageColor,
+      Print(_theme.helpMessage),
       SetStyles.reset,
     ]);
 
@@ -160,8 +157,7 @@ final class Checkbox<T>
   }
 
   void _onSubmit() {
-    final selectedOptions =
-        _selectedOptions.map((index) => _options[index]).toList();
+    final selectedOptions = _selectedOptions.map((index) => _options[index]).toList();
 
     restoreCursorPosition();
     clearFromCursorToEnd();
@@ -169,11 +165,11 @@ final class Checkbox<T>
 
     final buffer = StringBuffer();
     buffer.writeAnsiAll([
-      SetStyles(Style.foreground(Color.green)),
-      Print('✔'),
+      ..._theme.successPrefixColor,
+      Print(_theme.successPrefix),
       SetStyles.reset,
       Print(' $_message '),
-      SetStyles(Style.foreground(Color.brightBlack)),
+      ..._theme.resultMessageColor,
       Print(selectedOptions
           .map((element) => _onDisplay?.call(element) ?? element.toString())
           .join(', ')),
