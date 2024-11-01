@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:commander_ui/src/application/terminals/terminal.dart';
+import 'package:commander_ui/src/application/themes/default_swap_theme.dart';
 import 'package:commander_ui/src/application/utils/terminal_tools.dart';
 import 'package:commander_ui/src/domains/models/component.dart';
+import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
+import 'package:commander_ui/src/domains/themes/swap_theme.dart';
 import 'package:commander_ui/src/io.dart';
 import 'package:mansion/mansion.dart';
 
@@ -12,22 +15,24 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
   final _completer = Completer<bool>();
 
   final Terminal _terminal;
+  final SwapTheme _theme;
   late bool _value;
 
-  late final String _message;
-  late final bool _defaultValue;
-  late final String _placeholder;
+  final String _message;
+  final bool _defaultValue;
+  final String? _placeholder;
 
   bool _keepAlive = true;
 
   Swap(this._terminal,
       {required String message,
       bool defaultValue = false,
-      String placeholder = ''}) {
-    _message = message;
-    _placeholder = placeholder;
-    _defaultValue = defaultValue;
-
+      String? placeholder,
+      SwapTheme? theme})
+      : _message = message,
+        _placeholder = placeholder,
+        _defaultValue = defaultValue,
+        _theme = theme ?? DefaultSwapTheme() {
     if (_defaultValue case bool value) {
       _value = value;
     }
@@ -55,8 +60,7 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
       } else if (key.controlChar == ControlCharacter.arrowRight) {
         _value = false;
         _render();
-      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM]
-          .contains(key.controlChar)) {
+      } else if ([ControlCharacter.ctrlJ, ControlCharacter.ctrlM].contains(key.controlChar)) {
         _onSubmit();
       }
     }
@@ -71,13 +75,13 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
     final buffer = StringBuffer();
 
     buffer.writeAnsiAll([
-      SetStyles(Style.foreground(Color.yellow)),
-      Print('?'),
+      ..._theme.askPrefixColor,
+      Print(_theme.askPrefix),
       SetStyles.reset,
       Print(' $_message'),
-      if (_placeholder.isNotEmpty) ...[
-        SetStyles(Style.foreground(Color.brightBlack)),
-        Print(' ($_placeholder)'),
+      if (_placeholder != null) ...[
+        ..._theme.placeholderColorMessage,
+        Print(_theme.placeholderFormatter(_placeholder)),
         SetStyles.reset,
       ],
       Print(' : '),
@@ -87,8 +91,7 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
 
     for (final value in values) {
       buffer.writeAnsiAll([
-        SetStyles(Style.foreground(
-            value == _value ? Color.reset : Color.brightBlack)),
+        ...value == _value ? _theme.selected : _theme.unselected,
         Print(value ? 'Yes' : ' No'),
         SetStyles.reset,
       ]);
@@ -96,8 +99,8 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
 
     buffer.writeAnsiAll([
       AsciiControl.lineFeed,
-      SetStyles(Style.foreground(Color.brightBlack)),
-      Print('(Press ←/→ to select, enter to confirm)'),
+      ..._theme.helpMessageColor,
+      Print(_theme.helpMessage),
       SetStyles.reset,
     ]);
 
@@ -115,11 +118,11 @@ final class Swap<T> with TerminalTools implements Component<Future<bool>> {
 
     final buffer = StringBuffer();
     buffer.writeAnsiAll([
-      SetStyles(Style.foreground(Color.green)),
-      Print('✔'),
+      ..._theme.successPrefixColor,
+      Print(_theme.successPrefix),
       SetStyles.reset,
       Print(' $_message '),
-      SetStyles(Style.foreground(Color.brightBlack)),
+      ..._theme.resultMessageColor,
       Print(_value ? 'Yes' : 'No'),
       SetStyles.reset,
       AsciiControl.lineFeed,
