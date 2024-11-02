@@ -56,6 +56,7 @@ final class StepManager with TerminalTools {
 
         buffer.writeAnsiAll([
           CursorPosition.moveToColumn(_position!.$1),
+          Clear.untilEndOfLine,
           ..._theme.loadingSymbolColor,
           Print(_theme.loadingSymbols[_loadingStep]),
           SetStyles.reset
@@ -78,6 +79,7 @@ final class StepManager with TerminalTools {
 
     buffer.writeAnsiAll([
       CursorPosition.moveTo(_position!.$2 + _lineCount, _position!.$1),
+      Clear.untilEndOfLine,
       ..._theme.successPrefixColor,
       Print(_theme.successPrefix),
       SetStyles.reset,
@@ -98,6 +100,7 @@ final class StepManager with TerminalTools {
 
     buffer.writeAnsiAll([
       CursorPosition.moveTo(_position!.$2 + _lineCount, _position!.$1),
+      Clear.untilEndOfLine,
       ..._theme.warningPrefixColor,
       Print(_theme.warningPrefix),
       SetStyles.reset,
@@ -118,6 +121,7 @@ final class StepManager with TerminalTools {
 
     buffer.writeAnsiAll([
       CursorPosition.moveTo(_position!.$2 + _lineCount, _position!.$1),
+      Clear.untilEndOfLine,
       ..._theme.errorPrefixColor,
       Print(_theme.errorPrefix),
       SetStyles.reset,
