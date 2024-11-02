@@ -106,21 +106,19 @@ Future<String> sleepWithValue() =>
 
 Future<void> main() async {
   final commander = Commander(level: Level.verbose);
-  print('Hello World !');
 
-  final successTask =
-  await commander.task('I am an success task', colored: true);
+  final successTask = await commander.task();
   await successTask.step('Success step 1', callback: sleepWithValue);
   await successTask.step('Success step 2', callback: sleep);
   successTask.success('Success task data are available !');
 
-  final warnTask = await commander.task('I am an warn task');
+  final warnTask = await commander.task();
   await warnTask.step('Warn step 1', callback: sleepWithValue);
   await warnTask.step('Warn step 2', callback: sleep);
   await warnTask.step('Warn step 3', callback: sleep);
   warnTask.warn('Warn task !');
 
-  final errorTask = await commander.task('I am an error task');
+  final errorTask = await commander.task();
   await errorTask.step('Error step 1', callback: sleepWithValue);
   await errorTask.step('Error step 2', callback: sleep);
   await errorTask.step('Error step 3', callback: sleep);
