@@ -1,13 +1,13 @@
 import 'package:commander_ui/src/domains/models/chain_validator.dart';
 
-final class ValidatorChain
-    implements ChainValidatorExecutor, ChainValidatorContract {
-  final List<String? Function(String?)> _validators = [];
+final class ValidatorChain<T>
+    implements ChainValidatorExecutor<T>, ChainValidatorContract<T> {
+  final List<String? Function(T?)> _validators = [];
 
   String? value;
 
   @override
-  void validate(String? Function(String? value) validator) {
+  void validate(String? Function(T? value) validator) {
     _validators.add(validator);
   }
 
@@ -40,7 +40,7 @@ final class ValidatorChain
         return message;
       }
 
-      return switch (emailRegExp.hasMatch(value)) {
+      return switch (emailRegExp.hasMatch(value as String)) {
         false => message,
         _ => null,
       };
@@ -48,9 +48,9 @@ final class ValidatorChain
   }
 
   @override
-  void minLength(int count, {String? message}) {
+  void minLength(T count, {String? message}) {
     _validators.add((value) {
-      if (value case String value when value.length < count) {
+      if (value case String value when value.length < (count as num)) {
         return message ?? 'This field should have at least $count characters';
       }
 
@@ -59,9 +59,9 @@ final class ValidatorChain
   }
 
   @override
-  void maxLength(int count, {String? message}) {
+  void maxLength(T count, {String? message}) {
     _validators.add((value) {
-      if (value case String value when value.length > count) {
+      if (value case String value when value.length > (count as num)) {
         return message ?? 'This field should have at most $count characters';
       }
 
@@ -70,7 +70,7 @@ final class ValidatorChain
   }
 
   @override
-  void equals(String str, {String? message}) {
+  void equals(T str, {String? message}) {
     _validators.add((value) {
       if (value case String value when value != str) {
         return message ?? 'This field should be equal to $str';
@@ -81,7 +81,7 @@ final class ValidatorChain
   }
 
   @override
-  void between(int min, int max, {String? message}) {
+  void between(T min, T max, {String? message}) {
     final errorMessage =
         message ?? 'This field should be between $min and $max characters';
     _validators.add((value) {
@@ -89,9 +89,7 @@ final class ValidatorChain
         return errorMessage;
       }
 
-      final length = value.length;
-
-      if (length < min || length > max) {
+      if ((value as num) < (min as num)) {
         return errorMessage;
       }
 
@@ -100,16 +98,14 @@ final class ValidatorChain
   }
 
   @override
-  void lowerThan(int value, {String? message}) {
+  void lowerThan(T value, {String? message}) {
     final errorMessage = message ?? 'This field should be lower than $value';
     _validators.add((response) {
       if (response == null) {
         return errorMessage;
       }
 
-      final intValue = int.tryParse(response);
-
-      if (intValue == null || intValue >= value) {
+      if ((response as num) >= (value as num)) {
         return errorMessage;
       }
 
@@ -118,16 +114,14 @@ final class ValidatorChain
   }
 
   @override
-  void greaterThan(int value, {String? message}) {
+  void greaterThan(T value, {String? message}) {
     final errorMessage = message ?? 'This field should be greater than $value';
     _validators.add((response) {
       if (response == null) {
         return errorMessage;
       }
 
-      final intValue = int.tryParse(response);
-
-      if (intValue == null || intValue <= value) {
+      if ((response as num) <= (value as num)) {
         return errorMessage;
       }
 
@@ -136,7 +130,7 @@ final class ValidatorChain
   }
 
   @override
-  String? execute(String? value) {
+  String? execute(T? value) {
     print('Executing validators');
     for (final validator in _validators) {
       final result = validator(value);
