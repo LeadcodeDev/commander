@@ -1,4 +1,7 @@
-# 2.3.0
+## 2.4.0
+- Implement `number` component
+
+## 2.3.0
 - Implement theming components
   - Add `AskTheme` property in `ask` component
   - Add `SelectTheme` property in `select` component
@@ -17,26 +20,26 @@
   - `maxLength` : Check if the value length is lower than a value
   - `equals` : Check if the value is equals to a value
 
-# 2.2.4
+## 2.2.4
 - Make `task` component as windows compatible
 - Change default placeholder for `swap` component in example
 - Remove "Tape to search" in `checkbox` component
 - Reset cursor position in enter `screen` component
 
-# 2.2.3
+## 2.2.3
 - Add missing properties `select` in select commander entry
 - Fix multiple behaviour instead of single behaviour in `checkbox` component
 - Enhance `info` logger method
 
-# 2.2.2
+## 2.2.2
 - Remove `createSpace` method in `ask` component
 
-# 2.2.1
+## 2.2.1
 - The ask component disappeared after the validation stage
 - Calling `createSpace` method in all rendering cases for `ask` component
 - Remove missing `print` statement in `readKey` function
 
-# 2.2.0
+## 2.2.0
 - Add `select` display handler
 - Fix bad FutureOr execution
 

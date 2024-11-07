@@ -45,6 +45,30 @@ Future<void> main() async {
 }
 ```
 
+### Number component
+
+A simple example of using Commander to create a number component :
+
+- ✅ Integrated or custom validators
+- ✅ Default value
+- ✅ Custom rendering
+- ✅ `double` or `int` (`num` by default)
+
+```dart
+Future<void> main() async {
+  final commander = Commander(level: Level.verbose);
+
+  final value = await commander.number('What is your age ?',
+      interval: 1,
+      onDisplay: (value) => value?.toStringAsFixed(2),
+      validate: (validator) => validator
+        ..greaterThan(18, message: 'You must be at least 18 years old')
+        ..lowerThan(99, message: 'You must be at most 99 years old'));
+
+  print(value);
+}
+```
+
 ### Select component
 A simple example of using Commander to create an option selection component :
 

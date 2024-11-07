@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:commander_ui/src/application/components/ask.dart';
 import 'package:commander_ui/src/application/components/checkbox.dart';
+import 'package:commander_ui/src/application/components/number.dart';
 import 'package:commander_ui/src/application/components/screen.dart';
 import 'package:commander_ui/src/application/components/select.dart';
 import 'package:commander_ui/src/application/components/swap.dart';
@@ -15,6 +16,7 @@ import 'package:commander_ui/src/domains/models/commander_theme.dart';
 import 'package:commander_ui/src/domains/models/component_theme.dart';
 import 'package:commander_ui/src/domains/themes/ask_theme.dart';
 import 'package:commander_ui/src/domains/themes/checkbox_theme.dart';
+import 'package:commander_ui/src/domains/themes/number_theme.dart';
 import 'package:commander_ui/src/domains/themes/select_theme.dart';
 import 'package:commander_ui/src/domains/themes/swap_theme.dart';
 import 'package:commander_ui/src/domains/themes/task_theme.dart';
@@ -79,6 +81,21 @@ class Commander with TerminalTools {
               hidden: hidden,
               validate: validate,
               theme: theme ?? _componentTheme.askTheme)
+          .handle();
+
+  Future<T> number<T extends num>(String message,
+          {T? defaultValue,
+          T? interval,
+          Function(NumberChainValidator)? validate,
+          String? Function(T?)? onDisplay,
+          NumberTheme? theme}) =>
+      Number<T>(_terminal,
+              message: message,
+              defaultValue: defaultValue,
+              interval: interval,
+              validate: validate,
+              onDisplay: onDisplay,
+              theme: theme ?? _componentTheme.numberTheme)
           .handle();
 
   Future<T> select<T>(String message,
