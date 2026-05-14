@@ -26,6 +26,17 @@ class AsyncRegistry {
   final Map<Key, AsyncEntry> _entries = {};
   final Set<Key> _seenThisFrame = {};
   void Function(Key)? onResolved;
+  void Function(Object error, StackTrace stack)? onCallbackError;
+
+  void _notifyResolved(Key key) {
+    final cb = onResolved;
+    if (cb == null) return;
+    try {
+      cb(key);
+    } catch (e, st) {
+      onCallbackError?.call(e, st);
+    }
+  }
 
   void beginFrame() {
     _seenThisFrame.clear();
@@ -56,13 +67,13 @@ class AsyncRegistry {
       if (entry.gen != gen || !entry.active) return;
       entry.status = AsyncStatus.success;
       entry.value = value;
-      onResolved?.call(key);
+      _notifyResolved(key);
     }, onError: (e, st) {
       if (entry.gen != gen || !entry.active) return;
       entry.status = AsyncStatus.error;
       entry.error = e;
       entry.stack = st;
-      onResolved?.call(key);
+      _notifyResolved(key);
     });
     return entry;
   }
@@ -80,17 +91,17 @@ class AsyncRegistry {
       if (entry.gen != gen || !entry.active) return;
       entry.status = AsyncStatus.success;
       entry.value = value;
-      onResolved?.call(key);
+      _notifyResolved(key);
     }, onError: (e, st) {
       if (entry.gen != gen || !entry.active) return;
       entry.status = AsyncStatus.error;
       entry.error = e;
       entry.stack = st;
-      onResolved?.call(key);
+      _notifyResolved(key);
     }, onDone: () {
       if (entry.gen != gen || !entry.active) return;
       entry.status = AsyncStatus.success;
-      onResolved?.call(key);
+      _notifyResolved(key);
     });
     return entry;
   }

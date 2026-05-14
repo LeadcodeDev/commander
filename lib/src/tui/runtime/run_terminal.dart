@@ -203,7 +203,7 @@ Future<void> runTerminal<S>({
     } else if (mode is FlowMode) {
       await term.flush();
       final (_, row0) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
-      yOffset = row0;
+      yOffset = row0.clamp(0, term.size.height);
       final m = mode as FlowMode;
       final h = flowEffectiveHeight(m);
       for (var i = 0; i < h; i++) {
@@ -212,7 +212,7 @@ Future<void> runTerminal<S>({
       term.write('\x1B[${h}A');
       await term.flush();
       final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
-      yOffset = row1;
+      yOffset = row1.clamp(0, term.size.height);
       currentSize = Size(term.size.width, h);
       term.moveTo(0, yOffset);
       term.write('\x1B[0J');
@@ -224,7 +224,7 @@ Future<void> runTerminal<S>({
       term.write('\x1B[${h}A');
       await term.flush();
       final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
-      yOffset = row1;
+      yOffset = row1.clamp(0, term.size.height);
       term.moveTo(0, yOffset);
       term.write('\x1B[0J');
     }
@@ -266,6 +266,9 @@ Future<void> runTerminal<S>({
   await setup();
 
   final controller = StreamController<Event>();
+  async_.onCallbackError = (e, st) {
+    logger.error('AsyncRegistry onResolved callback threw', error: e, stack: st);
+  };
   async_.onResolved = (key) {
     handle.requestRedraw();
     if (!controller.isClosed) {

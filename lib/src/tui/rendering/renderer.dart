@@ -52,8 +52,9 @@ class Renderer {
         lastStyle = cell.style;
       }
       sb.write(cell.char.isEmpty ? ' ' : cell.char);
-      lastX = x + cell.width;
-      lastY = y;
+      final nextX = x + cell.width;
+      lastX = nextX < w ? nextX : null;
+      lastY = nextX < w ? y : null;
     }
 
     if (_initialPaint) {

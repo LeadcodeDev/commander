@@ -66,15 +66,24 @@ class KeyDecoder {
       return (event: KeyEvent(char: String.fromCharCode(b0)), consumed: 1);
     }
 
-    int seqLen = 1;
+    int seqLen;
     if ((b0 & 0xE0) == 0xC0) {
       seqLen = 2;
     } else if ((b0 & 0xF0) == 0xE0) {
       seqLen = 3;
     } else if ((b0 & 0xF8) == 0xF0) {
       seqLen = 4;
+    } else {
+      // Lone continuation byte or invalid lead — drop it.
+      return (event: const KeyEvent(key: NamedKey.unknown), consumed: 1);
     }
     if (_buffer.length < seqLen) return null;
+    for (var i = 1; i < seqLen; i++) {
+      if ((_buffer[i] & 0xC0) != 0x80) {
+        // Invalid continuation byte — drop the lead byte and resync.
+        return (event: const KeyEvent(key: NamedKey.unknown), consumed: 1);
+      }
+    }
     final s = String.fromCharCodes(_buffer.sublist(0, seqLen));
     return (
       event: KeyEvent(char: s, raw: _buffer.sublist(0, seqLen)),
