@@ -49,6 +49,7 @@ export 'src/tui/widgets/input/radio_group.dart';
 
 export 'src/tui/widgets/list/list_view.dart';
 export 'src/tui/widgets/list/table.dart';
+export 'src/tui/widgets/list/dropdown.dart';
 export 'src/tui/widgets/list/select.dart';
 export 'src/tui/widgets/list/tabs.dart';
 

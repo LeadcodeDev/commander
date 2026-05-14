@@ -8,7 +8,7 @@ class State {
   bool accept = false;
 
   String? country;
-  final selectState = SelectState();
+  final dropdownState = DropdownState();
 
   Key? wantsFocus = Key.symbol(#tabs);
 }
@@ -40,8 +40,8 @@ Future<void> main() => runTerminal<State>(
             currentFocus == _tabsKey) {
           s.wantsFocus = _firstFocusOfTab(s.tab);
           if (s.tab == 1) {
-            s.selectState.open = true;
-            s.selectState.highlightedIndex = s.country == null
+            s.dropdownState.open = true;
+            s.dropdownState.highlightedIndex = s.country == null
                 ? 0
                 : _countries
                     .indexOf(s.country!)
@@ -132,11 +132,11 @@ Future<void> main() => runTerminal<State>(
             ]).split(body.insetAll(1));
 
             ctx.draw(
-              Select<String>(
+              Dropdown<String>(
                 id: Key.symbol(#country),
                 options: _countries,
                 selected: state.country,
-                state: state.selectState,
+                state: state.dropdownState,
                 onChanged: (v) => state.country = v,
                 placeholder: 'Choose a country',
               ),
