@@ -39,8 +39,9 @@ class SelectState<T> {
 }
 
 class Select<T> implements FocusableWidget {
+  final Key? _id;
   @override
-  final Key id;
+  Key get id => _id ?? ValueKey(state);
   final List<T> items;
   final SelectionMode mode;
   final SelectState<T> state;
@@ -66,7 +67,7 @@ class Select<T> implements FocusableWidget {
   final void Function(T item, bool selected)? onToggle;
 
   const Select({
-    required this.id,
+    Key? id,
     required this.items,
     required this.state,
     required this.builder,
@@ -84,7 +85,8 @@ class Select<T> implements FocusableWidget {
     this.onChanged,
     this.onSubmit,
     this.onToggle,
-  })  : assert(visibleCount > 0),
+  })  : _id = id,
+        assert(visibleCount > 0),
         assert(minSelections == null || minSelections >= 0),
         assert(maxSelections == null || maxSelections >= 1),
         assert(minSelections == null ||

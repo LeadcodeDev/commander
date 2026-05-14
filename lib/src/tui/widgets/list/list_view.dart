@@ -13,8 +13,9 @@ class ListState {
 }
 
 class ListView<T> implements FocusableWidget {
+  final Key? _id;
   @override
-  final Key id;
+  Key get id => _id ?? ValueKey(state);
   final List<T> items;
   final Widget Function(T item, bool selected) itemBuilder;
   final ListState state;
@@ -23,14 +24,14 @@ class ListView<T> implements FocusableWidget {
   final Style? selectedStyle;
 
   const ListView({
-    required this.id,
+    Key? id,
     required this.items,
     required this.itemBuilder,
     required this.state,
     this.itemHeight = 1,
     this.onActivate,
     this.selectedStyle,
-  });
+  }) : _id = id;
 
   @override
   bool get isSkipped => false;

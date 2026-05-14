@@ -30,8 +30,9 @@ class CheckboxGroupState<T> {
 }
 
 class CheckboxGroup<T> implements FocusableWidget {
+  final Key? _id;
   @override
-  final Key id;
+  Key get id => _id ?? ValueKey(state);
   final List<T> items;
   final CheckboxGroupState<T> state;
   final List<T> defaultChecked;
@@ -39,13 +40,13 @@ class CheckboxGroup<T> implements FocusableWidget {
   final void Function(List<T> checked)? onChanged;
 
   const CheckboxGroup({
-    required this.id,
+    Key? id,
     required this.items,
     required this.state,
     required this.builder,
     this.defaultChecked = const [],
     this.onChanged,
-  });
+  }) : _id = id;
 
   @override
   bool get isSkipped => false;

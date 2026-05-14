@@ -84,8 +84,9 @@ class TableState<T> {
 }
 
 class Table<T> implements FocusableWidget {
+  final Key? _id;
   @override
-  final Key id;
+  Key get id => _id ?? ValueKey(state);
   final List<T> items;
   final List<TableColumn<T>> columns;
   final TableState<T> state;
@@ -114,7 +115,7 @@ class Table<T> implements FocusableWidget {
   final void Function(Set<CellCoord> cells)? onCellsSelectionChanged;
 
   const Table({
-    required this.id,
+    Key? id,
     required this.items,
     required this.columns,
     required this.state,
@@ -135,7 +136,8 @@ class Table<T> implements FocusableWidget {
     this.onRowsSelectionChanged,
     this.onColumnsSelectionChanged,
     this.onCellsSelectionChanged,
-  }) : assert(columns.length > 0);
+  })  : _id = id,
+        assert(columns.length > 0);
 
   @override
   bool get isSkipped => false;

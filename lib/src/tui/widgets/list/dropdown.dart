@@ -15,8 +15,9 @@ class DropdownState {
 }
 
 class Dropdown<T> implements FocusableWidget {
+  final Key? _id;
   @override
-  final Key id;
+  Key get id => _id ?? ValueKey(state);
   final List<T> options;
   final T? selected;
   final String Function(T)? display;
@@ -26,7 +27,7 @@ class Dropdown<T> implements FocusableWidget {
   final int maxDropdownHeight;
 
   const Dropdown({
-    required this.id,
+    Key? id,
     required this.options,
     required this.state,
     this.selected,
@@ -34,7 +35,7 @@ class Dropdown<T> implements FocusableWidget {
     this.onChanged,
     this.placeholder = 'Select...',
     this.maxDropdownHeight = 5,
-  });
+  }) : _id = id;
 
   String _label(T v) => display != null ? display!(v) : v.toString();
 

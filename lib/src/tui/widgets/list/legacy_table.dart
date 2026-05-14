@@ -13,20 +13,21 @@ class LegacyTableState {
 }
 
 class LegacyTable implements FocusableWidget {
+  final Key? _id;
   @override
-  final Key id;
+  Key get id => _id ?? ValueKey(state);
   final List<String> columns;
   final List<List<String>> rows;
   final LegacyTableState state;
   final List<int>? widths;
 
   const LegacyTable({
-    required this.id,
+    Key? id,
     required this.columns,
     required this.rows,
     required this.state,
     this.widths,
-  });
+  }) : _id = id;
 
   @override
   bool get isSkipped => false;
