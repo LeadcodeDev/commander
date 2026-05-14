@@ -1,11 +1,101 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
+
+import 'package:ffi/ffi.dart';
 
 import '../geometry/size.dart';
 import '../rendering/ansi_encoder.dart';
 import '../runtime/event.dart';
 import 'key_decoder.dart';
 import 'terminal.dart';
+
+// Windows console constants.
+const int _stdInputHandle = -10;
+const int _stdOutputHandle = -11;
+const int _enableProcessedInput = 0x0001;
+const int _enableLineInput = 0x0002;
+const int _enableEchoInput = 0x0004;
+const int _enableVirtualTerminalInput = 0x0200;
+const int _enableVirtualTerminalProcessing = 0x0004;
+const int _disableNewlineAutoReturn = 0x0008;
+
+typedef _GetStdHandleNative = IntPtr Function(Uint32);
+typedef _GetStdHandleDart = int Function(int);
+typedef _GetConsoleModeNative = Int32 Function(IntPtr, Pointer<Uint32>);
+typedef _GetConsoleModeDart = int Function(int, Pointer<Uint32>);
+typedef _SetConsoleModeNative = Int32 Function(IntPtr, Uint32);
+typedef _SetConsoleModeDart = int Function(int, int);
+
+class _WinConsole {
+  final _GetStdHandleDart getStdHandle;
+  final _GetConsoleModeDart getConsoleMode;
+  final _SetConsoleModeDart setConsoleMode;
+  final int hIn;
+  final int hOut;
+  int? savedInMode;
+  int? savedOutMode;
+
+  _WinConsole._(this.getStdHandle, this.getConsoleMode, this.setConsoleMode,
+      this.hIn, this.hOut);
+
+  static _WinConsole? open() {
+    try {
+      final lib = DynamicLibrary.open('kernel32.dll');
+      final getStd = lib
+          .lookupFunction<_GetStdHandleNative, _GetStdHandleDart>('GetStdHandle');
+      final getMode = lib.lookupFunction<_GetConsoleModeNative,
+          _GetConsoleModeDart>('GetConsoleMode');
+      final setMode = lib.lookupFunction<_SetConsoleModeNative,
+          _SetConsoleModeDart>('SetConsoleMode');
+      final hIn = getStd(_stdInputHandle);
+      final hOut = getStd(_stdOutputHandle);
+      return _WinConsole._(getStd, getMode, setMode, hIn, hOut);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  int? _readMode(int handle) {
+    final ptr = calloc<Uint32>();
+    try {
+      if (getConsoleMode(handle, ptr) == 0) return null;
+      return ptr.value;
+    } finally {
+      calloc.free(ptr);
+    }
+  }
+
+  void enableVt() {
+    final inMode = _readMode(hIn);
+    if (inMode != null) {
+      savedInMode = inMode;
+      final newIn = (inMode |
+              _enableVirtualTerminalInput) &
+          ~(_enableLineInput | _enableEchoInput | _enableProcessedInput);
+      setConsoleMode(hIn, newIn);
+    }
+    final outMode = _readMode(hOut);
+    if (outMode != null) {
+      savedOutMode = outMode;
+      final newOut = outMode |
+          _enableVirtualTerminalProcessing |
+          _disableNewlineAutoReturn;
+      setConsoleMode(hOut, newOut);
+    }
+  }
+
+  void restore() {
+    if (savedInMode != null) {
+      setConsoleMode(hIn, savedInMode!);
+      savedInMode = null;
+    }
+    if (savedOutMode != null) {
+      setConsoleMode(hOut, savedOutMode!);
+      savedOutMode = null;
+    }
+  }
+}
 
 class WindowsTerminal implements Terminal {
   Size _size;
@@ -17,8 +107,11 @@ class WindowsTerminal implements Terminal {
   bool _altScreen = false;
   bool _mouseEnabled = false;
   bool _cursorHidden = false;
+  final _WinConsole? _console;
 
-  WindowsTerminal() : _size = _querySize() {
+  WindowsTerminal()
+      : _size = _querySize(),
+        _console = _WinConsole.open() {
     stdout.write('\x1B[?1049l');
   }
 
@@ -52,6 +145,7 @@ class WindowsTerminal implements Terminal {
   @override
   void enterRawMode() {
     if (_rawMode) return;
+    _console?.enableVt();
     try {
       stdin.echoMode = false;
       stdin.lineMode = false;
@@ -66,6 +160,7 @@ class WindowsTerminal implements Terminal {
       stdin.echoMode = true;
       stdin.lineMode = true;
     } catch (_) {}
+    _console?.restore();
     _rawMode = false;
   }
 

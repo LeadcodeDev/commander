@@ -73,20 +73,36 @@ class UnixTerminal implements Terminal {
   bool _streamStarted = false;
 
   UnixTerminal()
-      : _lib = Platform.isMacOS
-            ? DynamicLibrary.open('/usr/lib/libSystem.dylib')
-            : DynamicLibrary.open('libc.so.6'),
-        _tcgetattr = (Platform.isMacOS
-                ? DynamicLibrary.open('/usr/lib/libSystem.dylib')
-                : DynamicLibrary.open('libc.so.6'))
+      : this._fromLib(_openLibc());
+
+  UnixTerminal._fromLib(DynamicLibrary lib)
+      : _lib = lib,
+        _tcgetattr = lib
             .lookupFunction<_TcGetAttrNative, _TcGetAttrDart>('tcgetattr'),
-        _tcsetattr = (Platform.isMacOS
-                ? DynamicLibrary.open('/usr/lib/libSystem.dylib')
-                : DynamicLibrary.open('libc.so.6'))
+        _tcsetattr = lib
             .lookupFunction<_TcSetAttrNative, _TcSetAttrDart>('tcsetattr'),
         _origPtr = calloc<_Termios>(),
         _size = _querySize() {
     _tcgetattr(_STDIN_FILENO, _origPtr);
+  }
+
+  static DynamicLibrary _openLibc() {
+    if (Platform.isMacOS) {
+      return DynamicLibrary.open('/usr/lib/libSystem.dylib');
+    }
+    // Linux: try glibc, then musl (Alpine), then bare libc, then process.
+    const candidates = [
+      'libc.so.6',
+      'libc.so',
+      'libc.musl-x86_64.so.1',
+      'libc.musl-aarch64.so.1',
+    ];
+    for (final path in candidates) {
+      try {
+        return DynamicLibrary.open(path);
+      } catch (_) {}
+    }
+    return DynamicLibrary.process();
   }
 
   static Size _querySize() {

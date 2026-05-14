@@ -12,16 +12,29 @@ class AnsiEncoder {
     final env = Platform.environment;
     if (env['NO_COLOR'] != null) return ColorMode.none;
     if (!stdout.hasTerminal) return ColorMode.none;
+    final term = env['TERM']?.toLowerCase() ?? '';
+    if (term == 'dumb') return ColorMode.none;
     final colorterm = env['COLORTERM']?.toLowerCase();
     if (colorterm == 'truecolor' || colorterm == '24bit') {
       return ColorMode.truecolor;
     }
-    final term = env['TERM']?.toLowerCase() ?? '';
+    if (Platform.isWindows) {
+      // Windows Terminal sets WT_SESSION; modern conhost (Win10 1909+) supports
+      // truecolor when VT processing is enabled. ANSICON wraps cmd.exe with
+      // 16-color ANSI support.
+      if (env['WT_SESSION'] != null) return ColorMode.truecolor;
+      if (env['TERM_PROGRAM'] != null) return ColorMode.truecolor;
+      if (env['ANSICON'] != null) return ColorMode.ansi16;
+      // Conservative default: most Windows 10+ shells support truecolor once
+      // VT mode is enabled; legacy Windows would already fail at SetConsoleMode.
+      return ColorMode.truecolor;
+    }
     if (term.contains('256color')) return ColorMode.indexed256;
     if (term == 'xterm' || term.contains('color') || term.contains('screen')) {
       return ColorMode.ansi16;
     }
-    if (Platform.isWindows) return ColorMode.truecolor;
+    // CI systems without explicit color hints: stay conservative.
+    if (env['CI'] == 'true' || env['CI'] == '1') return ColorMode.ansi16;
     return ColorMode.ansi16;
   }
 
