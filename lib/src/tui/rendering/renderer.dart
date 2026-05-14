@@ -8,6 +8,7 @@ class Renderer {
   final AnsiEncoder encoder;
   Buffer? _front;
   bool _initialPaint = true;
+  int yOffset = 0;
 
   Renderer(this.encoder);
 
@@ -38,7 +39,7 @@ class Renderer {
     void emit(Cell cell, int x, int y) {
       if (cell.width == 0) return;
       if (lastY != y || lastX != x) {
-        sb.write(AnsiSequences.moveTo(x, y));
+        sb.write(AnsiSequences.moveTo(x, y + yOffset));
       }
       if (lastStyle != cell.style) {
         sb.write(encoder.reset());

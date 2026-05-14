@@ -123,14 +123,6 @@ class UnixTerminal implements Terminal {
         }
       });
     } catch (_) {}
-    _intSub = ProcessSignal.sigint.watch().listen((_) async {
-      await shutdown();
-      exit(130);
-    });
-    _termSub = ProcessSignal.sigterm.watch().listen((_) async {
-      await shutdown();
-      exit(143);
-    });
   }
 
   @override
@@ -220,6 +212,35 @@ class UnixTerminal implements Terminal {
   void setTitle(String title) {
     final safe = title.replaceAll('\x07', '').replaceAll('\x1B', '');
     stdout.write('\x1B]0;$safe\x07');
+  }
+
+  @override
+  Future<(int, int)> queryCursorPosition() async {
+    stdout.write('\x1B[6n');
+    try {
+      await stdout.flush();
+    } catch (_) {}
+    final buf = <int>[];
+    const maxAttempts = 50;
+    for (var i = 0; i < maxAttempts; i++) {
+      int b;
+      try {
+        b = stdin.readByteSync();
+      } catch (_) {
+        continue;
+      }
+      if (b < 0) continue;
+      buf.add(b);
+      if (b == 0x52) break;
+    }
+    final s = String.fromCharCodes(buf);
+    final m = RegExp(r'\[(\d+);(\d+)R').firstMatch(s);
+    if (m != null) {
+      final row = int.parse(m.group(1)!) - 1;
+      final col = int.parse(m.group(2)!) - 1;
+      return (col, row);
+    }
+    return (0, 0);
   }
 
   @override

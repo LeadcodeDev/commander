@@ -41,7 +41,7 @@ Future<void> runTerminal<S>({
   required RenderFn<S> render,
   ThemeData? theme,
   ThemeBuilder<S>? themeBuilder,
-  RenderMode mode = const RenderMode.alternateScreen(),
+  RenderMode mode = const RenderMode.flow(),
   List<Stream<Event>> sources = const [],
   Duration? frameRate,
   Terminal? terminal,
@@ -83,8 +83,17 @@ Future<void> runTerminal<S>({
 
   List<({Rect rect, Key key})> lastHitZones = const [];
 
+  int yOffset = 0;
+  int flowEffectiveHeight(FlowMode m) {
+    final remaining = term.size.height - yOffset;
+    final desired = m.height ?? remaining;
+    return desired.clamp(1, remaining > 0 ? remaining : 1);
+  }
+
   Size currentSize = switch (mode) {
     AlternateScreenMode() => term.size,
+    FullScreenMode() => term.size,
+    FlowMode() => term.size, // placeholder, recomputed after setup
     InlineMode(:final height) => Size(term.size.width, height),
   };
 
@@ -97,6 +106,8 @@ Future<void> runTerminal<S>({
 
     final Size desired = switch (mode) {
       AlternateScreenMode() => term.size,
+      FullScreenMode() => term.size,
+      FlowMode m => Size(term.size.width, flowEffectiveHeight(m)),
       InlineMode(:final height) => Size(term.size.width, height),
     };
     if (desired != currentSize) {
@@ -133,9 +144,9 @@ Future<void> runTerminal<S>({
     async_.endFrame();
     lastHitZones = ctx.hitZones;
 
-    if (mode is AlternateScreenMode) {
+    if (mode is AlternateScreenMode || mode is FullScreenMode) {
       term.moveTo(0, 0);
-    } else if (mode is InlineMode) {
+    } else if (mode is InlineMode || mode is FlowMode) {
       term.write('\r');
     }
     final out = renderer.paint(back);
@@ -149,19 +160,67 @@ Future<void> runTerminal<S>({
     term.enterRawMode();
     if (mode is AlternateScreenMode) {
       term.enterAlternateScreen();
+    } else if (mode is FullScreenMode) {
+      term.write('\x1B[2J\x1B[H');
+    } else if (mode is FlowMode) {
+      await term.flush();
+      final (_, row0) = await term.queryCursorPosition();
+      yOffset = row0;
+      final m = mode as FlowMode;
+      final h = flowEffectiveHeight(m);
+      for (var i = 0; i < h; i++) {
+        term.write('\n');
+      }
+      term.write('\x1B[${h}A');
+      await term.flush();
+      final (_, row1) = await term.queryCursorPosition();
+      yOffset = row1;
+      currentSize = Size(term.size.width, h);
+      term.moveTo(0, yOffset);
+      term.write('\x1B[0J');
     } else if (mode is InlineMode) {
       final h = (mode as InlineMode).height;
       for (var i = 0; i < h; i++) {
         term.write('\n');
       }
       term.write('\x1B[${h}A');
+      await term.flush();
+      final (_, row1) = await term.queryCursorPosition();
+      yOffset = row1;
+      term.moveTo(0, yOffset);
+      term.write('\x1B[0J');
     }
+    renderer.yOffset = yOffset;
+    back = Buffer(currentSize);
     term.hideCursor();
     if (enableMouse) term.enableMouse();
     await term.flush();
   }
 
+  int lastUsedRow() {
+    for (var y = back.height - 1; y >= 0; y--) {
+      for (var x = 0; x < back.width; x++) {
+        final cell = back.get(x, y);
+        if (cell.char != ' ' ||
+            cell.style.bg != null ||
+            cell.style.fg != null) {
+          return y;
+        }
+      }
+    }
+    return -1;
+  }
+
   Future<void> teardown() async {
+    if (mode is FullScreenMode) {
+      term.moveTo(0, term.size.height - 1);
+      term.write('\n');
+    } else if (mode is InlineMode || mode is FlowMode) {
+      final used = lastUsedRow();
+      final targetRow = used >= 0 ? yOffset + used + 1 : yOffset;
+      term.moveTo(0, targetRow);
+      term.write('\r');
+    }
     await term.shutdown();
     async_.disposeAll();
   }

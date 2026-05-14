@@ -22,6 +22,7 @@ abstract interface class Terminal {
   Future<void> flush();
   void moveTo(int x, int y);
   void setTitle(String title);
+  Future<(int, int)> queryCursorPosition();
 
   Future<void> shutdown();
 
