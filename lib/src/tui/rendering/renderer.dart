@@ -1,0 +1,86 @@
+import '../geometry/size.dart';
+import '../style/style.dart';
+import 'ansi_encoder.dart';
+import 'buffer.dart';
+import 'cell.dart';
+
+class Renderer {
+  final AnsiEncoder encoder;
+  Buffer? _front;
+  bool _initialPaint = true;
+
+  Renderer(this.encoder);
+
+  void forceRepaint() {
+    _initialPaint = true;
+    _front = null;
+  }
+
+  void resize(Size newSize) {
+    if (_front != null && _front!.size == newSize) return;
+    _front = Buffer(newSize);
+    _initialPaint = true;
+  }
+
+  String paint(Buffer back) {
+    if (_front == null || _front!.size != back.size) {
+      _front = Buffer(back.size);
+      _initialPaint = true;
+    }
+    final sb = StringBuffer();
+    final w = back.width;
+    final h = back.height;
+
+    Style? lastStyle;
+    int? lastX;
+    int? lastY;
+
+    void emit(Cell cell, int x, int y) {
+      if (cell.width == 0) return;
+      if (lastY != y || lastX != x) {
+        sb.write(AnsiSequences.moveTo(x, y));
+      }
+      if (lastStyle != cell.style) {
+        sb.write(encoder.reset());
+        final seq = encoder.encodeStyle(cell.style);
+        if (seq.isNotEmpty) sb.write(seq);
+        lastStyle = cell.style;
+      }
+      sb.write(cell.char.isEmpty ? ' ' : cell.char);
+      lastX = x + cell.width;
+      lastY = y;
+    }
+
+    if (_initialPaint) {
+      for (var y = 0; y < h; y++) {
+        for (var x = 0; x < w; x++) {
+          final cell = back.get(x, y);
+          emit(cell, x, y);
+          if (cell.width > 1) x += cell.width - 1;
+          _front!.set(x, y, cell);
+        }
+      }
+      _initialPaint = false;
+    } else {
+      for (var y = 0; y < h; y++) {
+        for (var x = 0; x < w; x++) {
+          final cell = back.get(x, y);
+          final prev = _front!.get(x, y);
+          if (cell != prev) {
+            emit(cell, x, y);
+            _front!.set(x, y, cell);
+          }
+          if (cell.width > 1) {
+            x += cell.width - 1;
+          }
+        }
+      }
+    }
+
+    if (lastStyle != null && lastStyle != Style.none) {
+      sb.write(encoder.reset());
+    }
+
+    return sb.toString();
+  }
+}
