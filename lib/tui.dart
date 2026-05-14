@@ -65,6 +65,8 @@ export 'src/tui/widgets/feedback/gauge.dart';
 
 export 'src/tui/widgets/async/async.dart';
 
+export 'src/tui/widgets/chain/chain.dart';
+
 export 'src/tui/navigation/navigator.dart';
 
 export 'src/tui/utils/result.dart';

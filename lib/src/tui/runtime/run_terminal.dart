@@ -100,6 +100,10 @@ Future<void> runTerminal<S>({
   Buffer back = Buffer(currentSize);
 
   Future<void> drawFrame() async {
+    // Drain pending microtasks so async flows (e.g. Chain) can advance to
+    // their next state before we render. Avoids a 1-frame visual gap.
+    await Future<void>(() {});
+
     final activeTheme = themeBuilder != null
         ? themeBuilder(state)
         : (theme ?? const ThemeData());
@@ -144,6 +148,10 @@ Future<void> runTerminal<S>({
         (mode as FlowMode).autoGrow &&
         ctx.maxDesiredHeight > currentSize.height) {
       final delta = ctx.maxDesiredHeight - currentSize.height;
+      // Erase the old buffer area BEFORE scrolling so no stale content
+      // ends up shifted into a visible row after scroll.
+      term.moveTo(0, yOffset);
+      term.write('\x1B[0J');
       term.moveTo(0, yOffset + currentSize.height - 1);
       for (var i = 0; i < delta; i++) {
         term.write('\n');
@@ -157,6 +165,8 @@ Future<void> runTerminal<S>({
       renderer.resize(currentSize);
       renderer.yOffset = yOffset;
       renderer.forceRepaint();
+      term.moveTo(0, yOffset);
+      term.write('\x1B[0J');
       ctx = makeCtx();
       render(ctx, state);
       ctx.flushOverlays();

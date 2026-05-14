@@ -19,7 +19,7 @@ class InputState {
         submitted = false;
 }
 
-class Input implements FocusableWidget {
+class Input implements FocusableWidget, SizedWidget {
   @override
   final Key id;
   final String message;

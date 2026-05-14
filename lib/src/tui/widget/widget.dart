@@ -17,6 +17,12 @@ abstract interface class FocusableWidget implements Widget {
   }
 }
 
+/// Optional interface for widgets that know their intrinsic height.
+/// Used by Chain (and similar layout widgets) to size each step automatically.
+abstract interface class SizedWidget implements Widget {
+  int get height;
+}
+
 abstract interface class HitZoneSink {
   void add(Rect area, Key key);
 }
