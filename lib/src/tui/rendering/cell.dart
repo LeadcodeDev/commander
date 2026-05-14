@@ -5,7 +5,11 @@ class Cell {
   final Style style;
   final int width;
 
-  const Cell({this.char = ' ', this.style = Style.none, this.width = 1});
+  const Cell({this.char = ' ', this.style = Style.none, this.width = 1})
+      : assert(width >= 0 && width <= 2,
+            'Cell width must be 0 (continuation), 1, or 2'),
+        assert(width != 0 || char == '',
+            'Continuation cells must have empty char');
 
   static const Cell empty = Cell();
 

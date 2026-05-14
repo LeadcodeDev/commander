@@ -60,7 +60,9 @@ class TestTerminal implements Terminal {
   @override
   void setTitle(String title) => _output.write('\x1B]0;$title\x07');
   @override
-  Future<(int, int)> queryCursorPosition() async => (0, 0);
+  Future<(int, int)> queryCursorPosition({
+    Duration timeout = const Duration(milliseconds: 500),
+  }) async => (0, 0);
   @override
   Future<void> flush() async {}
 

@@ -44,18 +44,27 @@ class Style {
         strikethrough: strikethrough ?? this.strikethrough,
       );
 
-  Style merge(Style? other) {
+  /// Paint `this` on top of [other] — `this` wins where it sets a value.
+  /// Mnemonic: `top.over(bottom)`.
+  Style over(Style? other) {
     if (other == null) return this;
     return Style(
-      fg: other.fg ?? fg,
-      bg: other.bg ?? bg,
-      bold: other.bold || bold,
-      italic: other.italic || italic,
-      underline: other.underline || underline,
-      dim: other.dim || dim,
-      reverse: other.reverse || reverse,
-      strikethrough: other.strikethrough || strikethrough,
+      fg: fg ?? other.fg,
+      bg: bg ?? other.bg,
+      bold: bold || other.bold,
+      italic: italic || other.italic,
+      underline: underline || other.underline,
+      dim: dim || other.dim,
+      reverse: reverse || other.reverse,
+      strikethrough: strikethrough || other.strikethrough,
     );
+  }
+
+  /// Paint `this` underneath [other] — [other] wins where it sets a value.
+  /// Mnemonic: `bottom.under(top)`. Equivalent to `other.over(this)`.
+  Style under(Style? other) {
+    if (other == null) return this;
+    return other.over(this);
   }
 
   Style withFg(Color c) => copyWith(fg: c);

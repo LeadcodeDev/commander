@@ -36,13 +36,40 @@ class Buffer {
     return _cells[y * width + x];
   }
 
+  void _cleanupOrphan(int x, int y) {
+    if (!_inBounds(x, y)) return;
+    final idx = y * width + x;
+    final cur = _cells[idx];
+    if (cur.width == 0 && x > 0) {
+      final left = _cells[idx - 1];
+      if (left.width == 2) {
+        _cells[idx - 1] = Cell.empty;
+      }
+    }
+    if (cur.width == 2 && _inBounds(x + 1, y)) {
+      final right = _cells[idx + 1];
+      if (right.width == 0) {
+        _cells[idx + 1] = Cell.empty;
+      }
+    }
+  }
+
   void set(int x, int y, Cell cell) {
     if (!_inBounds(x, y)) return;
+    _cleanupOrphan(x, y);
     _cells[y * width + x] = cell;
   }
 
   void setChar(int x, int y, String char, {Style style = Style.none, int width = 1}) {
+    assert(width == 1 || width == 2,
+        'setChar width must be 1 or 2 (got $width)');
     if (!_inBounds(x, y)) return;
+    _cleanupOrphan(x, y);
+    if (width > 1) {
+      for (var i = 1; i < width; i++) {
+        _cleanupOrphan(x + i, y);
+      }
+    }
     _cells[y * this.width + x] = Cell(char: char, style: style, width: width);
     if (width > 1) {
       for (var i = 1; i < width; i++) {
@@ -89,7 +116,7 @@ class Buffer {
       for (var dx = 0; dx < clipped.width; dx++) {
         final current = get(clipped.x + dx, clipped.y + dy);
         set(clipped.x + dx, clipped.y + dy,
-            current.copyWith(style: style.merge(current.style)));
+            current.copyWith(style: current.style.over(style)));
       }
     }
   }

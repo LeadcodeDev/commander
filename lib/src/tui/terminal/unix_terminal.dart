@@ -215,14 +215,16 @@ class UnixTerminal implements Terminal {
   }
 
   @override
-  Future<(int, int)> queryCursorPosition() async {
+  Future<(int, int)> queryCursorPosition({
+    Duration timeout = const Duration(milliseconds: 500),
+  }) async {
     stdout.write('\x1B[6n');
     try {
       await stdout.flush();
     } catch (_) {}
     final buf = <int>[];
-    const maxAttempts = 50;
-    for (var i = 0; i < maxAttempts; i++) {
+    final sw = Stopwatch()..start();
+    while (sw.elapsed < timeout) {
       int b;
       try {
         b = stdin.readByteSync();

@@ -49,6 +49,7 @@ Future<void> runTerminal<S>({
   bool allowNonInteractive = false,
   bool enableMouse = true,
   bool exitOnCtrlC = true,
+  Duration cursorQueryTimeout = const Duration(milliseconds: 500),
 }) async {
   if (!allowNonInteractive) {
     final inIsTty = stdin.hasTerminal;
@@ -157,7 +158,7 @@ Future<void> runTerminal<S>({
         term.write('\n');
       }
       await term.flush();
-      final (_, newBottomRow) = await term.queryCursorPosition();
+      final (_, newBottomRow) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
       final newH = currentSize.height + delta;
       yOffset = (newBottomRow - newH + 1).clamp(0, term.size.height);
       currentSize = Size(currentSize.width, newH);
@@ -201,7 +202,7 @@ Future<void> runTerminal<S>({
       term.write('\x1B[2J\x1B[H');
     } else if (mode is FlowMode) {
       await term.flush();
-      final (_, row0) = await term.queryCursorPosition();
+      final (_, row0) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
       yOffset = row0;
       final m = mode as FlowMode;
       final h = flowEffectiveHeight(m);
@@ -210,7 +211,7 @@ Future<void> runTerminal<S>({
       }
       term.write('\x1B[${h}A');
       await term.flush();
-      final (_, row1) = await term.queryCursorPosition();
+      final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
       yOffset = row1;
       currentSize = Size(term.size.width, h);
       term.moveTo(0, yOffset);
@@ -222,7 +223,7 @@ Future<void> runTerminal<S>({
       }
       term.write('\x1B[${h}A');
       await term.flush();
-      final (_, row1) = await term.queryCursorPosition();
+      final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
       yOffset = row1;
       term.moveTo(0, yOffset);
       term.write('\x1B[0J');

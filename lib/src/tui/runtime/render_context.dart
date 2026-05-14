@@ -1,5 +1,7 @@
 import '../geometry/rect.dart';
 import '../rendering/buffer.dart';
+import '../style/color.dart';
+import '../style/style.dart';
 import '../theme/theme_data.dart';
 import '../widget/widget.dart';
 import 'async_registry.dart';
@@ -31,6 +33,7 @@ class RenderContext implements HitZoneSink {
 
   final _HitZoneCollector _hitZones = _HitZoneCollector();
   final List<({Widget widget, Rect area})> _overlays = [];
+  final Set<Key> _seenFocusables = <Key>{};
   String? _pendingTitle;
   int _maxDesiredHeight = 0;
 
@@ -62,6 +65,7 @@ class RenderContext implements HitZoneSink {
   void resetFrame() {
     _hitZones.clear();
     _overlays.clear();
+    _seenFocusables.clear();
     _pendingTitle = null;
     _maxDesiredHeight = 0;
   }
@@ -70,6 +74,9 @@ class RenderContext implements HitZoneSink {
   void add(Rect rect, Key key) => _hitZones.add(rect, key);
 
   void draw(Widget widget, Rect target) {
+    assert(target.width >= 0 && target.height >= 0,
+        'RenderContext.draw: target rect must have non-negative size '
+        '(got ${target.width}x${target.height})');
     if (target.bottom > _maxDesiredHeight) {
       _maxDesiredHeight = target.bottom;
     }
@@ -81,17 +88,48 @@ class RenderContext implements HitZoneSink {
           focus.clear();
         }
       } else {
+        assert(_seenFocusables.add(widget.id),
+            'Duplicate FocusableWidget id in same frame: ${widget.id}. '
+            'Each focusable widget must have a unique Key per frame.');
         focus.register(
           widget.id,
-          handler: (event) => widget.onKey(event, this),
+          handler: (event) {
+            try {
+              return widget.onKey(event, this);
+            } catch (e, st) {
+              logger.error('widget.onKey threw',
+                  error: e, stack: st);
+              return false;
+            }
+          },
         );
         if (focus.current == null) {
           focus.focus(widget.id);
         }
-        widget.registerHitZones(clipped, this);
+        try {
+          widget.registerHitZones(clipped, this);
+        } catch (e, st) {
+          logger.error('widget.registerHitZones threw',
+              error: e, stack: st);
+        }
       }
     }
-    widget.render(clipped, buffer, this);
+    try {
+      widget.render(clipped, buffer, this);
+    } catch (e, st) {
+      logger.error('widget.render threw', error: e, stack: st);
+      _drawErrorBoundary(clipped, e);
+    }
+  }
+
+  void _drawErrorBoundary(Rect area, Object error) {
+    if (area.isEmpty) return;
+    final msg = '[render error: $error]';
+    final truncated =
+        msg.length > area.width ? msg.substring(0, area.width) : msg;
+    buffer.writeText(area.x, area.y, truncated,
+        style: const Style(bg: Color.red, fg: Color.white, bold: true),
+        maxWidth: area.width);
   }
 
   void drawOverlay(Widget widget, Rect target) {

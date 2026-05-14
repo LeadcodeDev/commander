@@ -22,7 +22,9 @@ abstract interface class Terminal {
   Future<void> flush();
   void moveTo(int x, int y);
   void setTitle(String title);
-  Future<(int, int)> queryCursorPosition();
+  Future<(int, int)> queryCursorPosition({
+    Duration timeout = const Duration(milliseconds: 500),
+  });
 
   Future<void> shutdown();
 

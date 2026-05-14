@@ -24,10 +24,14 @@ class Renderer {
   }
 
   String paint(Buffer back) {
+    assert(back.width > 0 && back.height > 0,
+        'Renderer.paint: back buffer must be non-empty (got ${back.width}x${back.height})');
     if (_front == null || _front!.size != back.size) {
       _front = Buffer(back.size);
       _initialPaint = true;
     }
+    assert(_front!.size == back.size,
+        'Renderer invariant broken: front/back size mismatch ${_front!.size} vs ${back.size}');
     final sb = StringBuffer();
     final w = back.width;
     final h = back.height;
