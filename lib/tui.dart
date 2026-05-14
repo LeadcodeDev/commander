@@ -47,6 +47,7 @@ export 'src/tui/widgets/input/checkbox.dart';
 export 'src/tui/widgets/input/checkbox_group.dart';
 export 'src/tui/widgets/input/button.dart';
 export 'src/tui/widgets/input/radio_group.dart';
+export 'src/tui/widgets/input/switch.dart';
 
 export 'src/tui/widgets/list/list_view.dart';
 export 'src/tui/widgets/list/table.dart';
