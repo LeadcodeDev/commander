@@ -20,8 +20,9 @@ class InputState {
 }
 
 class Input implements FocusableWidget, SizedWidget {
+  final Key? _id;
   @override
-  final Key id;
+  Key get id => _id ?? ValueKey(state);
   final String message;
   final String? defaultValue;
   final String? placeholder;
@@ -46,7 +47,7 @@ class Input implements FocusableWidget, SizedWidget {
   final Style? successPrefixStyle;
 
   const Input({
-    required this.id,
+    Key? id,
     required this.message,
     required this.state,
     this.defaultValue,
@@ -66,7 +67,7 @@ class Input implements FocusableWidget, SizedWidget {
     this.askPrefixStyle,
     this.errorPrefixStyle,
     this.successPrefixStyle,
-  });
+  }) : _id = id;
 
   @override
   bool get isSkipped => state.submitted && lockOnSubmit;

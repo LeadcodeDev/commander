@@ -31,7 +31,6 @@ Future<void> main() => runTerminal<FormState>(
             flow: (ctx) async {
               state.nameValue = await ctx.draw<String>(
                 Input(
-                  id: Key.symbol(#name),
                   state: state.name,
                   message: 'Your name?',
                   placeholder: 'John Doe',
@@ -42,7 +41,6 @@ Future<void> main() => runTerminal<FormState>(
 
               state.emailValue = await ctx.draw<String>(
                 Input(
-                  id: Key.symbol(#email),
                   state: state.email,
                   message: 'Email?',
                   placeholder: 'you@example.com',
@@ -59,7 +57,6 @@ Future<void> main() => runTerminal<FormState>(
               if (state.emailValue!.contains('admin')) {
                 state.passwordValue = await ctx.draw<String>(
                   Input(
-                    id: Key.symbol(#password),
                     state: state.password,
                     message: 'Admin password?',
                     obscure: true,
@@ -71,7 +68,6 @@ Future<void> main() => runTerminal<FormState>(
 
               state.portValue = int.parse(await ctx.draw<String>(
                 Input(
-                  id: Key.symbol(#port),
                   state: state.port,
                   message: 'Port?',
                   defaultValue: '8080',
