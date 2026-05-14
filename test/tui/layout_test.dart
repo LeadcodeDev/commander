@@ -31,5 +31,14 @@ void main() {
       ]).split(const Rect.zero());
       expect(rects.every((r) => r.isEmpty), isTrue);
     });
+
+    test('fill weights all zero do not divide by zero', () {
+      final rects = Layout.horizontal([
+        const Constraint.fill(0),
+        const Constraint.fill(0),
+      ]).split(const Rect(0, 0, 10, 1));
+      expect(rects.length, 2);
+      expect(rects[0].width + rects[1].width, 10);
+    });
   });
 }

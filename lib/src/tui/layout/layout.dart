@@ -73,6 +73,7 @@ class Layout {
     }
 
     if (fillIndices.isNotEmpty && remaining > 0) {
+      if (fillWeightTotal == 0) fillWeightTotal = fillIndices.length;
       var fillTotal = remaining;
       for (var k = 0; k < fillIndices.length; k++) {
         final i = fillIndices[k];

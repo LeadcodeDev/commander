@@ -22,10 +22,15 @@ final class FlowMode extends RenderMode {
   final int? height;
   final int? minHeight;
   final bool autoGrow;
-  const FlowMode({this.height, this.minHeight, this.autoGrow = false});
+  const FlowMode({this.height, this.minHeight, this.autoGrow = false})
+      : assert(height == null || height > 0,
+            'FlowMode.height must be > 0'),
+        assert(minHeight == null || minHeight > 0,
+            'FlowMode.minHeight must be > 0');
 }
 
 final class InlineMode extends RenderMode {
   final int height;
-  const InlineMode({required this.height});
+  const InlineMode({required this.height})
+      : assert(height > 0, 'InlineMode.height must be > 0');
 }

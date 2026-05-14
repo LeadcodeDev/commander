@@ -189,6 +189,28 @@ void main() {
       expect(state.selected, {'A'});
     });
 
+    test('filter eliminating all items does not crash on Home/End', () {
+      final state = SelectState<String>();
+      final widget = Select<String>(
+        id: Key.symbol(#s),
+        items: const ['France', 'Germany', 'Italy'],
+        state: state,
+        builder: _builder,
+        filterable: true,
+      );
+      final ctx = _ctx();
+      state.filterFocused = true;
+      widget.onKey(const KeyEvent(char: 'z'), ctx);
+      widget.onKey(const KeyEvent(char: 'z'), ctx);
+      state.filterFocused = false;
+      expect(() => widget.onKey(const KeyEvent(key: NamedKey.home), ctx),
+          returnsNormally);
+      expect(() => widget.onKey(const KeyEvent(key: NamedKey.end), ctx),
+          returnsNormally);
+      expect(() => widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx),
+          returnsNormally);
+    });
+
     test('filter narrows visible items', () {
       final state = SelectState<String>();
       final widget = Select<String>(

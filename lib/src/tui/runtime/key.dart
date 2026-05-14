@@ -43,9 +43,21 @@ final class SymbolKey extends Key {
   String toString() => 'Key.symbol($symbol)';
 }
 
+/// Composite key built from a list of primitive parts.
+///
+/// `parts` must contain only primitive values (`num`, `String`, `Symbol`,
+/// `bool`). Non-primitive parts (e.g. `List`, `Map`, custom objects without a
+/// content-based `hashCode`) would break the `==`/`hashCode` contract: equal
+/// keys could end up with different hashes, corrupting `Set<Key>` and
+/// `Map<Key, _>` lookups used by focus and async tracking.
 final class CompositeKey extends Key {
   final List<Object> parts;
-  const CompositeKey(this.parts) : super._();
+  CompositeKey(this.parts)
+      : assert(
+          parts.every((p) => p is num || p is String || p is Symbol || p is bool),
+          'CompositeKey parts must be primitives (num/String/Symbol/bool)',
+        ),
+        super._();
 
   @override
   bool operator ==(Object other) {
