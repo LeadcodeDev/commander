@@ -46,11 +46,15 @@ export 'src/tui/widgets/display/screen.dart';
 
 export 'src/tui/widgets/input/text_field.dart';
 export 'src/tui/widgets/input/input.dart';
+export 'src/tui/widgets/input/input_number.dart';
 export 'src/tui/widgets/input/checkbox.dart';
 export 'src/tui/widgets/input/checkbox_group.dart';
 export 'src/tui/widgets/input/button.dart';
 export 'src/tui/widgets/input/radio_group.dart';
 export 'src/tui/widgets/input/switch.dart';
+export 'src/tui/widgets/input/slider.dart';
+export 'src/tui/widgets/input/range.dart';
+export 'src/tui/widgets/input/date_picker.dart';
 
 export 'src/tui/widgets/list/list_view.dart';
 export 'src/tui/widgets/list/table.dart';
