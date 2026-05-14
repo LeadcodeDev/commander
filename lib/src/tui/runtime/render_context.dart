@@ -65,12 +65,21 @@ class RenderContext implements HitZoneSink {
   void draw(Widget widget, Rect target) {
     final clipped = target.intersect(buffer.area);
     if (clipped.isEmpty) return;
-    if (widget is FocusableWidget && !widget.isSkipped) {
-      focus.register(
-        widget.id,
-        handler: (event) => widget.onKey(event, this),
-      );
-      widget.registerHitZones(clipped, this);
+    if (widget is FocusableWidget) {
+      if (widget.isSkipped) {
+        if (focus.current == widget.id) {
+          focus.clear();
+        }
+      } else {
+        focus.register(
+          widget.id,
+          handler: (event) => widget.onKey(event, this),
+        );
+        if (focus.current == null) {
+          focus.focus(widget.id);
+        }
+        widget.registerHitZones(clipped, this);
+      }
     }
     widget.render(clipped, buffer, this);
   }

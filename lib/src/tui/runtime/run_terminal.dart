@@ -201,17 +201,16 @@ Future<void> runTerminal<S>({
             handle.stop();
             break;
           }
-          if (event.key == 'Tab' && !event.shift) {
-            focus.next();
+          consumed = focus.dispatchKey(event);
+          if (consumed) handle.requestRedraw();
+          if (!consumed && event.key == 'Tab') {
+            if (event.shift) {
+              focus.previous();
+            } else {
+              focus.next();
+            }
             handle.requestRedraw();
             consumed = true;
-          } else if (event.key == 'Tab' && event.shift) {
-            focus.previous();
-            handle.requestRedraw();
-            consumed = true;
-          } else {
-            consumed = focus.dispatchKey(event);
-            if (consumed) handle.requestRedraw();
           }
         } else if (event is MouseEvent && event.action == MouseAction.down) {
           for (final z in lastHitZones) {

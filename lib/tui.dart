@@ -44,6 +44,7 @@ export 'src/tui/widgets/display/focusable.dart';
 export 'src/tui/widgets/display/screen.dart';
 
 export 'src/tui/widgets/input/text_field.dart';
+export 'src/tui/widgets/input/input.dart';
 export 'src/tui/widgets/input/checkbox.dart';
 export 'src/tui/widgets/input/checkbox_group.dart';
 export 'src/tui/widgets/input/button.dart';
