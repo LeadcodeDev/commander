@@ -41,6 +41,7 @@ export 'src/tui/widgets/display/divider.dart';
 export 'src/tui/widgets/display/row_column.dart';
 export 'src/tui/widgets/display/stack.dart';
 export 'src/tui/widgets/display/focusable.dart';
+export 'src/tui/widgets/display/screen.dart';
 
 export 'src/tui/widgets/input/text_field.dart';
 export 'src/tui/widgets/input/checkbox.dart';

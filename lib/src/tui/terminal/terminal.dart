@@ -21,6 +21,7 @@ abstract interface class Terminal {
   void write(String data);
   Future<void> flush();
   void moveTo(int x, int y);
+  void setTitle(String title);
 
   Future<void> shutdown();
 

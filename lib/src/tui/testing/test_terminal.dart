@@ -58,6 +58,8 @@ class TestTerminal implements Terminal {
   @override
   void moveTo(int x, int y) => _output.write('\x1B[${y + 1};${x + 1}H');
   @override
+  void setTitle(String title) => _output.write('\x1B]0;$title\x07');
+  @override
   Future<void> flush() async {}
 
   @override

@@ -217,6 +217,12 @@ class UnixTerminal implements Terminal {
   void moveTo(int x, int y) => stdout.write(AnsiSequences.moveTo(x, y));
 
   @override
+  void setTitle(String title) {
+    final safe = title.replaceAll('\x07', '').replaceAll('\x1B', '');
+    stdout.write('\x1B]0;$safe\x07');
+  }
+
+  @override
   Future<void> flush() => stdout.flush();
 
   @override

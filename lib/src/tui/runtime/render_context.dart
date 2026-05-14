@@ -30,6 +30,7 @@ class RenderContext implements HitZoneSink {
 
   final _HitZoneCollector _hitZones = _HitZoneCollector();
   final List<({Widget widget, Rect area})> _overlays = [];
+  String? _pendingTitle;
 
   RenderContext({
     required this.buffer,
@@ -44,12 +45,18 @@ class RenderContext implements HitZoneSink {
   List<({Rect rect, Key key})> get hitZones => _hitZones.zones;
   List<({Widget widget, Rect area})> get overlays =>
       List.unmodifiable(_overlays);
+  String? get pendingTitle => _pendingTitle;
+
+  void setTitle(String title) {
+    _pendingTitle = title;
+  }
 
   bool isFocused(Key id) => focus.isFocused(id);
 
   void resetFrame() {
     _hitZones.clear();
     _overlays.clear();
+    _pendingTitle = null;
   }
 
   @override

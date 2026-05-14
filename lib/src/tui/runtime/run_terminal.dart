@@ -124,6 +124,10 @@ Future<void> runTerminal<S>({
 
     render(ctx, state);
     ctx.flushOverlays();
+    final newTitle = ctx.pendingTitle;
+    if (newTitle != null) {
+      term.setTitle(newTitle);
+    }
 
     focus.finalizeFrame();
     async_.endFrame();
