@@ -25,8 +25,8 @@ Future<void> main() => runTerminal<State>(
       themeBuilder: buildTheme,
       onEvent: (s, event, handle) {
         if (event is KeyEvent) {
-          if (event.key == 'q') handle.stop();
-          if (event.key == 't') {
+          if (event.char == 'q') handle.stop();
+          if (event.char == 't') {
             s.dark = !s.dark;
             handle.requestRedraw();
           }

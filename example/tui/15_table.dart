@@ -64,15 +64,15 @@ Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (s, event, handle) {
         if (event is! KeyEvent) return;
-        if (event.key == 'q' && event.ctrl) {
+        if (event.char == 'q' && event.ctrl) {
           handle.stop();
           return;
         }
-        if (event.key == 's') {
+        if (event.char == 's') {
           s.sortByScore = !s.sortByScore;
           handle.requestRedraw();
         }
-        if (event.key == 'f') {
+        if (event.char == 'f') {
           s.onlyActive = !s.onlyActive;
           handle.requestRedraw();
         }

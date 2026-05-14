@@ -36,7 +36,7 @@ class Switch implements FocusableWidget {
 
   @override
   bool onKey(KeyEvent event, RenderContext ctx) {
-    if (event.key == ' ' || event.key == 'Enter') {
+    if (event.char == ' ' || event.key == NamedKey.enter) {
       onChanged?.call(!checked);
       return true;
     }

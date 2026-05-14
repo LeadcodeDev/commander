@@ -4,20 +4,59 @@ sealed class Event {
   const Event();
 }
 
+enum NamedKey {
+  enter,
+  escape,
+  tab,
+  backspace,
+  delete,
+  insert,
+  arrowUp,
+  arrowDown,
+  arrowLeft,
+  arrowRight,
+  home,
+  end,
+  pageUp,
+  pageDown,
+  f1,
+  f2,
+  f3,
+  f4,
+  f5,
+  f6,
+  f7,
+  f8,
+  f9,
+  f10,
+  f11,
+  f12,
+  unknown,
+}
+
 class KeyEvent extends Event {
-  final String key;
+  final NamedKey? key;
+  final String? char;
   final bool ctrl;
   final bool alt;
   final bool shift;
   final List<int> raw;
 
   const KeyEvent({
-    required this.key,
+    this.key,
+    this.char,
     this.ctrl = false,
     this.alt = false,
     this.shift = false,
     this.raw = const [],
-  });
+  }) : assert(key != null || char != null,
+            'KeyEvent must have either key or char set');
+
+  bool get isNamed => key != null;
+  bool get isChar => char != null;
+
+  bool matches(NamedKey named) => key == named;
+  bool isChar_(String c) => char == c;
 
   @override
   String toString() {
@@ -26,7 +65,8 @@ class KeyEvent extends Event {
       if (alt) 'alt',
       if (shift) 'shift',
     ].join('+');
-    return mods.isEmpty ? 'Key($key)' : 'Key($mods+$key)';
+    final label = key?.name ?? char ?? '';
+    return mods.isEmpty ? 'Key($label)' : 'Key($mods+$label)';
   }
 }
 

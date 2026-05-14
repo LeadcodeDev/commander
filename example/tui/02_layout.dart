@@ -7,7 +7,7 @@ class State {
 Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (state, event, handle) {
-        if (event is KeyEvent && event.key == 'q') handle.stop();
+        if (event is KeyEvent && event.char == 'q') handle.stop();
       },
       render: (ctx, state) {
         final rects = Layout.vertical([

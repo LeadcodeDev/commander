@@ -9,13 +9,13 @@ Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (s, event, handle) {
         if (event is KeyEvent) {
-          if (event.key == '+') {
+          if (event.char == '+') {
             s.counter++;
             handle.requestRedraw();
-          } else if (event.key == '-') {
+          } else if (event.char == '-') {
             s.counter--;
             handle.requestRedraw();
-          } else if (event.key == 'q') {
+          } else if (event.char == 'q') {
             s.wantsExit = true;
             handle.requestRedraw();
           }
@@ -58,7 +58,7 @@ Future<void> main() => runTerminal<State>(
                           ),
                         ),
                         onKeyHandler: (event) {
-                          if (event.key == 'Enter' || event.key == ' ') {
+                          if (event.key == NamedKey.enter || event.char == ' ') {
                             exit();
                             return true;
                           }

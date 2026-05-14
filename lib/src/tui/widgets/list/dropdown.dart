@@ -49,7 +49,7 @@ class Dropdown<T> implements FocusableWidget {
   @override
   bool onKey(KeyEvent event, RenderContext ctx) {
     if (!state.open) {
-      if (event.key == 'Enter' || event.key == ' ') {
+      if (event.key == NamedKey.enter || event.char == ' ') {
         state.open = true;
         state.highlightedIndex = selected == null
             ? 0
@@ -58,26 +58,26 @@ class Dropdown<T> implements FocusableWidget {
       }
       return false;
     }
-    switch (event.key) {
-      case 'Escape':
-        state.open = false;
-        return true;
-      case 'ArrowDown':
-      case 'j':
-        state.highlightedIndex =
-            (state.highlightedIndex + 1).clamp(0, options.length - 1);
-        return true;
-      case 'ArrowUp':
-      case 'k':
-        state.highlightedIndex =
-            (state.highlightedIndex - 1).clamp(0, options.length - 1);
-        return true;
-      case 'Enter':
-        if (options.isNotEmpty) {
-          onChanged?.call(options[state.highlightedIndex]);
-        }
-        state.open = false;
-        return true;
+    if (event.key == NamedKey.escape) {
+      state.open = false;
+      return true;
+    }
+    if (event.key == NamedKey.arrowDown || event.char == 'j') {
+      state.highlightedIndex =
+          (state.highlightedIndex + 1).clamp(0, options.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.arrowUp || event.char == 'k') {
+      state.highlightedIndex =
+          (state.highlightedIndex - 1).clamp(0, options.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.enter) {
+      if (options.isNotEmpty) {
+        onChanged?.call(options[state.highlightedIndex]);
+      }
+      state.open = false;
+      return true;
     }
     return false;
   }

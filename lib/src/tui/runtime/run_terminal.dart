@@ -197,13 +197,13 @@ Future<void> runTerminal<S>({
 
       try {
         if (event is KeyEvent) {
-          if (exitOnCtrlC && event.ctrl && event.key == 'c') {
+          if (exitOnCtrlC && event.ctrl && event.char == 'c') {
             handle.stop();
             break;
           }
           consumed = focus.dispatchKey(event);
           if (consumed) handle.requestRedraw();
-          if (!consumed && event.key == 'Tab') {
+          if (!consumed && event.key == NamedKey.tab) {
             if (event.shift) {
               focus.previous();
             } else {

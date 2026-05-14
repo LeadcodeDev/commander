@@ -66,33 +66,31 @@ class CheckboxGroup<T> implements FocusableWidget {
     if (items.isEmpty) return false;
     state.activeIndex = state.activeIndex.clamp(0, items.length - 1);
 
-    switch (event.key) {
-      case 'ArrowUp':
-      case 'k':
-        state.activeIndex = (state.activeIndex - 1).clamp(0, items.length - 1);
-        return true;
-      case 'ArrowDown':
-      case 'j':
-        state.activeIndex = (state.activeIndex + 1).clamp(0, items.length - 1);
-        return true;
-      case 'Home':
-        state.activeIndex = 0;
-        return true;
-      case 'End':
-        state.activeIndex = items.length - 1;
-        return true;
-      case 'PageUp':
-      case 'PageDown':
-        return false;
-      case ' ':
-        final item = items[state.activeIndex];
-        if (state.checked.contains(item)) {
-          state.checked.remove(item);
-        } else {
-          state.checked.add(item);
-        }
-        onChanged?.call(state.checked.toList(growable: false));
-        return true;
+    if (event.key == NamedKey.arrowUp || event.char == 'k') {
+      state.activeIndex = (state.activeIndex - 1).clamp(0, items.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.arrowDown || event.char == 'j') {
+      state.activeIndex = (state.activeIndex + 1).clamp(0, items.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.home) {
+      state.activeIndex = 0;
+      return true;
+    }
+    if (event.key == NamedKey.end) {
+      state.activeIndex = items.length - 1;
+      return true;
+    }
+    if (event.char == ' ') {
+      final item = items[state.activeIndex];
+      if (state.checked.contains(item)) {
+        state.checked.remove(item);
+      } else {
+        state.checked.add(item);
+      }
+      onChanged?.call(state.checked.toList(growable: false));
+      return true;
     }
     return false;
   }

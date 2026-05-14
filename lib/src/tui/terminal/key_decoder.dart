@@ -19,11 +19,11 @@ class KeyDecoder {
 
     if (b0 == 0x1B) {
       if (_buffer.length == 1) {
-        return (event: const KeyEvent(key: 'Escape'), consumed: 1);
+        return (event: const KeyEvent(key: NamedKey.escape), consumed: 1);
       }
       final b1 = _buffer[1];
       if (b1 == 0x1B) {
-        return (event: const KeyEvent(key: 'Escape'), consumed: 1);
+        return (event: const KeyEvent(key: NamedKey.escape), consumed: 1);
       }
       if (b1 == 0x5B) {
         return _decodeCsi();
@@ -33,45 +33,53 @@ class KeyDecoder {
       }
       if (b1 >= 0x20 && b1 < 0x7F) {
         return (
-          event: KeyEvent(key: String.fromCharCode(b1), alt: true, raw: [b0, b1]),
+          event: KeyEvent(
+              char: String.fromCharCode(b1), alt: true, raw: [b0, b1]),
           consumed: 2,
         );
       }
-      return (event: const KeyEvent(key: 'Escape'), consumed: 1);
+      return (event: const KeyEvent(key: NamedKey.escape), consumed: 1);
     }
 
     if (b0 == 0x0D || b0 == 0x0A) {
-      return (event: const KeyEvent(key: 'Enter'), consumed: 1);
+      return (event: const KeyEvent(key: NamedKey.enter), consumed: 1);
     }
     if (b0 == 0x09) {
-      return (event: const KeyEvent(key: 'Tab'), consumed: 1);
+      return (event: const KeyEvent(key: NamedKey.tab), consumed: 1);
     }
     if (b0 == 0x7F || b0 == 0x08) {
-      return (event: const KeyEvent(key: 'Backspace'), consumed: 1);
+      return (event: const KeyEvent(key: NamedKey.backspace), consumed: 1);
     }
     if (b0 == 0x20) {
-      return (event: const KeyEvent(key: ' '), consumed: 1);
+      return (event: const KeyEvent(char: ' '), consumed: 1);
     }
 
     if (b0 < 0x20) {
       final letter = String.fromCharCode(b0 + 0x60);
       return (
-        event: KeyEvent(key: letter, ctrl: true, raw: [b0]),
+        event: KeyEvent(char: letter, ctrl: true, raw: [b0]),
         consumed: 1,
       );
     }
 
     if (b0 < 0x80) {
-      return (event: KeyEvent(key: String.fromCharCode(b0)), consumed: 1);
+      return (event: KeyEvent(char: String.fromCharCode(b0)), consumed: 1);
     }
 
     int seqLen = 1;
-    if ((b0 & 0xE0) == 0xC0) seqLen = 2;
-    else if ((b0 & 0xF0) == 0xE0) seqLen = 3;
-    else if ((b0 & 0xF8) == 0xF0) seqLen = 4;
+    if ((b0 & 0xE0) == 0xC0) {
+      seqLen = 2;
+    } else if ((b0 & 0xF0) == 0xE0) {
+      seqLen = 3;
+    } else if ((b0 & 0xF8) == 0xF0) {
+      seqLen = 4;
+    }
     if (_buffer.length < seqLen) return null;
     final s = String.fromCharCodes(_buffer.sublist(0, seqLen));
-    return (event: KeyEvent(key: s, raw: _buffer.sublist(0, seqLen)), consumed: seqLen);
+    return (
+      event: KeyEvent(char: s, raw: _buffer.sublist(0, seqLen)),
+      consumed: seqLen,
+    );
   }
 
   ({Event event, int consumed})? _decodeCsi() {
@@ -101,22 +109,26 @@ class KeyDecoder {
     if (_buffer.length < 3) return null;
     final c = String.fromCharCode(_buffer[2]);
     final key = switch (c) {
-      'A' => 'ArrowUp',
-      'B' => 'ArrowDown',
-      'C' => 'ArrowRight',
-      'D' => 'ArrowLeft',
-      'H' => 'Home',
-      'F' => 'End',
-      'P' => 'F1',
-      'Q' => 'F2',
-      'R' => 'F3',
-      'S' => 'F4',
-      _ => c,
+      'A' => NamedKey.arrowUp,
+      'B' => NamedKey.arrowDown,
+      'C' => NamedKey.arrowRight,
+      'D' => NamedKey.arrowLeft,
+      'H' => NamedKey.home,
+      'F' => NamedKey.end,
+      'P' => NamedKey.f1,
+      'Q' => NamedKey.f2,
+      'R' => NamedKey.f3,
+      'S' => NamedKey.f4,
+      _ => null,
     };
-    return (event: KeyEvent(key: key), consumed: 3);
+    if (key != null) {
+      return (event: KeyEvent(key: key), consumed: 3);
+    }
+    return (event: KeyEvent(char: c), consumed: 3);
   }
 
-  ({Event event, int consumed})? _interpretCsi(String params, String finalByte, int consumed) {
+  ({Event event, int consumed})? _interpretCsi(
+      String params, String finalByte, int consumed) {
     if (params.startsWith('<')) {
       final parts = params.substring(1).split(';');
       if (parts.length >= 3) {
@@ -157,44 +169,47 @@ class KeyDecoder {
       }
     }
 
-    final key = switch (finalByte) {
-      'A' => 'ArrowUp',
-      'B' => 'ArrowDown',
-      'C' => 'ArrowRight',
-      'D' => 'ArrowLeft',
-      'H' => 'Home',
-      'F' => 'End',
-      'Z' => 'Tab',
+    final shift = finalByte == 'Z';
+    final namedKey = switch (finalByte) {
+      'A' => NamedKey.arrowUp,
+      'B' => NamedKey.arrowDown,
+      'C' => NamedKey.arrowRight,
+      'D' => NamedKey.arrowLeft,
+      'H' => NamedKey.home,
+      'F' => NamedKey.end,
+      'Z' => NamedKey.tab,
       '~' => _decodeTildeKey(params),
-      _ => finalByte,
+      _ => null,
     };
 
-    final shift = finalByte == 'Z';
-    return (event: KeyEvent(key: key, shift: shift), consumed: consumed);
+    if (namedKey != null) {
+      return (event: KeyEvent(key: namedKey, shift: shift), consumed: consumed);
+    }
+    return (event: KeyEvent(char: finalByte, shift: shift), consumed: consumed);
   }
 
-  String _decodeTildeKey(String params) {
+  NamedKey? _decodeTildeKey(String params) {
     final n = int.tryParse(params.split(';').first) ?? 0;
     return switch (n) {
-      1 || 7 => 'Home',
-      2 => 'Insert',
-      3 => 'Delete',
-      4 || 8 => 'End',
-      5 => 'PageUp',
-      6 => 'PageDown',
-      11 => 'F1',
-      12 => 'F2',
-      13 => 'F3',
-      14 => 'F4',
-      15 => 'F5',
-      17 => 'F6',
-      18 => 'F7',
-      19 => 'F8',
-      20 => 'F9',
-      21 => 'F10',
-      23 => 'F11',
-      24 => 'F12',
-      _ => 'Unknown',
+      1 || 7 => NamedKey.home,
+      2 => NamedKey.insert,
+      3 => NamedKey.delete,
+      4 || 8 => NamedKey.end,
+      5 => NamedKey.pageUp,
+      6 => NamedKey.pageDown,
+      11 => NamedKey.f1,
+      12 => NamedKey.f2,
+      13 => NamedKey.f3,
+      14 => NamedKey.f4,
+      15 => NamedKey.f5,
+      17 => NamedKey.f6,
+      18 => NamedKey.f7,
+      19 => NamedKey.f8,
+      20 => NamedKey.f9,
+      21 => NamedKey.f10,
+      23 => NamedKey.f11,
+      24 => NamedKey.f12,
+      _ => NamedKey.unknown,
     };
   }
 }

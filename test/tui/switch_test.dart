@@ -33,7 +33,7 @@ void main() {
         onChanged: (v) => newValue = v,
       );
       final ctx = _ctx();
-      w.onKey(const KeyEvent(key: ' '), ctx);
+      w.onKey(const KeyEvent(char: ' '), ctx);
       expect(newValue, isTrue);
     });
 
@@ -45,15 +45,15 @@ void main() {
         onChanged: (v) => newValue = v,
       );
       final ctx = _ctx();
-      w.onKey(const KeyEvent(key: 'Enter'), ctx);
+      w.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(newValue, isFalse);
     });
 
     test('other keys are not consumed', () {
       final w = tui.Switch(id: Key.symbol(#s), checked: false);
       final ctx = _ctx();
-      expect(w.onKey(const KeyEvent(key: 'a'), ctx), isFalse);
-      expect(w.onKey(const KeyEvent(key: 'Tab'), ctx), isFalse);
+      expect(w.onKey(const KeyEvent(char: 'a'), ctx), isFalse);
+      expect(w.onKey(const KeyEvent(key: NamedKey.tab), ctx), isFalse);
     });
   });
 }

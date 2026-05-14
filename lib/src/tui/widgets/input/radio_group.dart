@@ -42,18 +42,18 @@ class RadioGroup<T> implements FocusableWidget {
   @override
   bool onKey(KeyEvent event, RenderContext ctx) {
     final idx = options.indexWhere((o) => o.value == selected);
-    switch (event.key) {
-      case 'ArrowUp':
-        final next = (idx <= 0 ? options.length - 1 : idx - 1);
-        if (next >= 0) onChanged?.call(options[next].value);
-        return true;
-      case 'ArrowDown':
-        final next = (idx + 1) % options.length;
-        if (next >= 0) onChanged?.call(options[next].value);
-        return true;
-      case ' ':
-      case 'Enter':
-        return true;
+    if (event.key == NamedKey.arrowUp) {
+      final next = (idx <= 0 ? options.length - 1 : idx - 1);
+      if (next >= 0) onChanged?.call(options[next].value);
+      return true;
+    }
+    if (event.key == NamedKey.arrowDown) {
+      final next = (idx + 1) % options.length;
+      if (next >= 0) onChanged?.call(options[next].value);
+      return true;
+    }
+    if (event.char == ' ' || event.key == NamedKey.enter) {
+      return true;
     }
     return false;
   }

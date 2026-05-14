@@ -32,7 +32,7 @@ class Button implements FocusableWidget {
 
   @override
   bool onKey(KeyEvent event, RenderContext ctx) {
-    if (event.key == 'Enter' || event.key == ' ') {
+    if (event.key == NamedKey.enter || event.char == ' ') {
       onPressed?.call();
       return true;
     }

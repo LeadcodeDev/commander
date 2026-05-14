@@ -13,8 +13,8 @@ Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (s, event, handle) {
         if (event is KeyEvent) {
-          if (event.key == 'q') handle.stop();
-          if (event.key == 'r') {
+          if (event.char == 'q') handle.stop();
+          if (event.char == 'r') {
             s.counter++;
             handle.requestRedraw();
           }

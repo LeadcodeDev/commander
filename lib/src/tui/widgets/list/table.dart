@@ -226,50 +226,54 @@ class Table<T> implements FocusableWidget {
     state.activeRow = state.activeRow.clamp(0, filtered.length - 1);
     state.activeColumn = state.activeColumn.clamp(0, columns.length - 1);
 
-    switch (event.key) {
-      case 'ArrowDown':
-      case 'j':
-        state.activeRow = (state.activeRow + 1).clamp(0, filtered.length - 1);
-        return true;
-      case 'ArrowUp':
-      case 'k':
-        state.activeRow = (state.activeRow - 1).clamp(0, filtered.length - 1);
-        return true;
-      case 'ArrowRight':
-      case 'l':
-        state.activeColumn =
-            (state.activeColumn + 1).clamp(0, columns.length - 1);
-        return true;
-      case 'ArrowLeft':
-      case 'h':
-        state.activeColumn =
-            (state.activeColumn - 1).clamp(0, columns.length - 1);
-        return true;
-      case 'Home':
-        if (event.ctrl) {
-          state.activeColumn = 0;
-        } else {
-          state.activeRow = 0;
-        }
-        return true;
-      case 'End':
-        if (event.ctrl) {
-          state.activeColumn = columns.length - 1;
-        } else {
-          state.activeRow = filtered.length - 1;
-        }
-        return true;
-      case 'PageDown':
-        state.activeRow = (state.activeRow + 10).clamp(0, filtered.length - 1);
-        return true;
-      case 'PageUp':
-        state.activeRow = (state.activeRow - 10).clamp(0, filtered.length - 1);
-        return true;
-      case 'Enter':
-        onRowActivated?.call(state.activeRow, filtered[state.activeRow]);
-        return true;
-      case ' ':
-        return _handleSpace(event);
+    if (event.key == NamedKey.arrowDown || event.char == 'j') {
+      state.activeRow = (state.activeRow + 1).clamp(0, filtered.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.arrowUp || event.char == 'k') {
+      state.activeRow = (state.activeRow - 1).clamp(0, filtered.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.arrowRight || event.char == 'l') {
+      state.activeColumn =
+          (state.activeColumn + 1).clamp(0, columns.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.arrowLeft || event.char == 'h') {
+      state.activeColumn =
+          (state.activeColumn - 1).clamp(0, columns.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.home) {
+      if (event.ctrl) {
+        state.activeColumn = 0;
+      } else {
+        state.activeRow = 0;
+      }
+      return true;
+    }
+    if (event.key == NamedKey.end) {
+      if (event.ctrl) {
+        state.activeColumn = columns.length - 1;
+      } else {
+        state.activeRow = filtered.length - 1;
+      }
+      return true;
+    }
+    if (event.key == NamedKey.pageDown) {
+      state.activeRow = (state.activeRow + 10).clamp(0, filtered.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.pageUp) {
+      state.activeRow = (state.activeRow - 10).clamp(0, filtered.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.enter) {
+      onRowActivated?.call(state.activeRow, filtered[state.activeRow]);
+      return true;
+    }
+    if (event.char == ' ') {
+      return _handleSpace(event);
     }
     return false;
   }

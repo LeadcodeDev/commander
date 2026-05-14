@@ -106,59 +106,66 @@ class Input implements FocusableWidget {
     var v = state.value;
     String? next;
 
-    switch (event.key) {
-      case 'Tab':
-        if (state.value.isEmpty &&
-            placeholder != null &&
-            placeholder!.isNotEmpty) {
-          state.value = placeholder!;
-          state.cursor = state.value.length;
-          state.error = null;
-          onChanged?.call(state.value);
-        }
-        return false;
-      case 'Enter':
-        _submit();
-        return true;
-      case 'Backspace':
-        if (cur > 0) {
-          next = v.substring(0, cur - 1) + v.substring(cur);
-          cur -= 1;
-        }
-      case 'Delete':
-        if (cur < v.length) {
-          next = v.substring(0, cur) + v.substring(cur + 1);
-        }
-      case 'ArrowLeft':
-        if (v.isEmpty &&
-            placeholder != null &&
-            placeholder!.isNotEmpty) {
-          state.value = placeholder!;
-          state.cursor = state.value.length;
-          state.error = null;
-          onChanged?.call(state.value);
+    if (event.key != null) {
+      switch (event.key!) {
+        case NamedKey.tab:
+          if (state.value.isEmpty &&
+              placeholder != null &&
+              placeholder!.isNotEmpty) {
+            state.value = placeholder!;
+            state.cursor = state.value.length;
+            state.error = null;
+            onChanged?.call(state.value);
+          }
+          return false;
+        case NamedKey.enter:
+          _submit();
           return true;
-        }
-        if (cur > 0) cur -= 1;
-        state.cursor = cur;
-        return true;
-      case 'ArrowRight':
-        if (cur < v.length) cur += 1;
-        state.cursor = cur;
-        return true;
-      case 'Home':
-        state.cursor = 0;
-        return true;
-      case 'End':
-        state.cursor = v.length;
-        return true;
-      default:
-        if (event.ctrl || event.alt) return false;
-        if (event.key.runes.length == 1 && event.key.runes.first >= 0x20 &&
-            event.key.runes.first != 0x7F) {
-          next = v.substring(0, cur) + event.key + v.substring(cur);
-          cur += event.key.length;
-        }
+        case NamedKey.backspace:
+          if (cur > 0) {
+            next = v.substring(0, cur - 1) + v.substring(cur);
+            cur -= 1;
+          }
+        case NamedKey.delete:
+          if (cur < v.length) {
+            next = v.substring(0, cur) + v.substring(cur + 1);
+          }
+        case NamedKey.arrowLeft:
+          if (v.isEmpty &&
+              placeholder != null &&
+              placeholder!.isNotEmpty) {
+            state.value = placeholder!;
+            state.cursor = state.value.length;
+            state.error = null;
+            onChanged?.call(state.value);
+            return true;
+          }
+          if (cur > 0) cur -= 1;
+          state.cursor = cur;
+          return true;
+        case NamedKey.arrowRight:
+          if (cur < v.length) cur += 1;
+          state.cursor = cur;
+          return true;
+        case NamedKey.home:
+          state.cursor = 0;
+          return true;
+        case NamedKey.end:
+          state.cursor = v.length;
+          return true;
+        default:
+          return false;
+      }
+    } else {
+      if (event.ctrl || event.alt) return false;
+      final c = event.char;
+      if (c != null &&
+          c.runes.length == 1 &&
+          c.runes.first >= 0x20 &&
+          c.runes.first != 0x7F) {
+        next = v.substring(0, cur) + c + v.substring(cur);
+        cur += c.length;
+      }
     }
 
     if (next != null) {

@@ -110,11 +110,11 @@ void main() {
         columns: _cols(),
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
       expect(state.activeRow, 1);
-      widget.onKey(const KeyEvent(key: 'ArrowRight'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowRight), ctx);
       expect(state.activeColumn, 1);
-      widget.onKey(const KeyEvent(key: 'ArrowUp'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowUp), ctx);
       expect(state.activeRow, 0);
     });
 
@@ -128,9 +128,9 @@ void main() {
         selectCells: true,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selectedCells, {(row: 0, col: 0)});
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selectedCells, isEmpty);
     });
 
@@ -145,7 +145,7 @@ void main() {
         selectRows: true,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' ', shift: true), ctx);
+      widget.onKey(const KeyEvent(char: ' ', shift: true), ctx);
       expect(state.selectedRows, {0});
       expect(state.selectedCells, isEmpty);
     });
@@ -161,7 +161,7 @@ void main() {
         selectColumns: true,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' ', alt: true), ctx);
+      widget.onKey(const KeyEvent(char: ' ', alt: true), ctx);
       expect(state.selectedColumns, {0});
       expect(state.selectedCells, isEmpty);
     });
@@ -181,7 +181,7 @@ void main() {
         },
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(lastIdx, 0);
       expect(lastItem?.id, 1);
     });

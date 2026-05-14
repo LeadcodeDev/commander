@@ -44,17 +44,15 @@ class Tabs implements FocusableWidget {
   @override
   bool onKey(KeyEvent event, RenderContext ctx) {
     if (tabs.isEmpty) return false;
-    switch (event.key) {
-      case 'ArrowLeft':
-      case 'h':
-        final next = (selected - 1).clamp(0, tabs.length - 1);
-        if (next != selected) onTabSelected?.call(next);
-        return true;
-      case 'ArrowRight':
-      case 'l':
-        final next = (selected + 1).clamp(0, tabs.length - 1);
-        if (next != selected) onTabSelected?.call(next);
-        return true;
+    if (event.key == NamedKey.arrowLeft || event.char == 'h') {
+      final next = (selected - 1).clamp(0, tabs.length - 1);
+      if (next != selected) onTabSelected?.call(next);
+      return true;
+    }
+    if (event.key == NamedKey.arrowRight || event.char == 'l') {
+      final next = (selected + 1).clamp(0, tabs.length - 1);
+      if (next != selected) onTabSelected?.call(next);
+      return true;
     }
     return false;
   }

@@ -48,11 +48,11 @@ Widget _row(Country c, SelectItemState s) {
 Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (s, event, handle) {
-        if (event is KeyEvent && event.key == 'q' && event.ctrl) {
+        if (event is KeyEvent && event.char == 'q' && event.ctrl) {
           handle.stop();
         }
         if (event is KeyEvent &&
-            event.key == 'Tab' &&
+            event.key == NamedKey.tab &&
             handle.focus.current == Key.symbol(#tabs)) {
           return;
         }

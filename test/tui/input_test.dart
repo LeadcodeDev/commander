@@ -36,9 +36,9 @@ void main() {
         state: state,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'a'), ctx);
-      widget.onKey(const KeyEvent(key: 'b'), ctx);
-      widget.onKey(const KeyEvent(key: 'c'), ctx);
+      widget.onKey(const KeyEvent(char: 'a'), ctx);
+      widget.onKey(const KeyEvent(char: 'b'), ctx);
+      widget.onKey(const KeyEvent(char: 'c'), ctx);
       expect(state.value, 'abc');
       expect(state.cursor, 3);
     });
@@ -52,7 +52,7 @@ void main() {
         validate: (v) => v.isEmpty ? 'Name required' : null,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(state.error, 'Name required');
       expect(state.submitted, isFalse);
     });
@@ -68,9 +68,9 @@ void main() {
         onSubmit: (v) => submitted = v,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'a'), ctx);
-      widget.onKey(const KeyEvent(key: 'b'), ctx);
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(char: 'a'), ctx);
+      widget.onKey(const KeyEvent(char: 'b'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(state.submitted, isTrue);
       expect(state.error, isNull);
       expect(submitted, 'ab');
@@ -85,9 +85,9 @@ void main() {
         validate: (v) => v.isEmpty ? 'required' : null,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(state.error, isNotNull);
-      widget.onKey(const KeyEvent(key: 'a'), ctx);
+      widget.onKey(const KeyEvent(char: 'a'), ctx);
       expect(state.error, isNull);
     });
 
@@ -102,7 +102,7 @@ void main() {
         onSubmit: (v) => submitted = v,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(submitted, '8080');
       expect(state.submitted, isTrue);
     });
@@ -116,12 +116,12 @@ void main() {
         lockOnSubmit: true,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'a'), ctx);
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(char: 'a'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(state.submitted, isTrue);
       expect(widget.isSkipped, isTrue);
       // Further keys are ignored
-      widget.onKey(const KeyEvent(key: 'b'), ctx);
+      widget.onKey(const KeyEvent(char: 'b'), ctx);
       expect(state.value, 'a');
     });
 
@@ -134,11 +134,11 @@ void main() {
         lockOnSubmit: false,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'a'), ctx);
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(char: 'a'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(state.submitted, isTrue);
       expect(widget.isSkipped, isFalse);
-      widget.onKey(const KeyEvent(key: 'b'), ctx);
+      widget.onKey(const KeyEvent(char: 'b'), ctx);
       expect(state.value, 'ab');
       expect(state.submitted, isFalse); // editing resets submitted
     });

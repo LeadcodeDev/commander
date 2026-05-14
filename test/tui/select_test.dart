@@ -50,7 +50,7 @@ void main() {
       final ctx = _ctx();
 
       for (var i = 0; i < 5; i++) {
-        widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
+        widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
       }
       expect(state.activeIndex, 5);
       renderToBuffer(widget, size: const Size(30, 4));
@@ -84,12 +84,12 @@ void main() {
         mode: SelectionMode.single,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selected, {'A'});
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selected, {'A'}); // still A
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selected, {'B'});
     });
 
@@ -104,16 +104,16 @@ void main() {
         maxSelections: 2,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' '), ctx);
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selected, {'A', 'B'});
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selected, {'A', 'B'}); // refused
-      widget.onKey(const KeyEvent(key: 'ArrowUp'), ctx);
-      widget.onKey(const KeyEvent(key: 'ArrowUp'), ctx);
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowUp), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowUp), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.selected, {'B'}); // deselected A
     });
 
@@ -130,14 +130,14 @@ void main() {
         onSubmit: (v) => submitted = v,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' '), ctx);
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(submitted, isNull);
       expect(state.validationError, isNotNull);
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.validationError, isNull); // cleared on toggle
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(submitted, ['A', 'B']);
     });
 
@@ -154,9 +154,9 @@ void main() {
         onSubmit: (v) => submitted = v,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
-      widget.onKey(const KeyEvent(key: ' '), ctx);
-      widget.onKey(const KeyEvent(key: 'Enter'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.enter), ctx);
       expect(submitted, isNull);
       expect(state.validationError, 'Must include A');
     });
@@ -200,8 +200,8 @@ void main() {
       );
       final ctx = _ctx();
       state.filterFocused = true;
-      widget.onKey(const KeyEvent(key: 'f'), ctx);
-      widget.onKey(const KeyEvent(key: 'r'), ctx);
+      widget.onKey(const KeyEvent(char: 'f'), ctx);
+      widget.onKey(const KeyEvent(char: 'r'), ctx);
       expect(state.filterQuery, 'fr');
       final buf = renderToBuffer(widget, size: const Size(20, 6));
       final s = buf.toPlainString();

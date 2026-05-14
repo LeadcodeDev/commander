@@ -12,7 +12,7 @@ Future<void> main() => runTerminal<FormState>(
       initialState: FormState(),
       shouldExit: (s) => s.wantsExit,
       onEvent: (s, event, handle) {
-        if (event is KeyEvent && event.key == 'q' && event.ctrl) {
+        if (event is KeyEvent && event.char == 'q' && event.ctrl) {
           s.wantsExit = true;
         }
       },
@@ -20,7 +20,7 @@ Future<void> main() => runTerminal<FormState>(
         final steps = <_Step>[
           _Step(
             state: state.name,
-            input: () => Input(
+            input: Input(
               id: Key.symbol(#name),
               state: state.name,
               message: 'Your name?',
@@ -30,7 +30,7 @@ Future<void> main() => runTerminal<FormState>(
           ),
           _Step(
             state: state.email,
-            input: () => Input(
+            input: Input(
               id: Key.symbol(#email),
               state: state.email,
               message: 'Email?',
@@ -44,7 +44,7 @@ Future<void> main() => runTerminal<FormState>(
           ),
           _Step(
             state: state.password,
-            input: () => Input(
+            input: Input(
               id: Key.symbol(#password),
               state: state.password,
               message: 'Password?',
@@ -54,7 +54,7 @@ Future<void> main() => runTerminal<FormState>(
           ),
           _Step(
             state: state.port,
-            input: () => Input(
+            input: Input(
               id: Key.symbol(#port),
               state: state.port,
               message: 'Port?',
@@ -77,7 +77,7 @@ Future<void> main() => runTerminal<FormState>(
           final needsErrorLine = !s.state.submitted && s.state.error != null;
           final h = needsErrorLine ? 2 : 1;
           final rect = Rect(ctx.area.x, y, ctx.area.width, h);
-          ctx.draw(s.input(), rect);
+          ctx.draw(s.input, rect);
           y += h;
         }
 
@@ -111,6 +111,6 @@ int _firstUnsubmitted(List<_Step> steps) {
 
 class _Step {
   final InputState state;
-  final Input Function() input;
+  final Input input;
   _Step({required this.state, required this.input});
 }

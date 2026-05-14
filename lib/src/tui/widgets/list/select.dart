@@ -143,66 +143,78 @@ class Select<T> implements FocusableWidget {
 
   bool _onKeyFilter(KeyEvent event) {
     state.validationError = null;
-    switch (event.key) {
-      case 'ArrowDown':
-        state.filterFocused = false;
-        state.activeIndex = 0;
-        state.scrollOffset = 0;
-        return true;
-      case 'Escape':
-        if (state.filterQuery.isNotEmpty) {
-          state.filterQuery = '';
-          state.filterCursor = 0;
-          return true;
-        }
-        return false;
-      case 'Enter':
-        state.filterFocused = false;
-        return true;
-      case 'Backspace':
-        if (state.filterCursor > 0) {
-          state.filterQuery = state.filterQuery.substring(0, state.filterCursor - 1) +
-              state.filterQuery.substring(state.filterCursor);
-          state.filterCursor -= 1;
-        }
-        return true;
-      case 'Delete':
-        if (state.filterCursor < state.filterQuery.length) {
-          state.filterQuery = state.filterQuery.substring(0, state.filterCursor) +
-              state.filterQuery.substring(state.filterCursor + 1);
-        }
-        return true;
-      case 'ArrowLeft':
-        if (state.filterCursor > 0) state.filterCursor -= 1;
-        return true;
-      case 'ArrowRight':
-        if (state.filterCursor < state.filterQuery.length) {
-          state.filterCursor += 1;
-        }
-        return true;
-      case 'Home':
+    if (event.key == NamedKey.arrowDown) {
+      state.filterFocused = false;
+      state.activeIndex = 0;
+      state.scrollOffset = 0;
+      return true;
+    }
+    if (event.key == NamedKey.escape) {
+      if (state.filterQuery.isNotEmpty) {
+        state.filterQuery = '';
         state.filterCursor = 0;
         return true;
-      case 'End':
-        state.filterCursor = state.filterQuery.length;
-        return true;
-      default:
-        if (event.ctrl || event.alt) return false;
-        if (event.key.runes.length == 1 && event.key.runes.first >= 0x20) {
-          state.filterQuery = state.filterQuery.substring(0, state.filterCursor) +
-              event.key +
-              state.filterQuery.substring(state.filterCursor);
-          state.filterCursor += event.key.length;
-          return true;
-        }
-        return false;
+      }
+      return false;
     }
+    if (event.key == NamedKey.enter) {
+      state.filterFocused = false;
+      return true;
+    }
+    if (event.key == NamedKey.backspace) {
+      if (state.filterCursor > 0) {
+        state.filterQuery =
+            state.filterQuery.substring(0, state.filterCursor - 1) +
+                state.filterQuery.substring(state.filterCursor);
+        state.filterCursor -= 1;
+      }
+      return true;
+    }
+    if (event.key == NamedKey.delete) {
+      if (state.filterCursor < state.filterQuery.length) {
+        state.filterQuery =
+            state.filterQuery.substring(0, state.filterCursor) +
+                state.filterQuery.substring(state.filterCursor + 1);
+      }
+      return true;
+    }
+    if (event.key == NamedKey.arrowLeft) {
+      if (state.filterCursor > 0) state.filterCursor -= 1;
+      return true;
+    }
+    if (event.key == NamedKey.arrowRight) {
+      if (state.filterCursor < state.filterQuery.length) {
+        state.filterCursor += 1;
+      }
+      return true;
+    }
+    if (event.key == NamedKey.home) {
+      state.filterCursor = 0;
+      return true;
+    }
+    if (event.key == NamedKey.end) {
+      state.filterCursor = state.filterQuery.length;
+      return true;
+    }
+    if (event.char != null) {
+      if (event.ctrl || event.alt) return false;
+      final c = event.char!;
+      if (c.runes.length == 1 && c.runes.first >= 0x20) {
+        state.filterQuery =
+            state.filterQuery.substring(0, state.filterCursor) +
+                c +
+                state.filterQuery.substring(state.filterCursor);
+        state.filterCursor += c.length;
+        return true;
+      }
+    }
+    return false;
   }
 
   bool _onKeyList(KeyEvent event) {
     final filtered = _filteredItems();
     if (filtered.isEmpty) {
-      if (event.key == 'Escape') {
+      if (event.key == NamedKey.escape) {
         if (filterable && state.filterQuery.isNotEmpty) {
           state.filterQuery = '';
           state.filterCursor = 0;
@@ -218,60 +230,70 @@ class Select<T> implements FocusableWidget {
     }
     state.activeIndex = state.activeIndex.clamp(0, filtered.length - 1);
 
-    switch (event.key) {
-      case 'ArrowUp':
-      case 'k':
-        if (filterable && state.activeIndex == 0) {
-          state.filterFocused = true;
-          state.filterCursor = state.filterQuery.length;
-          return true;
-        }
-        state.activeIndex = (state.activeIndex - 1).clamp(0, filtered.length - 1);
+    if (event.key == NamedKey.arrowUp || event.char == 'k') {
+      if (filterable && state.activeIndex == 0) {
+        state.filterFocused = true;
+        state.filterCursor = state.filterQuery.length;
         return true;
-      case 'ArrowDown':
-      case 'j':
-        state.activeIndex = (state.activeIndex + 1).clamp(0, filtered.length - 1);
-        return true;
-      case 'PageUp':
-        state.activeIndex = (state.activeIndex - visibleCount).clamp(0, filtered.length - 1);
-        return true;
-      case 'PageDown':
-        state.activeIndex = (state.activeIndex + visibleCount).clamp(0, filtered.length - 1);
-        return true;
-      case 'Home':
-        state.activeIndex = 0;
-        return true;
-      case 'End':
-        state.activeIndex = filtered.length - 1;
-        return true;
-      case ' ':
-        _toggleAtActive(filtered);
-        return true;
-      case 'Enter':
-        _submit();
-        return true;
-      case 'Escape':
-        if (filterable && state.filterQuery.isNotEmpty) {
-          state.filterQuery = '';
-          state.filterCursor = 0;
-          state.activeIndex = state.activeIndex.clamp(0, items.length - 1);
-          return true;
-        }
-        return false;
-      default:
-        if (filterable && _isPrintable(event)) {
-          state.filterFocused = true;
-          return _onKeyFilter(event);
-        }
-        return false;
+      }
+      state.activeIndex =
+          (state.activeIndex - 1).clamp(0, filtered.length - 1);
+      return true;
     }
+    if (event.key == NamedKey.arrowDown || event.char == 'j') {
+      state.activeIndex =
+          (state.activeIndex + 1).clamp(0, filtered.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.pageUp) {
+      state.activeIndex =
+          (state.activeIndex - visibleCount).clamp(0, filtered.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.pageDown) {
+      state.activeIndex =
+          (state.activeIndex + visibleCount).clamp(0, filtered.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.home) {
+      state.activeIndex = 0;
+      return true;
+    }
+    if (event.key == NamedKey.end) {
+      state.activeIndex = filtered.length - 1;
+      return true;
+    }
+    if (event.char == ' ') {
+      _toggleAtActive(filtered);
+      return true;
+    }
+    if (event.key == NamedKey.enter) {
+      _submit();
+      return true;
+    }
+    if (event.key == NamedKey.escape) {
+      if (filterable && state.filterQuery.isNotEmpty) {
+        state.filterQuery = '';
+        state.filterCursor = 0;
+        state.activeIndex = state.activeIndex.clamp(0, items.length - 1);
+        return true;
+      }
+      return false;
+    }
+    if (filterable && _isPrintable(event)) {
+      state.filterFocused = true;
+      return _onKeyFilter(event);
+    }
+    return false;
   }
 
   bool _isPrintable(KeyEvent event) {
     if (event.ctrl || event.alt) return false;
-    if (event.key.length == 0) return false;
-    return event.key.runes.length == 1 && event.key.runes.first >= 0x20 &&
-        event.key.runes.first != 0x7F;
+    final c = event.char;
+    if (c == null || c.isEmpty) return false;
+    return c.runes.length == 1 &&
+        c.runes.first >= 0x20 &&
+        c.runes.first != 0x7F;
   }
 
   void _toggleAtActive(List<T> filtered) {

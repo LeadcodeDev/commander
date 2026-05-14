@@ -43,32 +43,35 @@ class ListView<T> implements FocusableWidget {
   @override
   bool onKey(KeyEvent event, RenderContext ctx) {
     if (items.isEmpty) return false;
-    switch (event.key) {
-      case 'ArrowDown':
-      case 'j':
-        state.selected = (state.selected + 1).clamp(0, items.length - 1);
-        return true;
-      case 'ArrowUp':
-      case 'k':
-        state.selected = (state.selected - 1).clamp(0, items.length - 1);
-        return true;
-      case 'PageDown':
-        state.selected = (state.selected + 10).clamp(0, items.length - 1);
-        return true;
-      case 'PageUp':
-        state.selected = (state.selected - 10).clamp(0, items.length - 1);
-        return true;
-      case 'Home':
-        state.selected = 0;
-        return true;
-      case 'End':
-        state.selected = items.length - 1;
-        return true;
-      case 'Enter':
-        if (state.selected >= 0 && state.selected < items.length) {
-          onActivate?.call(items[state.selected], state.selected);
-        }
-        return true;
+    if (event.key == NamedKey.arrowDown || event.char == 'j') {
+      state.selected = (state.selected + 1).clamp(0, items.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.arrowUp || event.char == 'k') {
+      state.selected = (state.selected - 1).clamp(0, items.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.pageDown) {
+      state.selected = (state.selected + 10).clamp(0, items.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.pageUp) {
+      state.selected = (state.selected - 10).clamp(0, items.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.home) {
+      state.selected = 0;
+      return true;
+    }
+    if (event.key == NamedKey.end) {
+      state.selected = items.length - 1;
+      return true;
+    }
+    if (event.key == NamedKey.enter) {
+      if (state.selected >= 0 && state.selected < items.length) {
+        onActivate?.call(items[state.selected], state.selected);
+      }
+      return true;
     }
     return false;
   }

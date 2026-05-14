@@ -10,7 +10,7 @@ class State {
 Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (s, event, handle) {
-        if (event is KeyEvent && event.key == 'q' && event.ctrl) {
+        if (event is KeyEvent && event.char == 'q' && event.ctrl) {
           handle.stop();
         }
       },

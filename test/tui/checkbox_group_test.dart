@@ -41,9 +41,9 @@ void main() {
         builder: _builder,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.checked, {'A'});
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(state.checked, isEmpty);
     });
 
@@ -56,12 +56,12 @@ void main() {
         builder: _builder,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
       expect(state.activeIndex, 1);
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
       expect(state.activeIndex, 2);
-      widget.onKey(const KeyEvent(key: 'ArrowUp'), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowUp), ctx);
       expect(state.activeIndex, 1);
     });
 
@@ -76,10 +76,10 @@ void main() {
         onChanged: (v) => lastChange = v,
       );
       final ctx = _ctx();
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(lastChange, ['A']);
-      widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
-      widget.onKey(const KeyEvent(key: ' '), ctx);
+      widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
+      widget.onKey(const KeyEvent(char: ' '), ctx);
       expect(lastChange!.toSet(), {'A', 'B'});
     });
 
@@ -94,7 +94,7 @@ void main() {
       );
       final ctx = _ctx();
       for (var i = 0; i < 5; i++) {
-        widget.onKey(const KeyEvent(key: 'ArrowDown'), ctx);
+        widget.onKey(const KeyEvent(key: NamedKey.arrowDown), ctx);
       }
       renderToBuffer(widget, size: const Size(20, 3));
       expect(state.scrollOffset, 3);

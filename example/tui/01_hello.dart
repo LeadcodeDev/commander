@@ -7,7 +7,7 @@ class HelloState {
 Future<void> main() => runTerminal<HelloState>(
       initialState: HelloState(),
       onEvent: (state, event, handle) {
-        if (event is KeyEvent && event.key == 'q') {
+        if (event is KeyEvent && event.char == 'q') {
           handle.stop();
         }
       },

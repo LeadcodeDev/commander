@@ -13,7 +13,7 @@ Future<void> main() => runTerminal<State>(
       initialState: State(),
       frameRate: const Duration(milliseconds: 250),
       onEvent: (s, event, handle) {
-        if (event is KeyEvent && event.key == 'q') handle.stop();
+        if (event is KeyEvent && event.char == 'q') handle.stop();
         if (event is TickEvent) {
           s.frame++;
           final rnd = Random();

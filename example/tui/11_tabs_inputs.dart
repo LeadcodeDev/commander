@@ -26,17 +26,17 @@ Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (s, event, handle) {
         if (event is! KeyEvent) return;
-        if (event.key == 'q' && event.ctrl) {
+        if (event.char == 'q' && event.ctrl) {
           handle.stop();
           return;
         }
         final currentFocus = handle.focus.current;
-        if (event.key == 'Escape' && currentFocus != _tabsKey) {
+        if (event.key == NamedKey.escape && currentFocus != _tabsKey) {
           s.wantsFocus = _tabsKey;
           handle.requestRedraw();
           return;
         }
-        if ((event.key == 'ArrowDown' || event.key == 'Enter') &&
+        if ((event.key == NamedKey.arrowDown || event.key == NamedKey.enter) &&
             currentFocus == _tabsKey) {
           s.wantsFocus = _firstFocusOfTab(s.tab);
           if (s.tab == 1) {
@@ -50,12 +50,12 @@ Future<void> main() => runTerminal<State>(
           handle.requestRedraw();
           return;
         }
-        if (event.key == 'ArrowDown' && currentFocus != _tabsKey) {
+        if (event.key == NamedKey.arrowDown && currentFocus != _tabsKey) {
           handle.focus.next();
           handle.requestRedraw();
           return;
         }
-        if (event.key == 'ArrowUp' && currentFocus != _tabsKey) {
+        if (event.key == NamedKey.arrowUp && currentFocus != _tabsKey) {
           handle.focus.previous();
           handle.requestRedraw();
           return;

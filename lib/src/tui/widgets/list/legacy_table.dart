@@ -37,21 +37,21 @@ class LegacyTable implements FocusableWidget {
   @override
   bool onKey(KeyEvent event, RenderContext ctx) {
     if (rows.isEmpty) return false;
-    switch (event.key) {
-      case 'ArrowDown':
-      case 'j':
-        state.selectedRow = (state.selectedRow + 1).clamp(0, rows.length - 1);
-        return true;
-      case 'ArrowUp':
-      case 'k':
-        state.selectedRow = (state.selectedRow - 1).clamp(0, rows.length - 1);
-        return true;
-      case 'Home':
-        state.selectedRow = 0;
-        return true;
-      case 'End':
-        state.selectedRow = rows.length - 1;
-        return true;
+    if (event.key == NamedKey.arrowDown || event.char == 'j') {
+      state.selectedRow = (state.selectedRow + 1).clamp(0, rows.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.arrowUp || event.char == 'k') {
+      state.selectedRow = (state.selectedRow - 1).clamp(0, rows.length - 1);
+      return true;
+    }
+    if (event.key == NamedKey.home) {
+      state.selectedRow = 0;
+      return true;
+    }
+    if (event.key == NamedKey.end) {
+      state.selectedRow = rows.length - 1;
+      return true;
     }
     return false;
   }

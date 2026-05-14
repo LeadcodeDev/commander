@@ -26,18 +26,18 @@ Future<void> main() => runTerminal<State>(
       initialState: State(),
       onEvent: (s, event, handle) {
         if (event is KeyEvent) {
-          if (event.key == 'q' && event.ctrl) handle.stop();
+          if (event.char == 'q' && event.ctrl) handle.stop();
           final current = s.navigator.current;
           if (current is HomeRoute) {
-            if (event.key == 'Enter') {
+            if (event.key == NamedKey.enter) {
               s.navigator.push(DetailRoute(s.selectedItem));
               handle.requestRedraw();
-            } else if (event.key == 's') {
+            } else if (event.char == 's') {
               s.navigator.push(const SettingsRoute());
               handle.requestRedraw();
             }
           } else {
-            if (event.key == 'Escape' || event.key == 'b') {
+            if (event.key == NamedKey.escape || event.char == 'b') {
               s.navigator.pop();
               handle.requestRedraw();
             }
