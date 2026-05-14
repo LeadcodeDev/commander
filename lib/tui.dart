@@ -38,6 +38,7 @@ export 'src/tui/widgets/display/container.dart';
 export 'src/tui/widgets/display/padding.dart';
 export 'src/tui/widgets/display/spacer.dart';
 export 'src/tui/widgets/display/divider.dart';
+export 'src/tui/widgets/display/each.dart';
 export 'src/tui/widgets/display/row_column.dart';
 export 'src/tui/widgets/display/stack.dart';
 export 'src/tui/widgets/display/focusable.dart';

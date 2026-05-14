@@ -72,12 +72,10 @@ Future<void> main() => runTerminal<FormState>(
 
         var y = ctx.area.y;
         for (var i = 0; i <= activeIndex && i < steps.length; i++) {
-          final s = steps[i];
-          final needsErrorLine = !s.state.submitted && s.state.error != null;
-          final h = needsErrorLine ? 2 : 1;
-          final rect = Rect(ctx.area.x, y, ctx.area.width, h);
-          ctx.draw(s.input, rect);
-          y += h;
+          final input = steps[i].input;
+          final rect = Rect(ctx.area.x, y, ctx.area.width, input.height);
+          ctx.draw(input, rect);
+          y += input.height;
         }
 
         if (activeIndex >= steps.length) {

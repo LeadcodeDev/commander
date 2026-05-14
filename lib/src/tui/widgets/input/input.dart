@@ -71,6 +71,11 @@ class Input implements FocusableWidget {
   @override
   bool get isSkipped => state.submitted && lockOnSubmit;
 
+  /// Number of rows the input needs in its current state.
+  /// - 1 row in normal/submitted state.
+  /// - 2 rows when displaying an unrecovered validation error.
+  int get height => (!state.submitted && state.error != null) ? 2 : 1;
+
   @override
   void registerHitZones(Rect area, HitZoneSink sink) => sink.add(area, id);
 
