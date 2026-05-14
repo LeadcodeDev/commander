@@ -154,11 +154,15 @@ Future<void> main() => runTerminal<State>(
               ),
               block[1],
             );
+            final currentSelection = state.multiState.selected
+                .map((c) => c.code)
+                .toList()
+              ..sort();
             ctx.draw(
               Paragraph(
                 'Space to toggle · Enter to confirm · ↑/↓ navigate · type to filter.\n\n'
-                'Selected: ${state.multiChoice.map((c) => c.code).join(', ')}\n'
-                'Submitted: ${state.submittedMulti}',
+                'Current: ${currentSelection.isEmpty ? "(none)" : currentSelection.join(', ')}\n'
+                'Submitted: ${state.multiChoice.map((c) => c.code).join(', ')}',
                 style: ctx.theme.text.caption,
               ),
               block[2],
