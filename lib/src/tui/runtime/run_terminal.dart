@@ -263,7 +263,17 @@ Future<void> runTerminal<S>({
     async_.disposeAll();
   }
 
-  await setup();
+  try {
+    await setup();
+  } catch (e) {
+    // If setup throws after partially mutating terminal state (e.g. raw mode
+    // enabled before alternate screen failed), restore the terminal before
+    // propagating to avoid leaving the user with a corrupted shell.
+    try {
+      await teardown();
+    } catch (_) {}
+    rethrow;
+  }
 
   final controller = StreamController<Event>();
   async_.onCallbackError = (e, st) {

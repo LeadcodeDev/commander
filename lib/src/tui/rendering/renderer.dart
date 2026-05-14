@@ -62,8 +62,11 @@ class Renderer {
         for (var x = 0; x < w; x++) {
           final cell = back.get(x, y);
           emit(cell, x, y);
-          if (cell.width > 1) x += cell.width - 1;
           _front!.set(x, y, cell);
+          if (cell.width > 1 && x + 1 < w) {
+            _front!.set(x + 1, y, Cell.continuation);
+            x += cell.width - 1;
+          }
         }
       }
       _initialPaint = false;
@@ -75,6 +78,9 @@ class Renderer {
           if (cell != prev) {
             emit(cell, x, y);
             _front!.set(x, y, cell);
+            if (cell.width > 1 && x + 1 < w) {
+              _front!.set(x + 1, y, Cell.continuation);
+            }
           }
           if (cell.width > 1) {
             x += cell.width - 1;
