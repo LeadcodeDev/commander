@@ -43,6 +43,8 @@ export 'src/tui/widgets/display/row_column.dart';
 export 'src/tui/widgets/display/stack.dart';
 export 'src/tui/widgets/display/focusable.dart';
 export 'src/tui/widgets/display/screen.dart';
+export 'src/tui/widgets/display/scroll_view.dart';
+export 'src/tui/widgets/display/code_block.dart';
 
 export 'src/tui/widgets/input/text_field.dart';
 export 'src/tui/widgets/input/input.dart';
@@ -55,6 +57,8 @@ export 'src/tui/widgets/input/switch.dart';
 export 'src/tui/widgets/input/slider.dart';
 export 'src/tui/widgets/input/range.dart';
 export 'src/tui/widgets/input/date_picker.dart';
+export 'src/tui/widgets/input/time_picker.dart';
+export 'src/tui/widgets/input/text_area.dart';
 
 export 'src/tui/widgets/list/list_view.dart';
 export 'src/tui/widgets/list/table.dart';
@@ -62,10 +66,14 @@ export 'src/tui/widgets/list/legacy_table.dart';
 export 'src/tui/widgets/list/dropdown.dart';
 export 'src/tui/widgets/list/select.dart';
 export 'src/tui/widgets/list/tabs.dart';
+export 'src/tui/widgets/list/tree.dart';
 
 export 'src/tui/widgets/feedback/progress_bar.dart';
 export 'src/tui/widgets/feedback/spinner.dart';
 export 'src/tui/widgets/feedback/gauge.dart';
+
+export 'src/tui/widgets/charts/sparkline.dart';
+export 'src/tui/widgets/charts/bar_chart.dart';
 
 export 'src/tui/widgets/async/async.dart';
 

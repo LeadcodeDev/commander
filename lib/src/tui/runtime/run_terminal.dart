@@ -330,6 +330,22 @@ Future<void> runTerminal<S>({
               break;
             }
           }
+        } else if (event is MouseEvent &&
+            (event.action == MouseAction.scrollUp ||
+                event.action == MouseAction.scrollDown)) {
+          for (final z in lastHitZones) {
+            if (z.rect.contains(event.x, event.y)) {
+              focus.focus(z.key);
+              final synthetic = KeyEvent(
+                key: event.action == MouseAction.scrollUp
+                    ? NamedKey.arrowUp
+                    : NamedKey.arrowDown,
+              );
+              consumed = focus.dispatchKey(synthetic);
+              if (consumed) handle.requestRedraw();
+              break;
+            }
+          }
         }
       } catch (e, st) {
         logger.error('dispatch failed', error: e, stack: st);
