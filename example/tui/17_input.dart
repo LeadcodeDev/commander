@@ -5,15 +5,14 @@ class FormState {
   final email = InputState();
   final password = InputState();
   final port = InputState(initialValue: '8080');
-  bool wantsExit = false;
 }
 
 Future<void> main() => runTerminal<FormState>(
       initialState: FormState(),
-      shouldExit: (s) => s.wantsExit,
+      mode: RenderMode.flow(autoGrow: true),
       onEvent: (s, event, handle) {
         if (event is KeyEvent && event.char == 'q' && event.ctrl) {
-          s.wantsExit = true;
+          handle.stop();
         }
       },
       render: (ctx, state) {
@@ -83,22 +82,17 @@ Future<void> main() => runTerminal<FormState>(
 
         if (activeIndex >= steps.length) {
           y += 1;
-          final rect = Rect(ctx.area.x, y, ctx.area.width, 2);
+          final rect = Rect(ctx.area.x, y, ctx.area.width, 1);
           ctx.draw(
             Paragraph(
-              '✓ All done. Press Ctrl-Q to quit.',
+              '✓ All done.',
               style: Style(fg: ctx.theme.colors.success, bold: true),
             ),
             rect,
           );
-        }
 
-        final footer = Rect(ctx.area.x, ctx.area.bottom - 1, ctx.area.width, 1);
-        ctx.draw(
-          const Text('Enter to submit · Ctrl-Q to quit',
-              align: TextAlign.center, style: Style(dim: true)),
-          footer,
-        );
+          ctx.exit();
+        }
       },
     );
 

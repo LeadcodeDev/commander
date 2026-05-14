@@ -2,7 +2,6 @@ import 'package:commander_ui/tui.dart';
 
 class State {
   int counter = 0;
-  bool wantsExit = false;
 }
 
 Future<void> main() => runTerminal<State>(
@@ -16,17 +15,15 @@ Future<void> main() => runTerminal<State>(
             s.counter--;
             handle.requestRedraw();
           } else if (event.char == 'q') {
-            s.wantsExit = true;
-            handle.requestRedraw();
+            handle.stop();
           }
         }
       },
-      shouldExit: (state) => state.wantsExit,
       render: (ctx, state) {
         ctx.draw(
           Screen(
             title: 'Commander — counter ${state.counter}',
-            onExit: () => state.wantsExit = true,
+            onExit: ctx.exit,
             builder: (ctx, exit) {
               return Center(
                 child: Container(

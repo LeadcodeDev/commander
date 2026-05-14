@@ -2,7 +2,11 @@ sealed class RenderMode {
   const RenderMode();
   const factory RenderMode.alternateScreen() = AlternateScreenMode;
   const factory RenderMode.fullScreen() = FullScreenMode;
-  const factory RenderMode.flow({int? height}) = FlowMode;
+  const factory RenderMode.flow({
+    int? height,
+    int? minHeight,
+    bool autoGrow,
+  }) = FlowMode;
   const factory RenderMode.inline({required int height}) = InlineMode;
 }
 
@@ -16,7 +20,9 @@ final class FullScreenMode extends RenderMode {
 
 final class FlowMode extends RenderMode {
   final int? height;
-  const FlowMode({this.height});
+  final int? minHeight;
+  final bool autoGrow;
+  const FlowMode({this.height, this.minHeight, this.autoGrow = false});
 }
 
 final class InlineMode extends RenderMode {

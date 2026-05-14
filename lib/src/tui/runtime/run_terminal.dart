@@ -21,7 +21,6 @@ import 'render_mode.dart';
 typedef OnEventFn<S> = FutureOr<void> Function(S state, Event event, RunHandle handle);
 typedef RenderFn<S> = void Function(RenderContext ctx, S state);
 typedef ThemeBuilder<S> = ThemeData Function(S state);
-typedef ShouldExitFn<S> = bool Function(S state);
 
 class RunHandle {
   final FocusController focus;
@@ -50,7 +49,6 @@ Future<void> runTerminal<S>({
   bool allowNonInteractive = false,
   bool enableMouse = true,
   bool exitOnCtrlC = true,
-  ShouldExitFn<S>? shouldExit,
 }) async {
   if (!allowNonInteractive) {
     final inIsTty = stdin.hasTerminal;
@@ -87,7 +85,9 @@ Future<void> runTerminal<S>({
   int flowEffectiveHeight(FlowMode m) {
     final remaining = term.size.height - yOffset;
     final desired = m.height ?? remaining;
-    return desired.clamp(1, remaining > 0 ? remaining : 1);
+    final clamped = desired.clamp(1, term.size.height);
+    final minH = m.minHeight ?? 1;
+    return clamped < minH ? minH.clamp(1, term.size.height) : clamped;
   }
 
   Size currentSize = switch (mode) {
@@ -119,22 +119,49 @@ Future<void> runTerminal<S>({
       back.clear();
     }
 
-    focus.resetFrame();
-    async_.beginFrame();
+    RenderContext makeCtx() {
+      focus.resetFrame();
+      async_.beginFrame();
+      final c = RenderContext(
+        buffer: back,
+        area: Rect(0, 0, currentSize.width, currentSize.height),
+        theme: activeTheme,
+        focus: focus,
+        async_: async_,
+        logger: logger,
+        requestRedraw: handle.requestRedraw,
+        exit: handle.stop,
+      );
+      c.resetFrame();
+      return c;
+    }
 
-    final ctx = RenderContext(
-      buffer: back,
-      area: Rect(0, 0, currentSize.width, currentSize.height),
-      theme: activeTheme,
-      focus: focus,
-      async_: async_,
-      logger: logger,
-      requestRedraw: handle.requestRedraw,
-    );
-    ctx.resetFrame();
-
+    var ctx = makeCtx();
     render(ctx, state);
     ctx.flushOverlays();
+
+    if (mode is FlowMode &&
+        (mode as FlowMode).autoGrow &&
+        ctx.maxDesiredHeight > currentSize.height) {
+      final delta = ctx.maxDesiredHeight - currentSize.height;
+      term.moveTo(0, yOffset + currentSize.height - 1);
+      for (var i = 0; i < delta; i++) {
+        term.write('\n');
+      }
+      await term.flush();
+      final (_, newBottomRow) = await term.queryCursorPosition();
+      final newH = currentSize.height + delta;
+      yOffset = (newBottomRow - newH + 1).clamp(0, term.size.height);
+      currentSize = Size(currentSize.width, newH);
+      back = Buffer(currentSize);
+      renderer.resize(currentSize);
+      renderer.yOffset = yOffset;
+      renderer.forceRepaint();
+      ctx = makeCtx();
+      render(ctx, state);
+      ctx.flushOverlays();
+    }
+
     final newTitle = ctx.pendingTitle;
     if (newTitle != null) {
       term.setTitle(newTitle);
@@ -219,7 +246,7 @@ Future<void> runTerminal<S>({
       final used = lastUsedRow();
       final targetRow = used >= 0 ? yOffset + used + 1 : yOffset;
       term.moveTo(0, targetRow);
-      term.write('\r');
+      term.write('\r\n');
     }
     await term.shutdown();
     async_.disposeAll();
@@ -290,10 +317,6 @@ Future<void> runTerminal<S>({
         } catch (e, st) {
           logger.error('onEvent failed', error: e, stack: st);
         }
-      }
-
-      if (shouldExit != null && shouldExit(state)) {
-        handle.stop();
       }
 
       if (handle._redrawRequested ||

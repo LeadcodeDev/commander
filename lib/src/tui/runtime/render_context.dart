@@ -27,10 +27,12 @@ class RenderContext implements HitZoneSink {
   final AsyncRegistry async_;
   final CommanderLogger logger;
   final void Function() requestRedraw;
+  final void Function() exit;
 
   final _HitZoneCollector _hitZones = _HitZoneCollector();
   final List<({Widget widget, Rect area})> _overlays = [];
   String? _pendingTitle;
+  int _maxDesiredHeight = 0;
 
   RenderContext({
     required this.buffer,
@@ -40,12 +42,16 @@ class RenderContext implements HitZoneSink {
     required this.async_,
     required this.logger,
     required this.requestRedraw,
+    this.exit = _noop,
   });
+
+  static void _noop() {}
 
   List<({Rect rect, Key key})> get hitZones => _hitZones.zones;
   List<({Widget widget, Rect area})> get overlays =>
       List.unmodifiable(_overlays);
   String? get pendingTitle => _pendingTitle;
+  int get maxDesiredHeight => _maxDesiredHeight;
 
   void setTitle(String title) {
     _pendingTitle = title;
@@ -57,12 +63,16 @@ class RenderContext implements HitZoneSink {
     _hitZones.clear();
     _overlays.clear();
     _pendingTitle = null;
+    _maxDesiredHeight = 0;
   }
 
   @override
   void add(Rect rect, Key key) => _hitZones.add(rect, key);
 
   void draw(Widget widget, Rect target) {
+    if (target.bottom > _maxDesiredHeight) {
+      _maxDesiredHeight = target.bottom;
+    }
     final clipped = target.intersect(buffer.area);
     if (clipped.isEmpty) return;
     if (widget is FocusableWidget) {
