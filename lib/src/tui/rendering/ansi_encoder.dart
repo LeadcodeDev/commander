@@ -164,19 +164,48 @@ class AnsiEncoder {
   }
 }
 
+/// Pre-encoded ANSI escape sequences for the terminal operations Commander
+/// emits directly (without going through [AnsiEncoder.encodeStyle]).
+///
+/// Every constant here is built by serializing a `package:mansion` [m.Escape]
+/// value at class load — so the wire format stays in sync with mansion's
+/// implementation rather than being maintained as parallel string literals.
 class AnsiSequences {
-  static const String reset = '\x1B[0m';
-  static const String clear = '\x1B[2J';
-  static const String clearLine = '\x1B[2K';
-  static const String home = '\x1B[H';
-  static const String hideCursor = '\x1B[?25l';
-  static const String showCursor = '\x1B[?25h';
-  static const String enterAlt = '\x1B[?1049h';
-  static const String leaveAlt = '\x1B[?1049l';
-  static const String enableMouse =
-      '\x1B[?1000h\x1B[?1002h\x1B[?1003h\x1B[?1006h';
-  static const String disableMouse =
-      '\x1B[?1006l\x1B[?1003l\x1B[?1002l\x1B[?1000l';
+  static final String reset = _encode(m.SetStyles.reset);
+  static final String clear = _encode(m.Clear.all);
+  static final String clearLine = _encode(m.Clear.currentLine);
+  static final String clearAfterCursor = _encode(m.Clear.afterCursor);
+  static final String home = _encode(const m.CursorPosition.moveTo(1, 1));
+  static final String hideCursor = _encode(m.CursorVisibility.hide);
+  static final String showCursor = _encode(m.CursorVisibility.show);
+  static final String enterAlt = _encode(m.AlternateScreen.enter);
+  static final String leaveAlt = _encode(m.AlternateScreen.leave);
+  static final String enableMouse = _encodeAll(m.EnableMouseCapture.all);
+  static final String disableMouse = _encodeAll(m.DisableMouseCapture.all);
 
-  static String moveTo(int x, int y) => '\x1B[${y + 1};${x + 1}H';
+  /// Absolute cursor positioning, 0-indexed (column [x], row [y]).
+  /// Mansion's [m.CursorPosition.moveTo] takes 1-indexed (row, column).
+  static String moveTo(int x, int y) =>
+      _encode(m.CursorPosition.moveTo(y + 1, x + 1));
+
+  /// Relative cursor move, [rows] up.
+  static String moveUp(int rows) => _encode(m.CursorPosition.moveUp(rows));
+
+  /// Terminal cursor position report request (DSR 6). No mansion equivalent
+  /// — kept as a literal so the response can be parsed in `queryCursorPosition`.
+  static const String cursorReport = '\x1B[6n';
+}
+
+String _encode(m.Sequence seq) {
+  final buf = StringBuffer();
+  seq.writeAnsiString(buf);
+  return buf.toString();
+}
+
+String _encodeAll(Iterable<m.Sequence> seqs) {
+  final buf = StringBuffer();
+  for (final s in seqs) {
+    s.writeAnsiString(buf);
+  }
+  return buf.toString();
 }

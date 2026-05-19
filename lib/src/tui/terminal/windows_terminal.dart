@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
+import 'package:mansion/mansion.dart' as mansion;
 
 import '../geometry/size.dart';
 import '../rendering/ansi_encoder.dart';
@@ -112,7 +113,9 @@ class WindowsTerminal implements Terminal {
   WindowsTerminal()
       : _size = _querySize(),
         _console = _WinConsole.open() {
-    stdout.write('\x1B[?1049l');
+    // Make sure we start on the main screen (some shells leave the
+    // alternate screen on previous-process exit).
+    stdout.write(AnsiSequences.leaveAlt);
   }
 
   static Size _querySize() {
@@ -214,15 +217,16 @@ class WindowsTerminal implements Terminal {
 
   @override
   void setTitle(String title) {
-    final safe = title.replaceAll('\x07', '').replaceAll('\x1B', '');
-    stdout.write('\x1B]0;$safe\x07');
+    final buf = StringBuffer();
+    mansion.SetTitle(title).writeAnsiString(buf);
+    stdout.write(buf.toString());
   }
 
   @override
   Future<(int, int)> queryCursorPosition({
     Duration timeout = const Duration(milliseconds: 500),
   }) async {
-    stdout.write('\x1B[6n');
+    stdout.write(AnsiSequences.cursorReport);
     try {
       await stdout.flush();
     } catch (_) {}

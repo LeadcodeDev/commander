@@ -22,6 +22,9 @@ class AppState {
   // Tab 3 — Tree
   final tree = TreeState<String>(expandedKeys: {'lib'});
 
+  // Tab 4 — CodeBlock (scrollable)
+  final codeScroll = CodeBlockState();
+
   // Used to drive Sparkline animation.
   AppState() {
     final rng = Random(42);
@@ -157,7 +160,7 @@ Future<void> main() => runTerminal<AppState>(
           case 3:
             _renderTree(ctx, state, rows[1]);
           default:
-            _renderCodeBlock(ctx, rows[1]);
+            _renderCodeBlock(ctx, state, rows[1]);
         }
 
         ctx.draw(
@@ -325,16 +328,19 @@ void _renderTree(RenderContext ctx, AppState state, Rect area) {
   );
 }
 
-void _renderCodeBlock(RenderContext ctx, Rect area) {
+void _renderCodeBlock(RenderContext ctx, AppState state, Rect area) {
   ctx.draw(
     Container(
       border: BorderStyle.single,
-      title: ' Dart sample ',
+      title: ' Dart sample (↑/↓ PgUp/PgDn Home/End to scroll) ',
       padding: const EdgeInsets.symmetric(horizontal: 1),
-      child: const CodeBlock(
+      child: CodeBlock(
+        id: Key.symbol(#codeBlock),
         code: _sampleCode,
         language: CodeLanguage.dart,
         showLineNumbers: true,
+        scrollable: true,
+        state: state.codeScroll,
       ),
     ),
     area,

@@ -1,10 +1,19 @@
 import '../../geometry/rect.dart';
 import '../../rendering/buffer.dart';
+import '../../runtime/event.dart';
+import '../../runtime/key.dart';
 import '../../runtime/render_context.dart';
 import '../../style/style.dart';
 import '../../widget/widget.dart';
 
 enum CodeLanguage { plain, dart, json, shell, yaml }
+
+/// Holds vertical scroll position for a [CodeBlock] in scrollable mode.
+/// Lives on the caller's state so scroll is preserved across rebuilds.
+class CodeBlockState {
+  int scrollOffset;
+  CodeBlockState({this.scrollOffset = 0});
+}
 
 class CodeTheme {
   final Style keyword;
@@ -44,7 +53,7 @@ class _Token {
   _Token(this.text, this.style);
 }
 
-class CodeBlock implements Widget {
+class CodeBlock implements FocusableWidget {
   static const _dartKeywords = {
     'abstract', 'as', 'assert', 'async', 'await', 'break', 'case', 'catch',
     'class', 'const', 'continue', 'covariant', 'default', 'deferred', 'do',
@@ -61,19 +70,79 @@ class CodeBlock implements Widget {
     'readonly', 'set', 'unset', 'declare', 'echo', 'cd', 'exit', 'source',
   };
 
+  final Key? _id;
+  @override
+  Key get id => _id ?? ValueKey(state ?? code);
+
   final String code;
   final CodeLanguage language;
   final bool showLineNumbers;
   final int firstLineNumber;
   final CodeTheme? theme;
 
+  /// When true the widget becomes focusable and reacts to ↑/↓/PgUp/PgDn/
+  /// Home/End to scroll its content vertically. A [CodeBlockState] is
+  /// required to persist the scroll offset across frames.
+  final bool scrollable;
+  final CodeBlockState? state;
+  final int pageStep;
+
   const CodeBlock({
+    Key? id,
     required this.code,
     this.language = CodeLanguage.plain,
     this.showLineNumbers = false,
     this.firstLineNumber = 1,
     this.theme,
-  });
+    this.scrollable = false,
+    this.state,
+    this.pageStep = 5,
+  })  : _id = id,
+        assert(!scrollable || state != null,
+            'CodeBlock(scrollable: true) requires a CodeBlockState');
+
+  @override
+  bool get isSkipped => !scrollable;
+
+  @override
+  void registerHitZones(Rect area, HitZoneSink sink) => sink.add(area, id);
+
+  int _maxOffset(int totalLines, int viewportHeight) {
+    final overflow = totalLines - viewportHeight;
+    return overflow > 0 ? overflow : 0;
+  }
+
+  @override
+  bool onKey(KeyEvent event, RenderContext ctx) {
+    if (!scrollable) return false;
+    final s = state!;
+    final lines = code.split('\n').length;
+    // Without a precise viewport here we clamp conservatively; the renderer
+    // re-clamps against the actual visible height on the next draw.
+    final maxOff = lines > 0 ? lines - 1 : 0;
+    switch (event.key) {
+      case NamedKey.arrowUp:
+        if (s.scrollOffset > 0) s.scrollOffset--;
+        return true;
+      case NamedKey.arrowDown:
+        if (s.scrollOffset < maxOff) s.scrollOffset++;
+        return true;
+      case NamedKey.pageUp:
+        s.scrollOffset = (s.scrollOffset - pageStep).clamp(0, maxOff);
+        return true;
+      case NamedKey.pageDown:
+        s.scrollOffset = (s.scrollOffset + pageStep).clamp(0, maxOff);
+        return true;
+      case NamedKey.home:
+        s.scrollOffset = 0;
+        return true;
+      case NamedKey.end:
+        s.scrollOffset = maxOff;
+        return true;
+      default:
+        return false;
+    }
+  }
 
   CodeTheme _theme(RenderContext ctx) => theme ?? CodeTheme.defaultFor(ctx);
 
@@ -304,15 +373,26 @@ class CodeBlock implements Widget {
         : 0;
     final lineNoGutter = showLineNumbers ? lineNoWidth + 1 : 0;
 
-    for (var i = 0; i < lines.length && i < area.height; i++) {
+    int offset = 0;
+    if (scrollable) {
+      final maxOff = _maxOffset(lines.length, area.height);
+      state!.scrollOffset = state!.scrollOffset.clamp(0, maxOff);
+      offset = state!.scrollOffset;
+    }
+
+    for (var i = 0;
+        i < area.height && (i + offset) < lines.length;
+        i++) {
+      final lineIndex = i + offset;
       final y = area.y + i;
       var x = area.x;
       if (showLineNumbers) {
-        final n = (i + firstLineNumber).toString().padLeft(lineNoWidth);
+        final n =
+            (lineIndex + firstLineNumber).toString().padLeft(lineNoWidth);
         buffer.writeText(x, y, n, style: t.lineNumber, maxWidth: lineNoWidth);
         x += lineNoGutter;
       }
-      final tokens = _tokenize(lines[i], t);
+      final tokens = _tokenize(lines[lineIndex], t);
       for (final tok in tokens) {
         if (x >= area.right) break;
         final remaining = area.right - x;

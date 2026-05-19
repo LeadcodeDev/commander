@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
+import 'package:mansion/mansion.dart' as mansion;
 
 import '../geometry/size.dart';
 import '../rendering/ansi_encoder.dart';
@@ -226,15 +227,16 @@ class UnixTerminal implements Terminal {
 
   @override
   void setTitle(String title) {
-    final safe = title.replaceAll('\x07', '').replaceAll('\x1B', '');
-    stdout.write('\x1B]0;$safe\x07');
+    final buf = StringBuffer();
+    mansion.SetTitle(title).writeAnsiString(buf);
+    stdout.write(buf.toString());
   }
 
   @override
   Future<(int, int)> queryCursorPosition({
     Duration timeout = const Duration(milliseconds: 500),
   }) async {
-    stdout.write('\x1B[6n');
+    stdout.write(AnsiSequences.cursorReport);
     try {
       await stdout.flush();
     } catch (_) {}

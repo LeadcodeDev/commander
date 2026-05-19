@@ -123,7 +123,7 @@ Future<void> runTerminal<S>({
       if (mode is FlowMode || mode is InlineMode) {
         final clampedY = yOffset.clamp(0, term.size.height);
         term.moveTo(0, clampedY);
-        term.write('\x1B[0J');
+        term.write(AnsiSequences.clearAfterCursor);
       }
       currentSize = desired;
       back = Buffer(currentSize);
@@ -161,7 +161,7 @@ Future<void> runTerminal<S>({
       // Erase the old buffer area BEFORE scrolling so no stale content
       // ends up shifted into a visible row after scroll.
       term.moveTo(0, yOffset);
-      term.write('\x1B[0J');
+      term.write(AnsiSequences.clearAfterCursor);
       term.moveTo(0, yOffset + currentSize.height - 1);
       for (var i = 0; i < delta; i++) {
         term.write('\n');
@@ -176,7 +176,7 @@ Future<void> runTerminal<S>({
       renderer.yOffset = yOffset;
       renderer.forceRepaint();
       term.moveTo(0, yOffset);
-      term.write('\x1B[0J');
+      term.write(AnsiSequences.clearAfterCursor);
       ctx = makeCtx();
       render(ctx, state);
       ctx.flushOverlays();
@@ -208,7 +208,8 @@ Future<void> runTerminal<S>({
     if (mode is AlternateScreenMode) {
       term.enterAlternateScreen();
     } else if (mode is FullScreenMode) {
-      term.write('\x1B[2J\x1B[H');
+      term.write(AnsiSequences.clear);
+      term.write(AnsiSequences.home);
     } else if (mode is FlowMode) {
       await term.flush();
       final (_, row0) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
@@ -218,24 +219,24 @@ Future<void> runTerminal<S>({
       for (var i = 0; i < h; i++) {
         term.write('\n');
       }
-      term.write('\x1B[${h}A');
+      term.write(AnsiSequences.moveUp(h));
       await term.flush();
       final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
       yOffset = row1.clamp(0, term.size.height);
       currentSize = Size(term.size.width, h);
       term.moveTo(0, yOffset);
-      term.write('\x1B[0J');
+      term.write(AnsiSequences.clearAfterCursor);
     } else if (mode is InlineMode) {
       final h = (mode as InlineMode).height;
       for (var i = 0; i < h; i++) {
         term.write('\n');
       }
-      term.write('\x1B[${h}A');
+      term.write(AnsiSequences.moveUp(h));
       await term.flush();
       final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
       yOffset = row1.clamp(0, term.size.height);
       term.moveTo(0, yOffset);
-      term.write('\x1B[0J');
+      term.write(AnsiSequences.clearAfterCursor);
     }
     renderer.yOffset = yOffset;
     back = Buffer(currentSize);
