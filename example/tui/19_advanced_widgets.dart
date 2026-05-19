@@ -76,26 +76,27 @@ class State {
 }
 
 Future<void> main() => runTerminal<State>(
-      initialState: State(),
-      mode: const RenderMode.flow(autoGrow: true),
-      onEvent: (s, e, h) {
-        if (e is KeyEvent && e.char == 'q' && e.ctrl) h.stop();
-      },
-      render: (ctx, state) {
-        ctx.draw(
-          Input(
-            state: state.input,
-            message: 'Your name?',
-            onSubmit: (v) => state.value = v,
-          ),
-          ctx.area,
-        );
-      },
+  initialState: State(),
+  mode: const RenderMode.flow(autoGrow: true),
+  onEvent: (s, e, h) {
+    if (e is KeyEvent && e.char == 'q' && e.ctrl) h.stop();
+  },
+  render: (ctx, state) {
+    ctx.draw(
+      Input(
+        state: state.input,
+        message: 'Your name?',
+        onSubmit: (v) => state.value = v,
+      ),
+      ctx.area,
     );
+  },
+);
 ''';
 
 Future<void> main() => runTerminal<AppState>(
       initialState: AppState(),
+      mode: const RenderMode.alternateScreen(),
       frameRate: const Duration(milliseconds: 200),
       onEvent: (s, event, handle) {
         if (event is KeyEvent && event.char == 'q' && event.ctrl) {
@@ -109,10 +110,25 @@ Future<void> main() => runTerminal<AppState>(
         }
       },
       render: (ctx, state) {
+        if (ctx.area.height < 16 || ctx.area.width < 60) {
+          ctx.draw(
+            Center(
+              child: Paragraph(
+                'Terminal too small.\n\n'
+                'Please resize to at least 60 × 16 (got '
+                '${ctx.area.width} × ${ctx.area.height}).\n\n'
+                'Ctrl-Q to quit.',
+                style: Style(fg: ctx.theme.colors.warning, bold: true),
+              ),
+            ),
+            ctx.area,
+          );
+          return;
+        }
         final rows = Layout.vertical([
-          const Constraint.length(2),  // tabs
-          const Constraint.fill(1),    // body
-          const Constraint.length(1),  // footer
+          const Constraint.length(2), // tabs
+          const Constraint.fill(1), // body
+          const Constraint.length(1), // footer
         ]).split(ctx.area);
 
         ctx.draw(
@@ -182,8 +198,11 @@ void _renderTimeScroll(RenderContext ctx, AppState state, Rect area) {
         state: state.scroll,
         contentHeight: 40,
         child: Paragraph(
-          List.generate(40, (i) => 'Line ${(i + 1).toString().padLeft(2)} — '
-              'lorem ipsum dolor sit amet, consectetur adipiscing.').join('\n'),
+          List.generate(
+                  40,
+                  (i) => 'Line ${(i + 1).toString().padLeft(2)} — '
+                      'lorem ipsum dolor sit amet, consectetur adipiscing.')
+              .join('\n'),
         ),
       ),
     ),
@@ -193,9 +212,9 @@ void _renderTimeScroll(RenderContext ctx, AppState state, Rect area) {
 
 void _renderCharts(RenderContext ctx, AppState state, Rect area) {
   final rows = Layout.vertical([
-    const Constraint.length(3),    // sparkline
-    const Constraint.fill(1),      // vertical bar chart
-    const Constraint.length(7),    // horizontal bar chart
+    const Constraint.length(3), // sparkline
+    const Constraint.fill(1), // vertical bar chart
+    const Constraint.length(7), // horizontal bar chart
   ]).split(area);
 
   ctx.draw(

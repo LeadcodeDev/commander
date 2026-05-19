@@ -116,6 +116,14 @@ Future<void> runTerminal<S>({
       InlineMode(:final height) => Size(term.size.width, height),
     };
     if (desired != currentSize) {
+      // Erase the old TUI region before resizing so stale rows from the
+      // previous size don't linger in the terminal scrollback. Only applies to
+      // flow / inline modes; alternate-screen modes always own the viewport.
+      if (mode is FlowMode || mode is InlineMode) {
+        final clampedY = yOffset.clamp(0, term.size.height);
+        term.moveTo(0, clampedY);
+        term.write('\x1B[0J');
+      }
       currentSize = desired;
       back = Buffer(currentSize);
       renderer.resize(currentSize);
