@@ -1,267 +1,109 @@
 # Commander
 
-Commander is a Dart library for creating user interfaces within the terminal.
+Commander is a Dart library for building terminal user interfaces — both inline interactive prompts and full-screen declarative TUI applications.
 
-It provides interactive components such as option selection and text input with advanced management of
-user input.
-
-## Installation
-
-To use Commander in your Dart project, add this to your `pubspec.yaml` file :
 ```yaml
 dependencies:
-  commander_ui: ^2.0.0
+  commander_ui: ^3.0.0
 ```
 
-Then run `pub get` to install the dependencies.
+The package exposes two complementary APIs, each behind its own entry-point:
 
-## Usage
+- **`package:commander_ui/inline.dart`** — interactive CLI prompts (Input, Select, Checkbox, Switch, Progress, Table, AlternateScreen, Delayed). The historical API of `commander_ui`. Use it when you want one-shot prompts to compose a CLI flow.
 
-### Ask component
+- **`package:commander_ui/tui.dart`** — declarative TUI framework inspired by Ratatui (Rust). Use it to build full applications: dashboards, multi-screen wizards, file explorers, REPLs.
 
-A simple example of using Commander to create an ask component :
+The two worlds are intentionally separate. Pick the one that fits the task.
 
-- ✅ Secure
-- ✅ Integrated or custom validators
-- ✅ Default value
+---
+
+## TUI quickstart
 
 ```dart
+import 'package:commander_ui/tui.dart';
+
+class HelloState {}
+
+Future<void> main() => runTerminal<HelloState>(
+      initialState: HelloState(),
+      onEvent: (state, event, handle) {
+        if (event is KeyEvent && event.key == 'q') handle.stop();
+      },
+      render: (ctx, state) {
+        ctx.draw(
+          Center(
+            child: Container(
+              border: BorderStyle.rounded,
+              title: ' Commander TUI ',
+              padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+              child: const Text('Hello, World!', align: TextAlign.center),
+            ),
+            width: 40,
+            height: 5,
+          ),
+          ctx.area,
+        );
+      },
+    );
+```
+
+Run with `dart run example/tui/01_hello.dart`.
+
+### Core concepts
+
+- **Immediate-mode rendering.** Each frame, your `render(ctx, state)` describes the full UI. The framework diffs cell buffers and emits the minimal escape sequence.
+- **No widget tree state.** Widgets are values. State lives in your own `AppState`. Lifecycle methods (`initState`, `dispose`) don't exist by design.
+- **Focus management built in.** Any widget with an `id: Key` becomes focusable. Tab cycles in render order; modals push focus scopes via `ctx.scope`. No code to write.
+- **Async without state plumbing.** `Async<T>`, `AsyncResult<T, E>`, `AsyncStream<T>` track futures/streams by `Key`, restart on key change, and render `onLoading`/`onSuccess`/`onError` declaratively.
+- **Cross-platform.** Unix (termios + ANSI) and Windows (Console API) backends. Alternate-screen or inline render modes.
+- **No magic.** You own state and event handling indirectly via `runTerminal`. Events flow through your `onEvent` for anything the framework doesn't consume.
+
+### Examples
+
+Each example is a runnable `dart` file in `example/tui/`:
+
+| File | Demo |
+|------|------|
+| `01_hello.dart` | Static hello-world. |
+| `02_layout.dart` | Three-zone layout with nested rows / columns. |
+| `03_focus.dart` | Form with Tab navigation and validation. |
+| `04_list.dart` | Scrollable `ListView` of 50 items. |
+| `05_tabs.dart` | `Tabs` widget with arrow-key switching. |
+| `06_async.dart` | `Async<T>` rendering loading / success / error states. |
+| `07_navigation.dart` | `TuiNavigator` with push/pop between screens. |
+| `08_dashboard.dart` | Real-time dashboard with `frameRate`, gauges, logs. |
+| `09_inline.dart` | Inline mode (fzf-like) with filter + list. |
+| `10_themed.dart` | `ThemeData` hot-swap (dark ↔ light). |
+
+### Key documents
+
+- `SPEC.md` — full functional specification.
+- `MILESTONES.md` — implementation roadmap.
+
+---
+
+## Inline API quickstart
+
+```dart
+import 'package:commander_ui/inline.dart';
+
 Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-
-  final value = await commander.ask('What is your email ?',
-    validate: (validator) => validator
-      ..notEmpty(message: 'Name cannot be empty :)')
-      ..email(message: 'Please enter a valid email'));
-
-  // Custom validator
-  final value = await commander.ask('What is your name ?',
-    validate: (validator) => validator
-      ..validate((value) => value == 'Bob' 
-          ? 'Bob is not allowed' 
-          : null));
-
-  print(value);
+  final commander = Commander();
+  final name = await commander.ask('Your name?');
+  commander.success('Hello $name');
 }
 ```
 
-### Number component
+The inline API hasn't changed. See `lib/commander_ui.dart` for the full surface.
 
-A simple example of using Commander to create a number component :
+---
 
-- ✅ Integrated or custom validators
-- ✅ Default value
-- ✅ Custom rendering
-- ✅ `double` or `int` (`num` by default)
+## Compatibility
 
-```dart
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
+- Dart `^3.3.0`.
+- Platforms: macOS, Linux, Windows 10 1909+ (Windows Terminal / PowerShell 7+).
+- No runtime dependencies for TUI mode beyond `dart:ffi` (used internally for termios on Unix).
 
-  final value = await commander.number('What is your age ?',
-      interval: 1,
-      onDisplay: (value) => value?.toStringAsFixed(2),
-      validate: (validator) => validator
-        ..greaterThan(18, message: 'You must be at least 18 years old')
-        ..lowerThan(99, message: 'You must be at most 99 years old'));
+## License
 
-  print(value);
-}
-```
-
-### Select component
-A simple example of using Commander to create an option selection component :
-
-- ✅ Placeholder
-- ✅ Default selected
-- ✅ Searchable values
-- ✅ Display transformer
-- ✅ Max display count (default as 5)
-
-```dart
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-
-  final value = await commander.select('What is your name ?',
-      onDisplay: (value) => value,
-      placeholder: 'Type to search',
-      defaultValue: 'Charlie',
-      options: ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'John']);
-
-  print(value);
-}
-```
-
-### Swap component
-A simple example of using Commander to create a swap component :
-
-- ✅ Select value with directional arrows
-
-```dart
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-
-  final value = await commander.swap('Do you love cats', 
-    defaultValue: true, 
-    placeholder: '🐈'
-  );
-  
-  final str = switch (value) {
-    true => 'I love cats 😍',
-    false => 'I prefer dogs 😕',
-  };
-
-  print(str);
-}
-```
-
-### Task component
-A simple example of using Commander to create a task component :
-
-- ✅ Multiple steps per task
-- ✅ Success, warn and error results
-- ✅ Sync and async action supports
-
-```dart
-Future<void> sleep() => Future.delayed(Duration(seconds: 1));
-
-Future<String> sleepWithValue() =>
-    Future.delayed(Duration(seconds: 1), () => 'Hello World !');
-
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-
-  final successTask = await commander.task();
-  await successTask.step('Success step 1', callback: sleepWithValue);
-  await successTask.step('Success step 2', callback: sleep);
-  successTask.success('Success task data are available !');
-
-  final warnTask = await commander.task();
-  await warnTask.step('Warn step 1', callback: sleepWithValue);
-  await warnTask.step('Warn step 2', callback: sleep);
-  await warnTask.step('Warn step 3', callback: sleep);
-  warnTask.warn('Warn task !');
-
-  final errorTask = await commander.task();
-  await errorTask.step('Error step 1', callback: sleepWithValue);
-  await errorTask.step('Error step 2', callback: sleep);
-  await errorTask.step('Error step 3', callback: sleep);
-  errorTask.error('Error task !');
-}
-```
-
-### Checkbox component
-A simple example of using Commander to create a checkbox component :
-
-- ✅ Placeholder
-- ✅ Default checked
-- ✅ Single or multiple selection
-- ✅ Display transforme
-
-```dart
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-
-  final value = await commander.checkbox(
-    'What is your favorite pet ?',
-    defaultValue: 'Charlie',
-    options: ['cat', 'dog', 'bird'],
-  );
-
-  print(value);
-}
-```
-
-### Table component
-A simple example of using Commander to create a table component :
-
-- ✅ Without column and line borders
-- ✅ With column and line borders
-- ✅ With column borders and without line borders
-- ✅ With line borders and without column borders
-
-```dart
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-  commander.table(
-    columns: ['Name', 'Age', 'Country', 'City'],
-    lineSeparator: false,
-    columnSeparator: false,
-    data: [
-      ['Alice', '20', 'USA', 'New York'],
-      ['Bob', '25', 'Canada', 'Toronto'],
-      ['Charlie', '30', 'France', 'Paris'],
-      ['David', '35', 'Germany', 'Berlin'],
-      ['Eve', '40', 'Italy', 'Rome'],
-      ['Frank', '45', 'Japan', 'Tokyo'],
-      ['John', '50', 'China', 'Beijing'],
-    ],
-  );
-}
-```
-
-### Alternative screen component
-A simple example of using Commander to create an alternative screen component :
-
-- ✅ Set title
-- ✅ Clear screen on start
-- ✅ Restore screen on stop
-
-```dart
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-
-  final screen = commander.screen(title: 'First screen');
-  screen.enter();
-
-  await sleep();
-  print('Hello screen !');
-  await sleep();
-
-  screen.leave();
-
-  print('Goodbye screen !');
-}
-
-
-Future<void> wait() =>
-    Future.delayed(Duration(seconds: Random().nextInt(3) + 1));
-```
-
-## Theming
-
-Commander provides a theming system to customize the appearance of the components.
-It is possible to define a global theme for all components or a specific theme for each component.
-
-```dart
-Future<void> main() async {
-  final commander = Commander(
-    level: Level.verbose,
-    componentTheme: ComponentTheme(
-      askTheme: DefaultAskTheme.copyWith(askPrefix: '🤖')
-    ));
-
-  final value = await commander.ask('What is your email ?',
-    validate: (validator) => validator
-      ..notEmpty(message: 'Name cannot be empty :)')
-      ..email(message: 'Please enter a valid email'));
-
-  print(value);
-}
-```
-
-Each component that interacts with the user has a `theme` property that allows the appearance to be customised.
-
-```dart
-Future<void> main() async {
-  final commander = Commander(level: Level.verbose);
-
-  final value = await commander.ask('What is your email ?',
-    theme: DefaultAskTheme.copyWith(askPrefix: '🤖'),
-    validate: (validator) => validator
-      ..notEmpty(message: 'Name cannot be empty :)')
-      ..email(message: 'Please enter a valid email'));
-
-  print(value);
-}
-```
+MIT — see `LICENSE`.
