@@ -265,7 +265,7 @@ class UnixTerminal implements Terminal {
   Future<void> flush() => stdout.flush();
 
   @override
-  Future<void> shutdown() async {
+  Future<void> restore() async {
     try {
       disableMouse();
       showCursor();
@@ -273,11 +273,19 @@ class UnixTerminal implements Terminal {
       leaveRawMode();
       await stdout.flush();
     } catch (_) {}
+  }
+
+  @override
+  Future<void> shutdown() async {
+    await restore();
     await _stdinSub?.cancel();
     await _resizeSub?.cancel();
     await _intSub?.cancel();
     await _termSub?.cancel();
     if (!_events.isClosed) await _events.close();
+    _streamStarted = false;
+    _stdinSub = null;
+    _resizeSub = null;
     try {
       calloc.free(_origPtr);
     } catch (_) {}

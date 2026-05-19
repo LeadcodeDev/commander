@@ -67,7 +67,16 @@ class TestTerminal implements Terminal {
   Future<void> flush() async {}
 
   @override
+  Future<void> restore() async {
+    _rawMode = false;
+    _altScreen = false;
+    _mouseEnabled = false;
+    _cursorHidden = false;
+  }
+
+  @override
   Future<void> shutdown() async {
+    await restore();
     if (!_events.isClosed) await _events.close();
   }
 }

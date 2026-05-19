@@ -1,3 +1,16 @@
+## 3.0.0
+
+**Breaking — legacy inline API removed.**
+
+- Remove `Commander` class and the legacy components (`ask`, `checkbox`, `number`, `screen`, `select`, `swap`, `table`, `task`) under `lib/src/application/` and `lib/src/domains/`.
+- Remove `package:commander_ui/commander_ui.dart` and `package:commander_ui/inline.dart` entries.
+- Add `InlineCommander` (in `package:commander_ui/prompt.dart`), a same-DX replacement built entirely on the TUI runtime:
+  - Interactive: `ask`, `password`, `number`, `select`, `multiSelect`, `confirm`, `task`.
+  - Status helpers: `success`, `info`, `warn`, `error`.
+- Add `PromptCancelledException`, thrown when the user aborts a prompt with Ctrl-C.
+
+Migration: replace `final c = Commander()` with `final c = InlineCommander()` and import `package:commander_ui/prompt.dart`. `swap` becomes `confirm`; `checkbox` becomes `multiSelect`; `task`'s step manager is replaced by `task(description, work)` which awaits an arbitrary future.
+
 ## 2.4.0
 - Implement `number` component
 

@@ -253,7 +253,7 @@ class WindowsTerminal implements Terminal {
   Future<void> flush() => stdout.flush();
 
   @override
-  Future<void> shutdown() async {
+  Future<void> restore() async {
     try {
       disableMouse();
       showCursor();
@@ -261,6 +261,11 @@ class WindowsTerminal implements Terminal {
       leaveRawMode();
       await stdout.flush();
     } catch (_) {}
+  }
+
+  @override
+  Future<void> shutdown() async {
+    await restore();
     await _stdinSub?.cancel();
     if (!_events.isClosed) await _events.close();
   }

@@ -71,6 +71,7 @@ Future<void> runTerminal<S>({
     }
   }
 
+  final ownedTerminal = terminal == null;
   final term = terminal ?? Terminal();
   final detectedMode = colorMode ?? AnsiEncoder.detect();
   final encoder = AnsiEncoder(detectedMode);
@@ -264,10 +265,25 @@ Future<void> runTerminal<S>({
     } else if (mode is InlineMode || mode is FlowMode) {
       final used = lastUsedRow();
       final targetRow = used >= 0 ? yOffset + used + 1 : yOffset;
-      term.moveTo(0, targetRow);
-      term.write('\r\n');
+      // If the row after content would fall off-screen, scroll one line so
+      // the cursor lands on a fresh row instead of overwriting content.
+      // Otherwise just position on the row right after the last content
+      // row — no extra blank line.
+      if (targetRow >= term.size.height) {
+        term.moveTo(0, term.size.height - 1);
+        term.write('\n');
+      } else {
+        term.moveTo(0, targetRow);
+      }
     }
-    await term.shutdown();
+    // When the caller passed their own terminal, only restore terminal
+    // modes — leave the stdin subscription and event stream intact so
+    // subsequent `runTerminal` calls on the same terminal still work.
+    if (ownedTerminal) {
+      await term.shutdown();
+    } else {
+      await term.restore();
+    }
     async_.disposeAll();
   }
 
