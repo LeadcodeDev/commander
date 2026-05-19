@@ -18,7 +18,8 @@ import 'not_a_terminal_exception.dart';
 import 'render_context.dart';
 import 'render_mode.dart';
 
-typedef OnEventFn<S> = FutureOr<void> Function(S state, Event event, RunHandle handle);
+typedef OnEventFn<S> = FutureOr<void> Function(
+    S state, Event event, RunHandle handle);
 typedef RenderFn<S> = void Function(RenderContext ctx, S state);
 typedef ThemeBuilder<S> = ThemeData Function(S state);
 
@@ -55,7 +56,8 @@ Future<void> runTerminal<S>({
     final inIsTty = stdin.hasTerminal;
     final outIsTty = stdout.hasTerminal;
     if (!inIsTty || !outIsTty) {
-      final sb = StringBuffer('commander: TUI mode requires an interactive terminal.\n');
+      final sb = StringBuffer(
+          'commander: TUI mode requires an interactive terminal.\n');
       sb.writeln(inIsTty
           ? '  stdin: TTY OK'
           : '  stdin: not a TTY (pipe or redirection)');
@@ -150,24 +152,30 @@ Future<void> runTerminal<S>({
       return c;
     }
 
-    var ctx = makeCtx();
+    RenderContext ctx = makeCtx();
     render(ctx, state);
     ctx.flushOverlays();
 
-    if (mode is FlowMode &&
-        (mode as FlowMode).autoGrow &&
-        ctx.maxDesiredHeight > currentSize.height) {
+    final isFlowAndRequiredMoreHight = mode is FlowMode &&
+        mode.autoGrow &&
+        ctx.maxDesiredHeight > currentSize.height;
+
+    if (isFlowAndRequiredMoreHight) {
       final delta = ctx.maxDesiredHeight - currentSize.height;
       // Erase the old buffer area BEFORE scrolling so no stale content
       // ends up shifted into a visible row after scroll.
       term.moveTo(0, yOffset);
       term.write(AnsiSequences.clearAfterCursor);
       term.moveTo(0, yOffset + currentSize.height - 1);
+
       for (var i = 0; i < delta; i++) {
         term.write('\n');
       }
+
       await term.flush();
-      final (_, newBottomRow) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
+
+      final (_, newBottomRow) =
+          await term.queryCursorPosition(timeout: cursorQueryTimeout);
       final newH = currentSize.height + delta;
       yOffset = (newBottomRow - newH + 1).clamp(0, term.size.height);
       currentSize = Size(currentSize.width, newH);
@@ -178,7 +186,9 @@ Future<void> runTerminal<S>({
       term.moveTo(0, yOffset);
       term.write(AnsiSequences.clearAfterCursor);
       ctx = makeCtx();
+
       render(ctx, state);
+
       ctx.flushOverlays();
     }
 
@@ -196,6 +206,7 @@ Future<void> runTerminal<S>({
     } else if (mode is InlineMode || mode is FlowMode) {
       term.write('\r');
     }
+
     final out = renderer.paint(back);
     if (out.isNotEmpty) {
       term.write(out);
@@ -205,6 +216,7 @@ Future<void> runTerminal<S>({
 
   Future<void> setup() async {
     term.enterRawMode();
+
     if (mode is AlternateScreenMode) {
       term.enterAlternateScreen();
     } else if (mode is FullScreenMode) {
@@ -212,36 +224,49 @@ Future<void> runTerminal<S>({
       term.write(AnsiSequences.home);
     } else if (mode is FlowMode) {
       await term.flush();
-      final (_, row0) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
+
+      final (_, row0) =
+          await term.queryCursorPosition(timeout: cursorQueryTimeout);
+
       yOffset = row0.clamp(0, term.size.height);
-      final m = mode as FlowMode;
-      final h = flowEffectiveHeight(m);
-      for (var i = 0; i < h; i++) {
+
+      final height = flowEffectiveHeight(mode);
+      for (int i = 0; i < height; i++) {
         term.write('\n');
       }
-      term.write(AnsiSequences.moveUp(h));
+
+      term.write(AnsiSequences.moveUp(height));
       await term.flush();
-      final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
+      final (_, row1) =
+          await term.queryCursorPosition(timeout: cursorQueryTimeout);
       yOffset = row1.clamp(0, term.size.height);
-      currentSize = Size(term.size.width, h);
+      currentSize = Size(term.size.width, height);
       term.moveTo(0, yOffset);
       term.write(AnsiSequences.clearAfterCursor);
     } else if (mode is InlineMode) {
-      final h = (mode as InlineMode).height;
-      for (var i = 0; i < h; i++) {
+      final h = mode.height;
+      for (int i = 0; i < h; i++) {
         term.write('\n');
       }
       term.write(AnsiSequences.moveUp(h));
+
       await term.flush();
-      final (_, row1) = await term.queryCursorPosition(timeout: cursorQueryTimeout);
+      final (_, row1) =
+          await term.queryCursorPosition(timeout: cursorQueryTimeout);
+
       yOffset = row1.clamp(0, term.size.height);
+
       term.moveTo(0, yOffset);
       term.write(AnsiSequences.clearAfterCursor);
     }
     renderer.yOffset = yOffset;
     back = Buffer(currentSize);
     term.hideCursor();
-    if (enableMouse) term.enableMouse();
+
+    if (enableMouse) {
+      term.enableMouse();
+    }
+
     await term.flush();
   }
 
@@ -302,7 +327,8 @@ Future<void> runTerminal<S>({
 
   final controller = StreamController<Event>();
   async_.onCallbackError = (e, st) {
-    logger.error('AsyncRegistry onResolved callback threw', error: e, stack: st);
+    logger.error('AsyncRegistry onResolved callback threw',
+        error: e, stack: st);
   };
   async_.onResolved = (key) {
     handle.requestRedraw();

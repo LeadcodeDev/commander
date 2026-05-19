@@ -35,15 +35,19 @@ void main() {
       );
 
       final fakeCtx = _renderContextOnly(const Size(30, 10));
-      expect(widget.onKey(const KeyEvent(key: NamedKey.enter), fakeCtx), isTrue);
+      expect(
+          widget.onKey(const KeyEvent(key: NamedKey.enter), fakeCtx), isTrue);
       expect(dropState.open, isTrue);
 
-      expect(widget.onKey(const KeyEvent(key: NamedKey.arrowDown), fakeCtx), isTrue);
+      expect(widget.onKey(const KeyEvent(key: NamedKey.arrowDown), fakeCtx),
+          isTrue);
       expect(dropState.highlightedIndex, 1);
-      expect(widget.onKey(const KeyEvent(key: NamedKey.arrowUp), fakeCtx), isTrue);
+      expect(
+          widget.onKey(const KeyEvent(key: NamedKey.arrowUp), fakeCtx), isTrue);
       expect(dropState.highlightedIndex, 0);
 
-      expect(widget.onKey(const KeyEvent(key: NamedKey.escape), fakeCtx), isTrue);
+      expect(
+          widget.onKey(const KeyEvent(key: NamedKey.escape), fakeCtx), isTrue);
       expect(dropState.open, isFalse);
     });
   });

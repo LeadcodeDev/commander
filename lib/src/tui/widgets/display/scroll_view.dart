@@ -109,7 +109,8 @@ class ScrollView implements FocusableWidget {
     if (contentWidth > 0) state.contentWidth = contentWidth;
 
     final hasVScroll = showScrollbar && contentHeight > area.height;
-    final viewportWidth = (area.width - (hasVScroll ? 1 : 0)).clamp(0, area.width);
+    final viewportWidth =
+        (area.width - (hasVScroll ? 1 : 0)).clamp(0, area.width);
     final viewportHeight = area.height;
     if (viewportWidth <= 0 || viewportHeight <= 0) return;
 
@@ -147,10 +148,12 @@ class ScrollView implements FocusableWidget {
       final ratio = contentHeight == 0
           ? 0.0
           : (viewportHeight / contentHeight).clamp(0.0, 1.0);
-      final thumbLen = (ratio * viewportHeight).round().clamp(1, viewportHeight);
+      final thumbLen =
+          (ratio * viewportHeight).round().clamp(1, viewportHeight);
       final posRatio = maxY == 0 ? 0.0 : state.offsetY / maxY;
-      final thumbStart =
-          (posRatio * (viewportHeight - thumbLen)).round().clamp(0, viewportHeight - thumbLen);
+      final thumbStart = (posRatio * (viewportHeight - thumbLen))
+          .round()
+          .clamp(0, viewportHeight - thumbLen);
       for (var y = 0; y < viewportHeight; y++) {
         final isThumb = y >= thumbStart && y < thumbStart + thumbLen;
         buffer.setChar(trackX, area.y + y, isThumb ? '█' : '│',

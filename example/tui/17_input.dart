@@ -35,7 +35,7 @@ Future<void> main() async {
         Chain.flow(
           state: state.form.chain,
           onComplete: (values) {
-            // Toutes les réponses collectées.
+            // All responses collected.
           },
           flow: (ctx) async {
             state.form.nameValue = await ctx.draw<String>(

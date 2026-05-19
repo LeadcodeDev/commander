@@ -51,13 +51,11 @@ class Switch implements FocusableWidget {
     final indicator = checked ? onIndicator : offIndicator;
     final defaultOn = Style(fg: ctx.theme.colors.success, bold: true);
     final defaultOff = Style(fg: ctx.theme.colors.muted);
-    final indicatorStyle = checked
-        ? (onStyle ?? defaultOn)
-        : (offStyle ?? defaultOff);
+    final indicatorStyle =
+        checked ? (onStyle ?? defaultOn) : (offStyle ?? defaultOff);
 
     final labelStyle = isFocused
-        ? ctx.theme.text.body
-            .copyWith(fg: ctx.theme.colors.primary, bold: true)
+        ? ctx.theme.text.body.copyWith(fg: ctx.theme.colors.primary, bold: true)
         : ctx.theme.text.body;
 
     buffer.writeText(area.x, area.y, indicator,

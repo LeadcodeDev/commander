@@ -5,7 +5,6 @@ import '../style/style.dart';
 import '../theme/theme_data.dart';
 import '../widget/widget.dart';
 import 'async_registry.dart';
-import 'event.dart';
 import 'focus_controller.dart';
 import 'key.dart';
 import 'logger.dart';
@@ -74,7 +73,8 @@ class RenderContext implements HitZoneSink {
   void add(Rect rect, Key key) => _hitZones.add(rect, key);
 
   void draw(Widget widget, Rect target) {
-    assert(target.width >= 0 && target.height >= 0,
+    assert(
+        target.width >= 0 && target.height >= 0,
         'RenderContext.draw: target rect must have non-negative size '
         '(got ${target.width}x${target.height})');
     if (target.bottom > _maxDesiredHeight) {
@@ -88,7 +88,8 @@ class RenderContext implements HitZoneSink {
           focus.clear();
         }
       } else {
-        assert(_seenFocusables.add(widget.id),
+        assert(
+            _seenFocusables.add(widget.id),
             'Duplicate FocusableWidget id in same frame: ${widget.id}. '
             'Each focusable widget must have a unique Key per frame.');
         focus.register(
@@ -97,8 +98,7 @@ class RenderContext implements HitZoneSink {
             try {
               return widget.onKey(event, this);
             } catch (e, st) {
-              logger.error('widget.onKey threw',
-                  error: e, stack: st);
+              logger.error('widget.onKey threw', error: e, stack: st);
               return false;
             }
           },
@@ -109,8 +109,7 @@ class RenderContext implements HitZoneSink {
         try {
           widget.registerHitZones(clipped, this);
         } catch (e, st) {
-          logger.error('widget.registerHitZones threw',
-              error: e, stack: st);
+          logger.error('widget.registerHitZones threw', error: e, stack: st);
         }
       }
     }

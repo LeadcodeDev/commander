@@ -7,18 +7,18 @@ enum BorderStyle {
   thick;
 
   BorderChars get chars => switch (this) {
-        BorderStyle.none => const BorderChars(
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '),
-        BorderStyle.ascii => const BorderChars(
-            '+', '+', '+', '+', '-', '-', '|', '|'),
-        BorderStyle.single => const BorderChars(
-            '┌', '┐', '└', '┘', '─', '─', '│', '│'),
-        BorderStyle.double => const BorderChars(
-            '╔', '╗', '╚', '╝', '═', '═', '║', '║'),
-        BorderStyle.rounded => const BorderChars(
-            '╭', '╮', '╰', '╯', '─', '─', '│', '│'),
-        BorderStyle.thick => const BorderChars(
-            '┏', '┓', '┗', '┛', '━', '━', '┃', '┃'),
+        BorderStyle.none =>
+          const BorderChars(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '),
+        BorderStyle.ascii =>
+          const BorderChars('+', '+', '+', '+', '-', '-', '|', '|'),
+        BorderStyle.single =>
+          const BorderChars('┌', '┐', '└', '┘', '─', '─', '│', '│'),
+        BorderStyle.double =>
+          const BorderChars('╔', '╗', '╚', '╝', '═', '═', '║', '║'),
+        BorderStyle.rounded =>
+          const BorderChars('╭', '╮', '╰', '╯', '─', '─', '│', '│'),
+        BorderStyle.thick =>
+          const BorderChars('┏', '┓', '┗', '┛', '━', '━', '┃', '┃'),
       };
 }
 

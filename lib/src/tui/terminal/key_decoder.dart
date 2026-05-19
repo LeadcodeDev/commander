@@ -33,8 +33,8 @@ class KeyDecoder {
       }
       if (b1 >= 0x20 && b1 < 0x7F) {
         return (
-          event: KeyEvent(
-              char: String.fromCharCode(b1), alt: true, raw: [b0, b1]),
+          event:
+              KeyEvent(char: String.fromCharCode(b1), alt: true, raw: [b0, b1]),
           consumed: 2,
         );
       }
@@ -155,7 +155,8 @@ class KeyDecoder {
         final isScroll = (code & 64) != 0;
         MouseAction action;
         if (isScroll) {
-          action = (code & 1) == 1 ? MouseAction.scrollDown : MouseAction.scrollUp;
+          action =
+              (code & 1) == 1 ? MouseAction.scrollDown : MouseAction.scrollUp;
         } else if (isMotion) {
           action = MouseAction.move;
         } else if (isUp) {

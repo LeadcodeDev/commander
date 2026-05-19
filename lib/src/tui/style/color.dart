@@ -13,7 +13,8 @@
 /// capability detection + automatic downgrading inside `AnsiEncoder`.
 library;
 
-export 'package:mansion/mansion.dart' show Color, Color4, Color8, Color24, ColorReset;
+export 'package:mansion/mansion.dart'
+    show Color, Color4, Color8, Color24, ColorReset;
 
 /// Terminal color capability tier, used by `AnsiEncoder` to decide whether
 /// to emit truecolor / 256-color / 16-color escape sequences (or none).

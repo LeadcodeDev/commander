@@ -65,7 +65,8 @@ class LegacyTable implements FocusableWidget {
     final headerStyle = ctx.theme.text.title;
     var x = area.x;
     for (var i = 0; i < columns.length && i < colWidths.length; i++) {
-      buffer.writeText(x, area.y, columns[i], style: headerStyle, maxWidth: colWidths[i]);
+      buffer.writeText(x, area.y, columns[i],
+          style: headerStyle, maxWidth: colWidths[i]);
       x += colWidths[i] + 1;
     }
 
@@ -77,7 +78,8 @@ class LegacyTable implements FocusableWidget {
     } else if (state.selectedRow >= state.scrollOffset + visible) {
       state.scrollOffset = state.selectedRow - visible + 1;
     }
-    state.scrollOffset = state.scrollOffset.clamp(0, (rows.length - visible).clamp(0, rows.length));
+    state.scrollOffset = state.scrollOffset
+        .clamp(0, (rows.length - visible).clamp(0, rows.length));
 
     for (var i = 0; i < visible && i + state.scrollOffset < rows.length; i++) {
       final idx = i + state.scrollOffset;
@@ -90,7 +92,8 @@ class LegacyTable implements FocusableWidget {
       if (isSel) buffer.fillStyle(rowRect, rowStyle);
       x = rowRect.x;
       for (var c = 0; c < colWidths.length && c < row.length; c++) {
-        buffer.writeText(x, rowRect.y, row[c], style: rowStyle, maxWidth: colWidths[c]);
+        buffer.writeText(x, rowRect.y, row[c],
+            style: rowStyle, maxWidth: colWidths[c]);
         x += colWidths[c] + 1;
       }
     }

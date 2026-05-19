@@ -32,6 +32,7 @@ class Gauge implements Widget {
     }
     final tx = area.x + (area.width - text.length) ~/ 2;
     final ty = area.y + area.height ~/ 2;
-    buffer.writeText(tx, ty, text, style: ctx.theme.text.body, maxWidth: area.width);
+    buffer.writeText(tx, ty, text,
+        style: ctx.theme.text.body, maxWidth: area.width);
   }
 }

@@ -29,7 +29,8 @@ Future<void> main() => runTerminal<State>(
                 child: Container(
                   border: BorderStyle.rounded,
                   title: ' Counter Demo ',
-                  padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
                   child: Column(
                     children: [
                       Text(
@@ -55,7 +56,8 @@ Future<void> main() => runTerminal<State>(
                           ),
                         ),
                         onKeyHandler: (event) {
-                          if (event.key == NamedKey.enter || event.char == ' ') {
+                          if (event.key == NamedKey.enter ||
+                              event.char == ' ') {
                             exit();
                             return true;
                           }

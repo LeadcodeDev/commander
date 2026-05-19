@@ -73,15 +73,14 @@ class UnixTerminal implements Terminal {
   final KeyDecoder _decoder = KeyDecoder();
   bool _streamStarted = false;
 
-  UnixTerminal()
-      : this._fromLib(_openLibc());
+  UnixTerminal() : this._fromLib(_openLibc());
 
   UnixTerminal._fromLib(DynamicLibrary lib)
       : _lib = lib,
-        _tcgetattr = lib
-            .lookupFunction<_TcGetAttrNative, _TcGetAttrDart>('tcgetattr'),
-        _tcsetattr = lib
-            .lookupFunction<_TcSetAttrNative, _TcSetAttrDart>('tcsetattr'),
+        _tcgetattr =
+            lib.lookupFunction<_TcGetAttrNative, _TcGetAttrDart>('tcgetattr'),
+        _tcsetattr =
+            lib.lookupFunction<_TcSetAttrNative, _TcSetAttrDart>('tcsetattr'),
         _origPtr = calloc<_Termios>(),
         _size = _querySize() {
     _tcgetattr(_STDIN_FILENO, _origPtr);

@@ -68,7 +68,11 @@ class InlineCommander {
     if (_disposed) {
       throw StateError('InlineCommander has been disposed');
     }
-    if (_terminalOverride != null) return _terminalOverride;
+
+    if (_terminalOverride != null) {
+      return _terminalOverride;
+    }
+
     return _cachedTerminal ??= Terminal();
   }
 
@@ -78,8 +82,10 @@ class InlineCommander {
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
+
     final t = _cachedTerminal;
     _cachedTerminal = null;
+
     if (t != null) await t.shutdown();
   }
 
@@ -112,7 +118,8 @@ class InlineCommander {
           validate: validate,
           onSubmit: submit,
         ),
-        Rect(ctx.area.x, ctx.area.y, ctx.area.width, state.error != null ? 2 : 1),
+        Rect(ctx.area.x, ctx.area.y, ctx.area.width,
+            state.error != null ? 2 : 1),
       ),
       theme: _theme,
       terminal: _terminal(),
@@ -151,7 +158,8 @@ class InlineCommander {
           validate: validate,
           onSubmit: submit,
         ),
-        Rect(ctx.area.x, ctx.area.y, ctx.area.width, state.error != null ? 2 : 1),
+        Rect(ctx.area.x, ctx.area.y, ctx.area.width,
+            state.error != null ? 2 : 1),
       ),
       theme: _theme,
       terminal: _terminal(),
@@ -171,17 +179,20 @@ class InlineCommander {
     if (options.isEmpty) {
       throw ArgumentError.value(options, 'options', 'must not be empty');
     }
+
     final state = tui_select.SelectState<T>();
+    bool submitted = false;
     T? pending;
-    var submitted = false;
 
     return runOneShot<T>(
       (ctx, submit) {
         if (submitted) {
-          _drawCompactAnswer(ctx, message, display?.call(pending as T) ?? pending.toString());
+          _drawCompactAnswer(
+              ctx, message, display?.call(pending as T) ?? pending.toString());
           submit(pending as T);
           return;
         }
+
         final widget = tui_select.Select<T>(
           id: Key.symbol(#__inline_select),
           items: options,
@@ -205,7 +216,8 @@ class InlineCommander {
           },
         );
         _drawWithHeader(ctx, message, widget,
-            bodyHeight: _selectBodyHeight(options.length, visibleCount, filterable));
+            bodyHeight:
+                _selectBodyHeight(options.length, visibleCount, filterable));
       },
       theme: _theme,
       terminal: _terminal(),
@@ -228,9 +240,10 @@ class InlineCommander {
     if (options.isEmpty) {
       throw ArgumentError.value(options, 'options', 'must not be empty');
     }
+
     final state = tui_select.SelectState<T>();
+    bool submitted = false;
     List<T>? pending;
-    var submitted = false;
 
     return runOneShot<List<T>>(
       (ctx, submit) {
@@ -242,6 +255,7 @@ class InlineCommander {
           submit(pending ?? const []);
           return;
         }
+
         final widget = tui_select.Select<T>(
           id: Key.symbol(#__inline_multi),
           items: options,
@@ -265,8 +279,10 @@ class InlineCommander {
             submitted = true;
           },
         );
+
         _drawWithHeader(ctx, message, widget,
-            bodyHeight: _selectBodyHeight(options.length, visibleCount, filterable));
+            bodyHeight:
+                _selectBodyHeight(options.length, visibleCount, filterable));
       },
       theme: _theme,
       terminal: _terminal(),
@@ -365,7 +381,8 @@ class InlineCommander {
     );
 
     if (caughtError != null) {
-      Error.throwWithStackTrace(caughtError!, caughtStack ?? StackTrace.current);
+      Error.throwWithStackTrace(
+          caughtError!, caughtStack ?? StackTrace.current);
     }
     return result as T;
   }
@@ -390,6 +407,7 @@ class InlineCommander {
     required int bodyHeight,
   }) {
     final width = ctx.area.width;
+
     ctx.draw(
       Text(
         '? $message',
@@ -397,6 +415,7 @@ class InlineCommander {
       ),
       Rect(ctx.area.x, ctx.area.y, width, 1),
     );
+
     ctx.draw(body, Rect(ctx.area.x, ctx.area.y + 1, width, bodyHeight));
   }
 
@@ -407,14 +426,15 @@ class InlineCommander {
   void _drawCompactAnswer(RenderContext ctx, String message, String value) {
     final width = ctx.area.width;
     final theme = ctx.theme;
+
     ctx.draw(
       Row(
         spacing: 1,
         children: [
           Fixed(
             size: 1,
-            child: Text('✓',
-                style: Style(fg: theme.colors.success, bold: true)),
+            child:
+                Text('✓', style: Style(fg: theme.colors.success, bold: true)),
           ),
           Fixed(
             size: message.length,
@@ -434,4 +454,3 @@ class InlineCommander {
     return visible + (filterable ? 1 : 0);
   }
 }
-

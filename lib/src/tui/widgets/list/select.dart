@@ -174,9 +174,8 @@ class Select<T> implements FocusableWidget {
     }
     if (event.key == NamedKey.delete) {
       if (state.filterCursor < state.filterQuery.length) {
-        state.filterQuery =
-            state.filterQuery.substring(0, state.filterCursor) +
-                state.filterQuery.substring(state.filterCursor + 1);
+        state.filterQuery = state.filterQuery.substring(0, state.filterCursor) +
+            state.filterQuery.substring(state.filterCursor + 1);
       }
       return true;
     }
@@ -202,10 +201,9 @@ class Select<T> implements FocusableWidget {
       if (event.ctrl || event.alt) return false;
       final c = event.char!;
       if (c.runes.length == 1 && c.runes.first >= 0x20) {
-        state.filterQuery =
-            state.filterQuery.substring(0, state.filterCursor) +
-                c +
-                state.filterQuery.substring(state.filterCursor);
+        state.filterQuery = state.filterQuery.substring(0, state.filterCursor) +
+            c +
+            state.filterQuery.substring(state.filterCursor);
         state.filterCursor += c.length;
         return true;
       }
@@ -238,13 +236,11 @@ class Select<T> implements FocusableWidget {
         state.filterCursor = state.filterQuery.length;
         return true;
       }
-      state.activeIndex =
-          (state.activeIndex - 1).clamp(0, filtered.length - 1);
+      state.activeIndex = (state.activeIndex - 1).clamp(0, filtered.length - 1);
       return true;
     }
     if (event.key == NamedKey.arrowDown || event.char == 'j') {
-      state.activeIndex =
-          (state.activeIndex + 1).clamp(0, filtered.length - 1);
+      state.activeIndex = (state.activeIndex + 1).clamp(0, filtered.length - 1);
       return true;
     }
     if (event.key == NamedKey.pageUp) {
@@ -391,7 +387,8 @@ class Select<T> implements FocusableWidget {
     }
   }
 
-  void _renderFilter(Rect area, Buffer buffer, RenderContext ctx, bool isFocused) {
+  void _renderFilter(
+      Rect area, Buffer buffer, RenderContext ctx, bool isFocused) {
     final focused = isFocused && state.filterFocused;
     final query = state.filterQuery;
     final display = query.isEmpty ? filterPlaceholder : query;
@@ -401,13 +398,15 @@ class Select<T> implements FocusableWidget {
             ? ctx.theme.text.body.copyWith(fg: ctx.theme.colors.primary)
             : ctx.theme.text.body);
     final prefix = focused ? '/ ' : '  ';
-    buffer.writeText(area.x, area.y, prefix, style: ctx.theme.text.caption, maxWidth: area.width);
+    buffer.writeText(area.x, area.y, prefix,
+        style: ctx.theme.text.caption, maxWidth: area.width);
     buffer.writeText(area.x + 2, area.y, display,
         style: style, maxWidth: area.width - 2);
     if (focused) {
       final cx = area.x + 2 + state.filterCursor;
       if (cx < area.right) {
-        final c = state.filterCursor < query.length ? query[state.filterCursor] : ' ';
+        final c =
+            state.filterCursor < query.length ? query[state.filterCursor] : ' ';
         buffer.setChar(cx, area.y, c, style: const Style(reverse: true));
       }
     }
@@ -439,7 +438,9 @@ class Select<T> implements FocusableWidget {
     state.scrollOffset = state.scrollOffset.clamp(0, maxOffset);
 
     final listFocused = isFocused && !state.filterFocused;
-    for (var i = 0; i < maxVisible && i + state.scrollOffset < filtered.length; i++) {
+    for (var i = 0;
+        i < maxVisible && i + state.scrollOffset < filtered.length;
+        i++) {
       final idx = i + state.scrollOffset;
       final item = filtered[idx];
       final lineRect = Rect(area.x, area.y + i, area.width, 1);

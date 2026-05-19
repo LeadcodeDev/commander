@@ -37,6 +37,5 @@ abstract interface class Terminal {
   /// process exit will collect anything left behind.
   Future<void> shutdown();
 
-  factory Terminal() =>
-      Platform.isWindows ? WindowsTerminal() : UnixTerminal();
+  factory Terminal() => Platform.isWindows ? WindowsTerminal() : UnixTerminal();
 }

@@ -121,8 +121,7 @@ class AsyncRegistry {
     }
   }
 
-  AsyncStatus statusOf(Key key) =>
-      _entries[key]?.status ?? AsyncStatus.unknown;
+  AsyncStatus statusOf(Key key) => _entries[key]?.status ?? AsyncStatus.unknown;
 
   void disposeAll() {
     for (final e in _entries.values) {

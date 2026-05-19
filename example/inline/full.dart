@@ -7,6 +7,7 @@ Future<void> main() async {
     'Your name?',
     validate: (v) => v.trim().isEmpty ? 'Name is required' : null,
   );
+
   commander.info('Hi $name, a few questions…');
 
   final age = await commander.number(

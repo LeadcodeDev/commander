@@ -84,8 +84,9 @@ class TextArea implements FocusableWidget {
   void _insertChar(String c) {
     if (maxLength != null && state.text.length >= maxLength!) return;
     final line = state.lines[state.cursorLine];
-    state.lines[state.cursorLine] =
-        line.substring(0, state.cursorCol) + c + line.substring(state.cursorCol);
+    state.lines[state.cursorLine] = line.substring(0, state.cursorCol) +
+        c +
+        line.substring(state.cursorCol);
     state.cursorCol += c.length;
     _notifyChanged();
   }
@@ -105,8 +106,8 @@ class TextArea implements FocusableWidget {
   void _backspace() {
     if (state.cursorCol > 0) {
       final line = state.lines[state.cursorLine];
-      state.lines[state.cursorLine] =
-          line.substring(0, state.cursorCol - 1) + line.substring(state.cursorCol);
+      state.lines[state.cursorLine] = line.substring(0, state.cursorCol - 1) +
+          line.substring(state.cursorCol);
       state.cursorCol -= 1;
       _notifyChanged();
     } else if (state.cursorLine > 0) {
@@ -123,8 +124,8 @@ class TextArea implements FocusableWidget {
   void _delete() {
     final line = state.lines[state.cursorLine];
     if (state.cursorCol < line.length) {
-      state.lines[state.cursorLine] =
-          line.substring(0, state.cursorCol) + line.substring(state.cursorCol + 1);
+      state.lines[state.cursorLine] = line.substring(0, state.cursorCol) +
+          line.substring(state.cursorCol + 1);
       _notifyChanged();
     } else if (state.cursorLine < state.lines.length - 1) {
       final next = state.lines[state.cursorLine + 1];
@@ -190,12 +191,14 @@ class TextArea implements FocusableWidget {
         state.cursorCol = state.lines[state.cursorLine].length;
         return true;
       case NamedKey.pageUp:
-        state.cursorLine = (state.cursorLine - 5).clamp(0, state.lines.length - 1);
+        state.cursorLine =
+            (state.cursorLine - 5).clamp(0, state.lines.length - 1);
         state.cursorCol =
             state.cursorCol.clamp(0, state.lines[state.cursorLine].length);
         return true;
       case NamedKey.pageDown:
-        state.cursorLine = (state.cursorLine + 5).clamp(0, state.lines.length - 1);
+        state.cursorLine =
+            (state.cursorLine + 5).clamp(0, state.lines.length - 1);
         state.cursorCol =
             state.cursorCol.clamp(0, state.lines[state.cursorLine].length);
         return true;
@@ -233,8 +236,8 @@ class TextArea implements FocusableWidget {
         !focused;
 
     final txtStyle = textStyle ?? ctx.theme.text.body;
-    final phStyle = placeholderStyle ??
-        Style(fg: ctx.theme.colors.muted, italic: true);
+    final phStyle =
+        placeholderStyle ?? Style(fg: ctx.theme.colors.muted, italic: true);
     final curStyle = cursorStyle ??
         Style(
           fg: ctx.theme.colors.background,
@@ -251,7 +254,8 @@ class TextArea implements FocusableWidget {
       final lineIdx = state.scrollOffset + i;
       if (lineIdx >= state.lines.length) break;
       final line = state.lines[lineIdx];
-      final visible = line.length > area.width ? line.substring(0, area.width) : line;
+      final visible =
+          line.length > area.width ? line.substring(0, area.width) : line;
       buffer.writeText(area.x, area.y + i, visible,
           style: txtStyle, maxWidth: area.width);
 
@@ -259,7 +263,8 @@ class TextArea implements FocusableWidget {
       if (focused && lineIdx == state.cursorLine) {
         final cx = area.x + state.cursorCol;
         if (cx < area.right) {
-          final ch = state.cursorCol < line.length ? line[state.cursorCol] : ' ';
+          final ch =
+              state.cursorCol < line.length ? line[state.cursorCol] : ' ';
           buffer.setChar(cx, area.y + i, ch, style: curStyle);
         }
       }

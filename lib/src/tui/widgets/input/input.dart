@@ -137,9 +137,7 @@ class Input implements FocusableWidget, SizedWidget {
             next = v.substring(0, cur) + v.substring(cur + 1);
           }
         case NamedKey.arrowLeft:
-          if (v.isEmpty &&
-              placeholder != null &&
-              placeholder!.isNotEmpty) {
+          if (v.isEmpty && placeholder != null && placeholder!.isNotEmpty) {
             state.value = placeholder!;
             state.cursor = state.value.length;
             state.error = null;
@@ -197,9 +195,8 @@ class Input implements FocusableWidget, SizedWidget {
     }
 
     final hasError = state.error != null;
-    final prefix = state.submitted
-        ? successPrefix
-        : (hasError ? errorPrefix : askPrefix);
+    final prefix =
+        state.submitted ? successPrefix : (hasError ? errorPrefix : askPrefix);
     final prefixStyle = state.submitted
         ? (successPrefixStyle ?? Style(fg: theme.colors.success, bold: true))
         : (hasError
@@ -214,14 +211,17 @@ class Input implements FocusableWidget, SizedWidget {
     final dStyle = defaultValueStyle ?? theme.text.caption;
 
     var x = area.x;
-    buffer.writeText(x, area.y, prefix, style: prefixStyle, maxWidth: area.right - x);
+    buffer.writeText(x, area.y, prefix,
+        style: prefixStyle, maxWidth: area.right - x);
     x += prefix.length + 1;
-    buffer.writeText(x, area.y, message, style: mStyle, maxWidth: area.right - x);
+    buffer.writeText(x, area.y, message,
+        style: mStyle, maxWidth: area.right - x);
     x += message.length;
 
     if (_hasDefault && state.value.isEmpty) {
       final hint = ' (${defaultValue!})';
-      buffer.writeText(x, area.y, hint, style: dStyle, maxWidth: area.right - x);
+      buffer.writeText(x, area.y, hint,
+          style: dStyle, maxWidth: area.right - x);
       x += hint.length;
     }
     buffer.writeText(x, area.y, ' ', style: iStyle, maxWidth: 1);
@@ -230,7 +230,8 @@ class Input implements FocusableWidget, SizedWidget {
     final inputStart = x;
     final inputWidth = area.right - inputStart;
     if (inputWidth > 0) {
-      final showPlaceholder = state.value.isEmpty && (placeholder?.isNotEmpty ?? false);
+      final showPlaceholder =
+          state.value.isEmpty && (placeholder?.isNotEmpty ?? false);
       final display = showPlaceholder
           ? placeholder!
           : (obscure ? '*' * state.value.length : state.value);
@@ -259,8 +260,8 @@ class Input implements FocusableWidget, SizedWidget {
 
   void _renderSubmitted(Rect area, Buffer buffer, RenderContext ctx) {
     final theme = ctx.theme;
-    final prefixStyle = successPrefixStyle ??
-        Style(fg: theme.colors.success, bold: true);
+    final prefixStyle =
+        successPrefixStyle ?? Style(fg: theme.colors.success, bold: true);
     final mStyle = messageStyle ?? theme.text.body;
     final iStyle = inputStyle ?? theme.text.body.copyWith(bold: true);
 
@@ -268,7 +269,8 @@ class Input implements FocusableWidget, SizedWidget {
     buffer.writeText(x, area.y, successPrefix,
         style: prefixStyle, maxWidth: area.right - x);
     x += successPrefix.length + 1;
-    buffer.writeText(x, area.y, message, style: mStyle, maxWidth: area.right - x);
+    buffer.writeText(x, area.y, message,
+        style: mStyle, maxWidth: area.right - x);
     x += message.length;
     buffer.writeText(x, area.y, ' ', style: iStyle, maxWidth: 1);
     x += 1;

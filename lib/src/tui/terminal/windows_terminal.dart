@@ -43,12 +43,14 @@ class _WinConsole {
   static _WinConsole? open() {
     try {
       final lib = DynamicLibrary.open('kernel32.dll');
-      final getStd = lib
-          .lookupFunction<_GetStdHandleNative, _GetStdHandleDart>('GetStdHandle');
-      final getMode = lib.lookupFunction<_GetConsoleModeNative,
-          _GetConsoleModeDart>('GetConsoleMode');
-      final setMode = lib.lookupFunction<_SetConsoleModeNative,
-          _SetConsoleModeDart>('SetConsoleMode');
+      final getStd = lib.lookupFunction<_GetStdHandleNative, _GetStdHandleDart>(
+          'GetStdHandle');
+      final getMode =
+          lib.lookupFunction<_GetConsoleModeNative, _GetConsoleModeDart>(
+              'GetConsoleMode');
+      final setMode =
+          lib.lookupFunction<_SetConsoleModeNative, _SetConsoleModeDart>(
+              'SetConsoleMode');
       final hIn = getStd(_stdInputHandle);
       final hOut = getStd(_stdOutputHandle);
       return _WinConsole._(getStd, getMode, setMode, hIn, hOut);
@@ -71,8 +73,7 @@ class _WinConsole {
     final inMode = _readMode(hIn);
     if (inMode != null) {
       savedInMode = inMode;
-      final newIn = (inMode |
-              _enableVirtualTerminalInput) &
+      final newIn = (inMode | _enableVirtualTerminalInput) &
           ~(_enableLineInput | _enableEchoInput | _enableProcessedInput);
       setConsoleMode(hIn, newIn);
     }

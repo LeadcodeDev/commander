@@ -13,7 +13,8 @@ class Padding implements Widget {
   Padding.all(int v, {required this.child}) : padding = EdgeInsets.all(v);
 
   Padding.symmetric({int vertical = 0, int horizontal = 0, required this.child})
-      : padding = EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal);
+      : padding =
+            EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal);
 
   @override
   void render(Rect area, Buffer buffer, RenderContext ctx) {

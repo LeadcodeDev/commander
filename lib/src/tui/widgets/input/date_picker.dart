@@ -150,8 +150,7 @@ class DatePicker implements FocusableWidget, SizedWidget {
       case NamedKey.end:
         final lastDay =
             DateTime(state.cursor.year, state.cursor.month + 1, 0).day;
-        _moveCursor(
-            DateTime(state.cursor.year, state.cursor.month, lastDay));
+        _moveCursor(DateTime(state.cursor.year, state.cursor.month, lastDay));
         return true;
       case NamedKey.enter:
         _select();
@@ -196,8 +195,7 @@ class DatePicker implements FocusableWidget, SizedWidget {
 
     final wkStyle = weekdayStyle ?? Style(fg: ctx.theme.colors.muted);
     final orderedWeekdays = [
-      for (var i = 0; i < 7; i++)
-        weekdayNames[(firstDayOfWeek - 1 + i) % 7]
+      for (var i = 0; i < 7; i++) weekdayNames[(firstDayOfWeek - 1 + i) % 7]
     ];
     for (var i = 0; i < 7; i++) {
       final wx = area.x + i * 3;
@@ -213,18 +211,16 @@ class DatePicker implements FocusableWidget, SizedWidget {
     final cursorDate = _dateOnly(c);
 
     final defaultDay = dayStyle ?? ctx.theme.text.body;
-    final defaultSelected = selectedStyle ??
-        Style(fg: ctx.theme.colors.success, bold: true);
+    final defaultSelected =
+        selectedStyle ?? Style(fg: ctx.theme.colors.success, bold: true);
     final defaultCursor = cursorStyle ??
         Style(
           fg: ctx.theme.colors.background,
-          bg: focused
-              ? ctx.theme.colors.primary
-              : ctx.theme.colors.foreground,
+          bg: focused ? ctx.theme.colors.primary : ctx.theme.colors.foreground,
           bold: true,
         );
-    final defaultDisabled = disabledStyle ??
-        Style(fg: ctx.theme.colors.muted, dim: true);
+    final defaultDisabled =
+        disabledStyle ?? Style(fg: ctx.theme.colors.muted, dim: true);
 
     for (var day = 1; day <= daysInMonth; day++) {
       final cellIndex = colOffset + day - 1;

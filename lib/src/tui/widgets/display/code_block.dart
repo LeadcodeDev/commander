@@ -55,19 +55,96 @@ class _Token {
 
 class CodeBlock implements FocusableWidget {
   static const _dartKeywords = {
-    'abstract', 'as', 'assert', 'async', 'await', 'break', 'case', 'catch',
-    'class', 'const', 'continue', 'covariant', 'default', 'deferred', 'do',
-    'dynamic', 'else', 'enum', 'export', 'extends', 'extension', 'external',
-    'factory', 'false', 'final', 'finally', 'for', 'Function', 'get', 'hide',
-    'if', 'implements', 'import', 'in', 'interface', 'is', 'late', 'library',
-    'mixin', 'new', 'null', 'on', 'operator', 'part', 'rethrow', 'return',
-    'sealed', 'set', 'show', 'static', 'super', 'switch', 'sync', 'this',
-    'throw', 'true', 'try', 'typedef', 'var', 'void', 'while', 'with', 'yield',
+    'abstract',
+    'as',
+    'assert',
+    'async',
+    'await',
+    'break',
+    'case',
+    'catch',
+    'class',
+    'const',
+    'continue',
+    'covariant',
+    'default',
+    'deferred',
+    'do',
+    'dynamic',
+    'else',
+    'enum',
+    'export',
+    'extends',
+    'extension',
+    'external',
+    'factory',
+    'false',
+    'final',
+    'finally',
+    'for',
+    'Function',
+    'get',
+    'hide',
+    'if',
+    'implements',
+    'import',
+    'in',
+    'interface',
+    'is',
+    'late',
+    'library',
+    'mixin',
+    'new',
+    'null',
+    'on',
+    'operator',
+    'part',
+    'rethrow',
+    'return',
+    'sealed',
+    'set',
+    'show',
+    'static',
+    'super',
+    'switch',
+    'sync',
+    'this',
+    'throw',
+    'true',
+    'try',
+    'typedef',
+    'var',
+    'void',
+    'while',
+    'with',
+    'yield',
   };
   static const _shellKeywords = {
-    'if', 'then', 'else', 'elif', 'fi', 'case', 'esac', 'for', 'in', 'do',
-    'done', 'while', 'until', 'function', 'return', 'export', 'local',
-    'readonly', 'set', 'unset', 'declare', 'echo', 'cd', 'exit', 'source',
+    'if',
+    'then',
+    'else',
+    'elif',
+    'fi',
+    'case',
+    'esac',
+    'for',
+    'in',
+    'do',
+    'done',
+    'while',
+    'until',
+    'function',
+    'return',
+    'export',
+    'local',
+    'readonly',
+    'set',
+    'unset',
+    'declare',
+    'echo',
+    'cd',
+    'exit',
+    'source',
   };
 
   final Key? _id;
@@ -176,8 +253,10 @@ class CodeBlock implements FocusableWidget {
         final quote = c;
         var j = i + 1;
         while (j < line.length && line[j] != quote) {
-          if (line[j] == r'\' && j + 1 < line.length) j += 2;
-          else j++;
+          if (line[j] == r'\' && j + 1 < line.length)
+            j += 2;
+          else
+            j++;
         }
         if (j < line.length) j++;
         tokens.add(_Token(line.substring(i, j), t.string));
@@ -201,8 +280,8 @@ class CodeBlock implements FocusableWidget {
           j++;
         }
         final word = line.substring(i, j);
-        tokens.add(_Token(word,
-            _dartKeywords.contains(word) ? t.keyword : t.identifier));
+        tokens.add(_Token(
+            word, _dartKeywords.contains(word) ? t.keyword : t.identifier));
         i = j;
         continue;
       }
@@ -221,8 +300,10 @@ class CodeBlock implements FocusableWidget {
       if (c == '"') {
         var j = i + 1;
         while (j < line.length && line[j] != '"') {
-          if (line[j] == r'\' && j + 1 < line.length) j += 2;
-          else j++;
+          if (line[j] == r'\' && j + 1 < line.length)
+            j += 2;
+          else
+            j++;
         }
         if (j < line.length) j++;
         final str = line.substring(i, j);
@@ -234,9 +315,16 @@ class CodeBlock implements FocusableWidget {
         i = j;
         continue;
       }
-      if (_isDigit(c) || (c == '-' && i + 1 < line.length && _isDigit(line[i + 1]))) {
+      if (_isDigit(c) ||
+          (c == '-' && i + 1 < line.length && _isDigit(line[i + 1]))) {
         var j = i + 1;
-        while (j < line.length && (_isDigit(line[j]) || line[j] == '.' || line[j] == 'e' || line[j] == 'E' || line[j] == '+' || line[j] == '-')) {
+        while (j < line.length &&
+            (_isDigit(line[j]) ||
+                line[j] == '.' ||
+                line[j] == 'e' ||
+                line[j] == 'E' ||
+                line[j] == '+' ||
+                line[j] == '-')) {
           j++;
         }
         tokens.add(_Token(line.substring(i, j), t.number));
@@ -273,8 +361,10 @@ class CodeBlock implements FocusableWidget {
         final quote = c;
         var j = i + 1;
         while (j < line.length && line[j] != quote) {
-          if (line[j] == r'\' && j + 1 < line.length) j += 2;
-          else j++;
+          if (line[j] == r'\' && j + 1 < line.length)
+            j += 2;
+          else
+            j++;
         }
         if (j < line.length) j++;
         tokens.add(_Token(line.substring(i, j), t.string));
@@ -303,8 +393,8 @@ class CodeBlock implements FocusableWidget {
           j++;
         }
         final word = line.substring(i, j);
-        tokens.add(_Token(word,
-            _shellKeywords.contains(word) ? t.keyword : t.identifier));
+        tokens.add(_Token(
+            word, _shellKeywords.contains(word) ? t.keyword : t.identifier));
         i = j;
         continue;
       }
@@ -352,11 +442,12 @@ class CodeBlock implements FocusableWidget {
 
   static bool _isIdentStart(String c) {
     final cp = c.codeUnitAt(0);
-    return (cp >= 0x41 && cp <= 0x5A) || (cp >= 0x61 && cp <= 0x7A) || cp == 0x5F;
+    return (cp >= 0x41 && cp <= 0x5A) ||
+        (cp >= 0x61 && cp <= 0x7A) ||
+        cp == 0x5F;
   }
 
-  static bool _isIdentPart(String c) =>
-      _isIdentStart(c) || _isDigit(c);
+  static bool _isIdentPart(String c) => _isIdentStart(c) || _isDigit(c);
 
   static bool _isPunct(String c) {
     const punct = '(){}[];,.:?@#=+-*/<>!&|^~%';
@@ -380,15 +471,12 @@ class CodeBlock implements FocusableWidget {
       offset = state!.scrollOffset;
     }
 
-    for (var i = 0;
-        i < area.height && (i + offset) < lines.length;
-        i++) {
+    for (var i = 0; i < area.height && (i + offset) < lines.length; i++) {
       final lineIndex = i + offset;
       final y = area.y + i;
       var x = area.x;
       if (showLineNumbers) {
-        final n =
-            (lineIndex + firstLineNumber).toString().padLeft(lineNoWidth);
+        final n = (lineIndex + firstLineNumber).toString().padLeft(lineNoWidth);
         buffer.writeText(x, y, n, style: t.lineNumber, maxWidth: lineNoWidth);
         x += lineNoGutter;
       }

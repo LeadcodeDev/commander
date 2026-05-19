@@ -46,6 +46,7 @@ Future<void> main() => runTerminal<State>(
           ),
           rects[1],
         );
+
         ctx.draw(
           TextField(
             id: Key.symbol(#email),
@@ -57,6 +58,7 @@ Future<void> main() => runTerminal<State>(
           ),
           rects[2],
         );
+
         ctx.draw(
           Checkbox(
             id: Key.symbol(#agree),
@@ -66,6 +68,7 @@ Future<void> main() => runTerminal<State>(
           ),
           rects[3],
         );
+
         ctx.draw(
           Button(
             id: Key.symbol(#submit),
@@ -74,9 +77,9 @@ Future<void> main() => runTerminal<State>(
           ),
           rects[4],
         );
+
         ctx.draw(
-          const Text('Tab to switch · Ctrl-Q to quit',
-              align: TextAlign.center),
+          const Text('Tab to switch · Ctrl-Q to quit', align: TextAlign.center),
           rects[6],
         );
       },

@@ -15,8 +15,7 @@ class Cell {
 
   static const Cell continuation = Cell(char: '', width: 0);
 
-  Cell copyWith({String? char, Style? style, int? width}) =>
-      Cell(
+  Cell copyWith({String? char, Style? style, int? width}) => Cell(
         char: char ?? this.char,
         style: style ?? this.style,
         width: width ?? this.width,

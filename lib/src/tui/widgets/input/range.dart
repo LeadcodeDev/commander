@@ -154,7 +154,8 @@ class Range implements FocusableWidget, SizedWidget {
     if (area.isEmpty) return;
     final focused = ctx.isFocused(id);
 
-    final label = showValues ? ' ${_format(state.low)}–${_format(state.high)}' : '';
+    final label =
+        showValues ? ' ${_format(state.low)}–${_format(state.high)}' : '';
     final trackWidth = (area.width - label.length).clamp(1, area.width);
     if (trackWidth <= 0) return;
 

@@ -28,8 +28,8 @@ class AnsiEncoder {
         style.dim ||
         style.reverse ||
         style.strikethrough;
-    final hasColors = mode != ColorMode.none &&
-        (style.fg != null || style.bg != null);
+    final hasColors =
+        mode != ColorMode.none && (style.fg != null || style.bg != null);
     if (!hasAttrs && !hasColors) return '';
 
     final pieces = <m.Style>{};
@@ -100,7 +100,8 @@ class AnsiEncoder {
         },
       Color24(:final red, :final green, :final blue) => switch (target) {
           ColorMode.truecolor => color,
-          ColorMode.indexed256 => Color8.fromIndex(_rgbToIndexed(red, green, blue)),
+          ColorMode.indexed256 =>
+            Color8.fromIndex(_rgbToIndexed(red, green, blue)),
           ColorMode.ansi16 => _rgbToAnsi(red, green, blue),
           ColorMode.none => color,
         },

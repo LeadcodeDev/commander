@@ -79,8 +79,7 @@ class TimePicker implements FocusableWidget, SizedWidget {
       case TimeField.second:
         final total = (state.hour * 3600 + state.minute * 60 + state.second) +
             direction * secondStep;
-        final wrapped =
-            ((total % (24 * 3600)) + 24 * 3600) % (24 * 3600);
+        final wrapped = ((total % (24 * 3600)) + 24 * 3600) % (24 * 3600);
         state.hour = wrapped ~/ 3600;
         state.minute = (wrapped % 3600) ~/ 60;
         state.second = wrapped % 60;
@@ -174,9 +173,7 @@ class TimePicker implements FocusableWidget, SizedWidget {
     final active = activeFieldStyle ??
         Style(
           fg: ctx.theme.colors.background,
-          bg: focused
-              ? ctx.theme.colors.primary
-              : ctx.theme.colors.foreground,
+          bg: focused ? ctx.theme.colors.primary : ctx.theme.colors.foreground,
           bold: true,
         );
     final sep = separatorStyle ?? Style(fg: ctx.theme.colors.muted);
@@ -192,13 +189,11 @@ class TimePicker implements FocusableWidget, SizedWidget {
     var x = area.x;
     void write(String s, Style style) {
       if (x + s.length > area.right) return;
-      buffer.writeText(x, area.y, s,
-          style: style, maxWidth: area.right - x);
+      buffer.writeText(x, area.y, s, style: style, maxWidth: area.right - x);
       x += s.length;
     }
 
-    write(hourText,
-        state.active == TimeField.hour && focused ? active : base);
+    write(hourText, state.active == TimeField.hour && focused ? active : base);
     write(':', sep);
     write(_pad(state.minute),
         state.active == TimeField.minute && focused ? active : base);

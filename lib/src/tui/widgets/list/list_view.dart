@@ -87,16 +87,19 @@ class ListView<T> implements FocusableWidget {
     } else if (state.selected >= state.scrollOffset + visible) {
       state.scrollOffset = state.selected - visible + 1;
     }
-    state.scrollOffset = state.scrollOffset.clamp(0, (items.length - visible).clamp(0, items.length));
+    state.scrollOffset = state.scrollOffset
+        .clamp(0, (items.length - visible).clamp(0, items.length));
 
     for (var i = 0; i < visible && i + state.scrollOffset < items.length; i++) {
       final idx = i + state.scrollOffset;
       final isSel = idx == state.selected;
-      final rect = Rect(area.x, area.y + i * itemHeight, area.width, itemHeight);
+      final rect =
+          Rect(area.x, area.y + i * itemHeight, area.width, itemHeight);
       itemBuilder(items[idx], isSel).render(rect, buffer, ctx);
       if (isSel) {
         final sel = selectedStyle ??
-            Style(bg: ctx.theme.colors.primary, fg: ctx.theme.colors.background);
+            Style(
+                bg: ctx.theme.colors.primary, fg: ctx.theme.colors.background);
         buffer.fillStyle(rect, sel);
       }
     }

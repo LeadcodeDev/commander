@@ -20,7 +20,8 @@ Future<void> main() => runTerminal<State>(
           s.cpu = (s.cpu + (rnd.nextDouble() * 20 - 10)).clamp(0, 100);
           s.mem = (s.mem + (rnd.nextDouble() * 10 - 5)).clamp(0, 100);
           if (rnd.nextDouble() < 0.4) {
-            s.logs.add('[${DateTime.now().toIso8601String().substring(11, 19)}] tick ${s.frame}');
+            s.logs.add(
+                '[${DateTime.now().toIso8601String().substring(11, 19)}] tick ${s.frame}');
             if (s.logs.length > 50) s.logs.removeAt(0);
           }
         }

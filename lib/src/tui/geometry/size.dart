@@ -4,7 +4,9 @@ class Size {
 
   const Size(this.width, this.height);
 
-  const Size.zero() : width = 0, height = 0;
+  const Size.zero()
+      : width = 0,
+        height = 0;
 
   int get area => width * height;
   bool get isEmpty => width <= 0 || height <= 0;

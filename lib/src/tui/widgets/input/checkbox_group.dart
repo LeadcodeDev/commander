@@ -20,7 +20,8 @@ class CheckboxItemState {
   });
 }
 
-typedef CheckboxItemBuilder<T> = Widget Function(T item, CheckboxItemState state);
+typedef CheckboxItemBuilder<T> = Widget Function(
+    T item, CheckboxItemState state);
 
 class CheckboxGroupState<T> {
   int activeIndex = 0;
@@ -114,7 +115,9 @@ class CheckboxGroup<T> implements FocusableWidget {
     final maxOffset = (items.length - maxVisible).clamp(0, items.length);
     state.scrollOffset = state.scrollOffset.clamp(0, maxOffset);
 
-    for (var i = 0; i < maxVisible && i + state.scrollOffset < items.length; i++) {
+    for (var i = 0;
+        i < maxVisible && i + state.scrollOffset < items.length;
+        i++) {
       final idx = i + state.scrollOffset;
       final item = items[idx];
       final lineRect = Rect(area.x, area.y + i, area.width, 1);

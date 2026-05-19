@@ -6,12 +6,14 @@ enum _Kind { success, info, warn, error }
 
 void _write(_Kind kind, String message, IOSink? sink) {
   final out = sink ?? stdout;
+
   final (icon, color) = switch (kind) {
     _Kind.success => ('✓', Color4.brightGreen),
     _Kind.info => ('ℹ', Color4.brightBlue),
     _Kind.warn => ('!', Color4.yellow),
     _Kind.error => ('✗', Color4.red),
   };
+
   out.writeAnsiAll([
     SetStyles(Style.foreground(color), Style.bold),
     Print(icon),
