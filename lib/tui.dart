@@ -51,6 +51,7 @@ export 'src/tui/widgets/input/input.dart';
 export 'src/tui/widgets/input/input_number.dart';
 export 'src/tui/widgets/input/checkbox.dart';
 export 'src/tui/widgets/input/checkbox_group.dart';
+export 'src/tui/widgets/input/confirm.dart';
 export 'src/tui/widgets/input/button.dart';
 export 'src/tui/widgets/input/radio_group.dart';
 export 'src/tui/widgets/input/switch.dart';

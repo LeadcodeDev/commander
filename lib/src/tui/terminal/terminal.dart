@@ -26,6 +26,15 @@ abstract interface class Terminal {
     Duration timeout = const Duration(milliseconds: 500),
   });
 
+  /// Lightweight cleanup: restore terminal modes (raw off, cursor on,
+  /// mouse off, alternate screen off) without tearing down stdin
+  /// subscriptions or event streams. Safe to call between successive
+  /// `runTerminal` invocations that share this terminal.
+  Future<void> restore();
+
+  /// Full teardown: releases stdin subscriptions, closes event streams,
+  /// frees native resources. After this, the terminal is unusable —
+  /// process exit will collect anything left behind.
   Future<void> shutdown();
 
   factory Terminal() =>

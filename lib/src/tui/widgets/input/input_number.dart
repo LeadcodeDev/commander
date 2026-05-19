@@ -251,10 +251,17 @@ class InputNumber implements FocusableWidget, SizedWidget {
                 Style(fg: ctx.theme.colors.primary, bold: true)));
 
     final msgStyle = messageStyle ?? ctx.theme.text.body;
-    final valStyle = inputStyle ??
-        ctx.theme.text.body.copyWith(
-          fg: focused ? ctx.theme.colors.primary : null,
+    // Field style matches DatePicker / TimePicker: when focused (and not
+    // yet submitted), the numeric value sits in a coloured cell so the
+    // user sees clearly where typing lands.
+    final activeFieldStyle = inputStyle ??
+        Style(
+          fg: ctx.theme.colors.background,
+          bg: ctx.theme.colors.primary,
+          bold: true,
         );
+    final restingValueStyle =
+        inputStyle ?? ctx.theme.text.body.copyWith(bold: true);
 
     var x = area.x;
     buffer.writeText(x, area.y, prefix,
@@ -268,14 +275,23 @@ class InputNumber implements FocusableWidget, SizedWidget {
     }
 
     if (x < area.right) {
-      final shown = state.text.isEmpty && placeholder != null && !focused
-          ? placeholder!
-          : state.text;
-      final shownStyle = state.text.isEmpty && placeholder != null && !focused
-          ? Style(fg: ctx.theme.colors.muted, italic: true)
-          : valStyle;
-      buffer.writeText(x, area.y, shown,
-          style: shownStyle, maxWidth: area.right - x);
+      final showPlaceholder =
+          state.text.isEmpty && placeholder != null && !focused;
+      if (showPlaceholder) {
+        buffer.writeText(x, area.y, placeholder!,
+            style: Style(fg: ctx.theme.colors.muted, italic: true),
+            maxWidth: area.right - x);
+      } else {
+        // Empty + focused → still show one-cell cursor block so the user
+        // sees where typing lands; otherwise size the bg to the value.
+        final value =
+            state.text.isEmpty && focused && !state.submitted ? ' ' : state.text;
+        final style = (focused && !state.submitted)
+            ? activeFieldStyle
+            : restingValueStyle;
+        buffer.writeText(x, area.y, value,
+            style: style, maxWidth: area.right - x);
+      }
     }
 
     if (!state.submitted && state.error != null && area.height >= 2) {

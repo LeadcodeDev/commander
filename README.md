@@ -7,13 +7,15 @@ dependencies:
   commander_ui: ^3.0.0
 ```
 
+> **Heads up — 3.0.0 is a breaking release.** The legacy `Commander` class and `package:commander_ui/inline.dart` are gone. Replace `Commander()` with `InlineCommander()` and import `package:commander_ui/prompt.dart`. See [CHANGELOG.md](CHANGELOG.md) for the migration cheat sheet.
+
 The package exposes two complementary APIs, each behind its own entry-point:
 
-- **`package:commander_ui/inline.dart`** — interactive CLI prompts (Input, Select, Checkbox, Switch, Progress, Table, AlternateScreen, Delayed). The historical API of `commander_ui`. Use it when you want one-shot prompts to compose a CLI flow.
+- **`package:commander_ui/prompt.dart`** — `InlineCommander`, one-shot interactive CLI prompts (`ask`, `select`, `multiSelect`, `confirm`, `number`, `password`, `task`) plus status helpers (`success`, `info`, `warn`, `error`). Built on top of the TUI runtime. Use it for scripts and short interactive flows.
 
 - **`package:commander_ui/tui.dart`** — declarative TUI framework inspired by Ratatui (Rust). Use it to build full applications: dashboards, multi-screen wizards, file explorers, REPLs.
 
-The two worlds are intentionally separate. Pick the one that fits the task.
+The two worlds share the same runtime but expose different ergonomics. Pick the one that fits the task.
 
 ---
 
@@ -82,19 +84,35 @@ Each example is a runnable `dart` file in `example/tui/`:
 
 ---
 
-## Inline API quickstart
+## Inline prompts quickstart
 
 ```dart
-import 'package:commander_ui/inline.dart';
+import 'package:commander_ui/prompt.dart';
 
 Future<void> main() async {
-  final commander = Commander();
+  final commander = InlineCommander();
   final name = await commander.ask('Your name?');
   commander.success('Hello $name');
+  await commander.dispose();
 }
 ```
 
-The inline API hasn't changed. See `lib/commander_ui.dart` for the full surface.
+Call `await commander.dispose()` at the end so the cached terminal subscription is released cleanly. Successive prompts on the same `InlineCommander` share one terminal — no flicker, and no "stdin: not a TTY" after the first call.
+
+`InlineCommander` covers the common CLI prompt vocabulary:
+
+| Method | Returns | Notes |
+|---|---|---|
+| `ask(message, {defaultValue, placeholder, obscure, validate})` | `Future<String>` | free-form text input |
+| `password(message, {validate})` | `Future<String>` | same as `ask(obscure: true)` |
+| `number(message, {min, max, defaultValue, allowDecimals, validate})` | `Future<num>` | bounded numeric input |
+| `select<T>(message, {options, defaultValue, display, ...})` | `Future<T>` | single choice list |
+| `multiSelect<T>(message, {options, defaults, minSelections, ...})` | `Future<List<T>>` | toggle multiple |
+| `confirm(message, {defaultValue})` | `Future<bool>` | y/n keypress |
+| `task<T>(description, work)` | `Future<T>` | spinner while awaiting a future |
+| `success/info/warn/error(message)` | `void` | styled status line on stdout |
+
+Run the examples with `dart run example/inline/hello.dart` and `dart run example/inline/full.dart`.
 
 ---
 
