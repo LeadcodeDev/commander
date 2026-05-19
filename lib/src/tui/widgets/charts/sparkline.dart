@@ -60,7 +60,9 @@ class Sparkline implements Widget {
       final v = samples[i];
       final level = span == 0
           ? _blocks.length ~/ 2
-          : ((v - lo) / span * (_blocks.length - 1)).round().clamp(0, _blocks.length - 1);
+          : ((v - lo) / span * (_blocks.length - 1))
+              .round()
+              .clamp(0, _blocks.length - 1);
       buffer.setChar(area.x + i, area.y, _blocks[level], style: style);
     }
   }

@@ -80,8 +80,7 @@ class InputNumber implements FocusableWidget, SizedWidget {
     this.successPrefixStyle,
   })  : _id = id,
         assert(step > 0, 'step must be > 0'),
-        assert(min == null || max == null || min <= max,
-            'min must be <= max');
+        assert(min == null || max == null || min <= max, 'min must be <= max');
 
   @override
   bool get isSkipped => state.submitted && lockOnSubmit;
@@ -121,9 +120,7 @@ class InputNumber implements FocusableWidget, SizedWidget {
   void _setFromNumber(num v) {
     final clamped = _clamp(v);
     final asText = allowDecimals
-        ? (clamped is int
-            ? clamped.toString()
-            : (clamped as double).toString())
+        ? (clamped is int ? clamped.toString() : (clamped as double).toString())
         : clamped.toInt().toString();
     state.text = asText;
     state.cursor = asText.length;
@@ -284,8 +281,9 @@ class InputNumber implements FocusableWidget, SizedWidget {
       } else {
         // Empty + focused → still show one-cell cursor block so the user
         // sees where typing lands; otherwise size the bg to the value.
-        final value =
-            state.text.isEmpty && focused && !state.submitted ? ' ' : state.text;
+        final value = state.text.isEmpty && focused && !state.submitted
+            ? ' '
+            : state.text;
         final style = (focused && !state.submitted)
             ? activeFieldStyle
             : restingValueStyle;

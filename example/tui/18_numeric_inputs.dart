@@ -27,22 +27,22 @@ Future<void> main() => runTerminal<State>(
       },
       render: (ctx, state) {
         final rows = Layout.vertical([
-          const Constraint.length(2),  // title
-          const Constraint.length(1),  // section: sliders
-          const Constraint.length(1),  // volume
-          const Constraint.length(1),  // brightness
-          const Constraint.length(1),  // spacer
-          const Constraint.length(1),  // section: range
-          const Constraint.length(1),  // price range
-          const Constraint.length(1),  // spacer
-          const Constraint.length(1),  // section: number inputs
-          const Constraint.length(1),  // port
-          const Constraint.length(1),  // scale
-          const Constraint.length(1),  // spacer
-          const Constraint.length(1),  // section: date
-          const Constraint.length(8),  // date picker
-          const Constraint.fill(1),    // help
-          const Constraint.length(1),  // footer
+          const Constraint.length(2), // title
+          const Constraint.length(1), // section: sliders
+          const Constraint.length(1), // volume
+          const Constraint.length(1), // brightness
+          const Constraint.length(1), // spacer
+          const Constraint.length(1), // section: range
+          const Constraint.length(1), // price range
+          const Constraint.length(1), // spacer
+          const Constraint.length(1), // section: number inputs
+          const Constraint.length(1), // port
+          const Constraint.length(1), // scale
+          const Constraint.length(1), // spacer
+          const Constraint.length(1), // section: date
+          const Constraint.length(8), // date picker
+          const Constraint.fill(1), // help
+          const Constraint.length(1), // footer
         ]).split(ctx.area);
 
         ctx.draw(
@@ -148,9 +148,12 @@ Future<void> main() => runTerminal<State>(
         );
 
         final summary = StringBuffer()
-          ..writeln('volume=${state.volumeValue}  brightness=${state.brightnessValue}')
-          ..writeln('price=\$${state.priceLow.toInt()}–\$${state.priceHigh.toInt()}')
-          ..writeln('port=${state.portValue ?? "(unsubmitted)"}  scale=${state.scaleValue ?? "(unsubmitted)"}')
+          ..writeln(
+              'volume=${state.volumeValue}  brightness=${state.brightnessValue}')
+          ..writeln(
+              'price=\$${state.priceLow.toInt()}–\$${state.priceHigh.toInt()}')
+          ..writeln(
+              'port=${state.portValue ?? "(unsubmitted)"}  scale=${state.scaleValue ?? "(unsubmitted)"}')
           ..writeln('date=${state.dateValue ?? "(unsubmitted)"}');
 
         ctx.draw(
@@ -159,7 +162,8 @@ Future<void> main() => runTerminal<State>(
         );
 
         ctx.draw(
-          const Text('Tab/Shift+Tab to navigate · Enter to submit · Ctrl-Q to quit',
+          const Text(
+              'Tab/Shift+Tab to navigate · Enter to submit · Ctrl-Q to quit',
               align: TextAlign.center),
           rows[15],
         );

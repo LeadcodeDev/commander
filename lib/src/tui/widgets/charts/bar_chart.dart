@@ -65,7 +65,9 @@ class BarChart implements Widget {
     var lo = min ?? 0;
     var hi = max;
     if (hi == null) {
-      hi = data.isEmpty ? 1 : data.map((d) => d.value).reduce((a, b) => a > b ? a : b);
+      hi = data.isEmpty
+          ? 1
+          : data.map((d) => d.value).reduce((a, b) => a > b ? a : b);
       if (hi == lo) hi = lo + 1;
     }
     return (lo, hi);
@@ -121,8 +123,8 @@ class BarChart implements Widget {
       if (showValues) {
         final txt = _fmt(d.value);
         final tx = x + (barWidth - txt.length) ~/ 2;
-        buffer.writeText(tx.clamp(area.x, area.right - txt.length), area.y,
-            txt, style: vStyle, maxWidth: txt.length);
+        buffer.writeText(tx.clamp(area.x, area.right - txt.length), area.y, txt,
+            style: vStyle, maxWidth: txt.length);
       }
       if (showLabels) {
         final lbl = d.label;
@@ -144,7 +146,9 @@ class BarChart implements Widget {
         ? data.map((d) => d.label.length).fold<int>(0, (a, b) => a > b ? a : b)
         : 0;
     final valueWidth = showValues
-        ? data.map((d) => _fmt(d.value).length).fold<int>(0, (a, b) => a > b ? a : b)
+        ? data
+            .map((d) => _fmt(d.value).length)
+            .fold<int>(0, (a, b) => a > b ? a : b)
         : 0;
     final padding = (showLabels ? 1 : 0) + (showValues ? 1 : 0);
     final barAvail = area.width - labelWidth - valueWidth - padding;

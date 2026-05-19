@@ -19,7 +19,8 @@ class Paragraph implements Widget {
     final effectiveStyle = style ?? ctx.theme.text.body;
     final lines = _layout(text, area.width, wrap);
     for (var i = 0; i < lines.length && i < area.height; i++) {
-      buffer.writeText(area.x, area.y + i, lines[i], style: effectiveStyle, maxWidth: area.width);
+      buffer.writeText(area.x, area.y + i, lines[i],
+          style: effectiveStyle, maxWidth: area.width);
     }
   }
 

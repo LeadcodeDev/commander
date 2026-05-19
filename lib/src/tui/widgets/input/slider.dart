@@ -121,7 +121,8 @@ class Slider implements FocusableWidget, SizedWidget {
     if (trackWidth <= 0) return;
 
     final ratio = (state.value - min) / (max - min);
-    final handlePos = (ratio * (trackWidth - 1)).round().clamp(0, trackWidth - 1);
+    final handlePos =
+        (ratio * (trackWidth - 1)).round().clamp(0, trackWidth - 1);
 
     final track = trackStyle ?? Style(fg: ctx.theme.colors.muted);
     final fill = fillStyle ?? Style(fg: ctx.theme.colors.primary);

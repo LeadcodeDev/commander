@@ -40,8 +40,7 @@ class StderrLogger implements CommanderLogger {
 
 class FileLogger implements CommanderLogger {
   final IOSink _sink;
-  FileLogger(String path)
-      : _sink = File(path).openWrite(mode: FileMode.append);
+  FileLogger(String path) : _sink = File(path).openWrite(mode: FileMode.append);
 
   @override
   void debug(String message, {Object? data}) =>
@@ -60,8 +59,7 @@ class FileLogger implements CommanderLogger {
 
   void _write(String level, String message, {Object? data}) {
     final time = DateTime.now().toIso8601String();
-    _sink.writeln(
-        '$time [$level] $message${data != null ? ' :: $data' : ''}');
+    _sink.writeln('$time [$level] $message${data != null ? ' :: $data' : ''}');
   }
 
   Future<void> close() async {

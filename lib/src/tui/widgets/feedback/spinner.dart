@@ -32,7 +32,7 @@ class Spinner implements Widget {
       effectiveKey,
       () => _ticker(interval),
     );
-    final tick = entry.value as int? ?? frame;
+    final tick = entry.value ?? frame;
     final ch = frames[tick % frames.length];
     final text = label != null ? '$ch $label' : ch;
     buffer.writeText(area.x, area.y, text, style: s, maxWidth: area.width);

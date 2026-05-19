@@ -32,10 +32,10 @@ Future<void> main() => runTerminal<State>(
                   key: Key('fetch-${state.counter}'),
                   future: fetchData,
                   onLoading: () => const Spinner(label: 'Loading...'),
-                  onSuccess: (value) => Text('✓ $value',
-                      style: const Style(fg: Color.green)),
-                  onError: (e, _) => Text('✗ $e',
-                      style: const Style(fg: Color.red)),
+                  onSuccess: (value) =>
+                      Text('✓ $value', style: const Style(fg: Color.green)),
+                  onError: (e, _) =>
+                      Text('✗ $e', style: const Style(fg: Color.red)),
                 ),
                 const Spacer(),
                 const Text('Press r to re-fetch · q to quit'),

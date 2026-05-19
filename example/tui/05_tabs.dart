@@ -27,8 +27,10 @@ Future<void> main() => runTerminal<State>(
         );
 
         final body = switch (state.tab) {
-          0 => 'Welcome to the Overview tab.\n\nUse arrow keys or h/l to switch tabs.',
-          1 => '[INFO ] Application started\n[INFO ] Listening on :8080\n[WARN ] High memory usage detected',
+          0 =>
+            'Welcome to the Overview tab.\n\nUse arrow keys or h/l to switch tabs.',
+          1 =>
+            '[INFO ] Application started\n[INFO ] Listening on :8080\n[WARN ] High memory usage detected',
           2 => 'CPU: 42%\nMemory: 1.2 GB / 4 GB\nRequests/s: 128',
           _ => 'Settings panel goes here.',
         };

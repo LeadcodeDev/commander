@@ -96,6 +96,7 @@ class MouseEvent extends Event {
 }
 
 enum MouseButton { left, middle, right, none }
+
 enum MouseAction { down, up, move, scrollUp, scrollDown }
 
 class ResizeEvent extends Event {

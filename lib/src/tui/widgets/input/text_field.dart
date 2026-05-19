@@ -10,7 +10,8 @@ import '../../widget/widget.dart';
 class TextFieldState {
   String value;
   int cursor;
-  TextFieldState({this.value = '', int? cursor}) : cursor = cursor ?? value.length;
+  TextFieldState({this.value = '', int? cursor})
+      : cursor = cursor ?? value.length;
 }
 
 class TextField implements FocusableWidget {
@@ -114,9 +115,7 @@ class TextField implements FocusableWidget {
     if (area.isEmpty) return;
     final isFocused = ctx.isFocused(id);
     final borderStyle = border ??
-        (isFocused
-            ? ctx.theme.borders.focusedStyle
-            : ctx.theme.borders.style);
+        (isFocused ? ctx.theme.borders.focusedStyle : ctx.theme.borders.style);
     final stroke = isFocused
         ? ctx.theme.borders.focusedStrokeStyle.withFg(ctx.theme.colors.primary)
         : ctx.theme.borders.strokeStyle;
@@ -134,9 +133,7 @@ class TextField implements FocusableWidget {
     final textStyle = isFocused
         ? (focusedStyle ?? Style.none)
         : (unfocusedStyle ?? ctx.theme.text.body);
-    final display = v.isEmpty
-        ? placeholder
-        : (obscure ? '*' * v.length : v);
+    final display = v.isEmpty ? placeholder : (obscure ? '*' * v.length : v);
     final displayStyle = v.isEmpty
         ? ctx.theme.text.caption
         : (isValid
@@ -144,7 +141,8 @@ class TextField implements FocusableWidget {
             : textStyle.copyWith(fg: ctx.theme.colors.error));
 
     if (!inner.isEmpty) {
-      buffer.writeText(inner.x, inner.y, display, style: displayStyle, maxWidth: inner.width);
+      buffer.writeText(inner.x, inner.y, display,
+          style: displayStyle, maxWidth: inner.width);
       if (isFocused && cur <= v.length) {
         final cx = inner.x + cur;
         if (cx < inner.right) {
@@ -169,7 +167,8 @@ class TextField implements FocusableWidget {
     buffer.setChar(area.x, area.y, chars.topLeft, style: stroke);
     buffer.setChar(area.right - 1, area.y, chars.topRight, style: stroke);
     buffer.setChar(area.x, area.bottom - 1, chars.bottomLeft, style: stroke);
-    buffer.setChar(area.right - 1, area.bottom - 1, chars.bottomRight, style: stroke);
+    buffer.setChar(area.right - 1, area.bottom - 1, chars.bottomRight,
+        style: stroke);
   }
 }
 

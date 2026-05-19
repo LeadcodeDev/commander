@@ -29,7 +29,11 @@ class Block implements Widget {
   });
 
   factory Block.bordered({String? title, Widget? child, BorderStyle? style}) =>
-      Block(borderStyle: style, sides: BorderSides.all, title: title, child: child);
+      Block(
+          borderStyle: style,
+          sides: BorderSides.all,
+          title: title,
+          child: child);
 
   Block titled(String title) => Block(
         borderStyle: borderStyle,
@@ -78,7 +82,8 @@ class Block implements Widget {
     }
     if (sides.hasBottom && area.height >= 2) {
       for (var x = 0; x < area.width; x++) {
-        buffer.setChar(area.x + x, area.bottom - 1, chars.bottom, style: stroke);
+        buffer.setChar(area.x + x, area.bottom - 1, chars.bottom,
+            style: stroke);
       }
     }
     if (sides.hasLeft && area.width >= 1) {
@@ -95,7 +100,8 @@ class Block implements Widget {
       buffer.setChar(area.x, area.y, chars.topLeft, style: stroke);
       buffer.setChar(area.right - 1, area.y, chars.topRight, style: stroke);
       buffer.setChar(area.x, area.bottom - 1, chars.bottomLeft, style: stroke);
-      buffer.setChar(area.right - 1, area.bottom - 1, chars.bottomRight, style: stroke);
+      buffer.setChar(area.right - 1, area.bottom - 1, chars.bottomRight,
+          style: stroke);
     }
 
     if (title != null && sides.hasTop && area.width > 2) {

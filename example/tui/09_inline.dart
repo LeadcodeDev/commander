@@ -20,7 +20,8 @@ Future<void> main() => runTerminal<State>(
       mode: const RenderMode.inline(height: 8),
       onEvent: (s, event, handle) {
         if (event is KeyEvent && event.key == NamedKey.escape) handle.stop();
-        if (event is KeyEvent && event.key == NamedKey.enter &&
+        if (event is KeyEvent &&
+            event.key == NamedKey.enter &&
             ctxCurrentFocus(s) == Key.symbol(#list)) {
           handle.stop();
         }

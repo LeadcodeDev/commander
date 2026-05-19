@@ -13,7 +13,14 @@ class State {
   Key? wantsFocus = Key.symbol(#tabs);
 }
 
-const _countries = ['France', 'Germany', 'Italy', 'Spain', 'Portugal', 'Belgium'];
+const _countries = [
+  'France',
+  'Germany',
+  'Italy',
+  'Spain',
+  'Portugal',
+  'Belgium'
+];
 
 final _tabsKey = Key.symbol(#tabs);
 
@@ -30,15 +37,18 @@ Future<void> main() => runTerminal<State>(
           handle.stop();
           return;
         }
+
         final currentFocus = handle.focus.current;
         if (event.key == NamedKey.escape && currentFocus != _tabsKey) {
           s.wantsFocus = _tabsKey;
           handle.requestRedraw();
           return;
         }
+
         if ((event.key == NamedKey.arrowDown || event.key == NamedKey.enter) &&
             currentFocus == _tabsKey) {
           s.wantsFocus = _firstFocusOfTab(s.tab);
+
           if (s.tab == 1) {
             s.dropdownState.open = true;
             s.dropdownState.highlightedIndex = s.country == null
@@ -47,6 +57,7 @@ Future<void> main() => runTerminal<State>(
                     .indexOf(s.country!)
                     .clamp(0, _countries.length - 1);
           }
+
           handle.requestRedraw();
           return;
         }

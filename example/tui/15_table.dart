@@ -29,9 +29,7 @@ class State {
 
 Widget _cellName(User u, TableCellState s) => Text(
       u.name,
-      style: s.isRowSelected
-          ? const Style(bold: true)
-          : Style.none,
+      style: s.isRowSelected ? const Style(bold: true) : Style.none,
     );
 
 Widget _cellEmail(User u, TableCellState s) => Text(
@@ -45,6 +43,7 @@ Widget _cellStatus(User u, TableCellState s) {
     'idle' => Color.yellow,
     _ => Color.red,
   };
+
   return Text(u.status, style: Style(fg: color, bold: s.isCellSelected));
 }
 
@@ -102,7 +101,8 @@ Future<void> main() => runTerminal<State>(
                 title: 'ID',
                 width: const TableConstraint.length(4),
                 headerAlign: TextAlign.right,
-                cellBuilder: (u, s) => Text(u.id.toString(), align: TextAlign.right),
+                cellBuilder: (u, s) =>
+                    Text(u.id.toString(), align: TextAlign.right),
               ),
               TableColumn(
                 title: 'Name',
@@ -142,6 +142,7 @@ Future<void> main() => runTerminal<State>(
         final cellsSel = state.tableState.selectedCells
             .map((c) => '(${c.row},${c.col})')
             .join(' ');
+
         ctx.draw(
           Paragraph(
             'Rows: $rowsSel · Cols: $colsSel · Cells: $cellsSel\n'

@@ -6,7 +6,11 @@ class Rect {
 
   const Rect(this.x, this.y, this.width, this.height);
 
-  const Rect.zero() : x = 0, y = 0, width = 0, height = 0;
+  const Rect.zero()
+      : x = 0,
+        y = 0,
+        width = 0,
+        height = 0;
 
   int get right => x + width;
   int get bottom => y + height;
@@ -23,6 +27,7 @@ class Rect {
     final ny = y > other.y ? y : other.y;
     final nr = right < other.right ? right : other.right;
     final nb = bottom < other.bottom ? bottom : other.bottom;
+
     if (nr <= nx || nb <= ny) return const Rect.zero();
     return Rect(nx, ny, nr - nx, nb - ny);
   }
@@ -30,12 +35,12 @@ class Rect {
   Rect inset({int top = 0, int right = 0, int bottom = 0, int left = 0}) {
     final w = width - left - right;
     final h = height - top - bottom;
+
     if (w <= 0 || h <= 0) return Rect(x + left, y + top, 0, 0);
     return Rect(x + left, y + top, w, h);
   }
 
-  Rect insetAll(int v) =>
-      inset(top: v, right: v, bottom: v, left: v);
+  Rect insetAll(int v) => inset(top: v, right: v, bottom: v, left: v);
 
   @override
   bool operator ==(Object other) =>

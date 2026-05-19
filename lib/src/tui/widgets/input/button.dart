@@ -44,12 +44,17 @@ class Button implements FocusableWidget {
     if (area.isEmpty) return;
     final isFocused = ctx.isFocused(id);
     final s = isFocused
-        ? (focusedStyle ?? Style(bg: ctx.theme.colors.primary, fg: ctx.theme.colors.background, bold: true))
+        ? (focusedStyle ??
+            Style(
+                bg: ctx.theme.colors.primary,
+                fg: ctx.theme.colors.background,
+                bold: true))
         : (style ?? Style(fg: ctx.theme.colors.primary));
     final text = ' $label ';
     final mid = area.y + area.height ~/ 2;
     final tx = area.x + (area.width - text.length) ~/ 2;
     buffer.fillStyle(area, s);
-    buffer.writeText(tx.clamp(area.x, area.right), mid, text, style: s, maxWidth: area.width);
+    buffer.writeText(tx.clamp(area.x, area.right), mid, text,
+        style: s, maxWidth: area.width);
   }
 }

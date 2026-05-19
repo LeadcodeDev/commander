@@ -67,7 +67,8 @@ class RadioGroup<T> implements FocusableWidget {
       final isSel = opt.value == selected;
       final mark = isSel ? '(•)' : '( )';
       final style = isFocused && isSel
-          ? ctx.theme.text.body.copyWith(fg: ctx.theme.colors.primary, bold: true)
+          ? ctx.theme.text.body
+              .copyWith(fg: ctx.theme.colors.primary, bold: true)
           : ctx.theme.text.body;
       buffer.writeText(area.x, area.y + i, '$mark ${opt.label}',
           style: style, maxWidth: area.width);

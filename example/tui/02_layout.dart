@@ -40,6 +40,7 @@ Future<void> main() => runTerminal<State>(
           ),
           body[0],
         );
+
         ctx.draw(
           Container(
             border: BorderStyle.rounded,

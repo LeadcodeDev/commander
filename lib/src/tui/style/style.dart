@@ -90,6 +90,13 @@ class Style {
 
   @override
   int get hashCode => Object.hash(
-        fg, bg, bold, italic, underline, dim, reverse, strikethrough,
+        fg,
+        bg,
+        bold,
+        italic,
+        underline,
+        dim,
+        reverse,
+        strikethrough,
       );
 }

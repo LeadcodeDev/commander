@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
+import 'package:mansion/mansion.dart' as mansion;
 
 import '../geometry/size.dart';
 import '../rendering/ansi_encoder.dart';
@@ -42,12 +43,14 @@ class _WinConsole {
   static _WinConsole? open() {
     try {
       final lib = DynamicLibrary.open('kernel32.dll');
-      final getStd = lib
-          .lookupFunction<_GetStdHandleNative, _GetStdHandleDart>('GetStdHandle');
-      final getMode = lib.lookupFunction<_GetConsoleModeNative,
-          _GetConsoleModeDart>('GetConsoleMode');
-      final setMode = lib.lookupFunction<_SetConsoleModeNative,
-          _SetConsoleModeDart>('SetConsoleMode');
+      final getStd = lib.lookupFunction<_GetStdHandleNative, _GetStdHandleDart>(
+          'GetStdHandle');
+      final getMode =
+          lib.lookupFunction<_GetConsoleModeNative, _GetConsoleModeDart>(
+              'GetConsoleMode');
+      final setMode =
+          lib.lookupFunction<_SetConsoleModeNative, _SetConsoleModeDart>(
+              'SetConsoleMode');
       final hIn = getStd(_stdInputHandle);
       final hOut = getStd(_stdOutputHandle);
       return _WinConsole._(getStd, getMode, setMode, hIn, hOut);
@@ -70,8 +73,7 @@ class _WinConsole {
     final inMode = _readMode(hIn);
     if (inMode != null) {
       savedInMode = inMode;
-      final newIn = (inMode |
-              _enableVirtualTerminalInput) &
+      final newIn = (inMode | _enableVirtualTerminalInput) &
           ~(_enableLineInput | _enableEchoInput | _enableProcessedInput);
       setConsoleMode(hIn, newIn);
     }
@@ -112,7 +114,9 @@ class WindowsTerminal implements Terminal {
   WindowsTerminal()
       : _size = _querySize(),
         _console = _WinConsole.open() {
-    stdout.write('\x1B[?1049l');
+    // Make sure we start on the main screen (some shells leave the
+    // alternate screen on previous-process exit).
+    stdout.write(AnsiSequences.leaveAlt);
   }
 
   static Size _querySize() {
@@ -214,15 +218,16 @@ class WindowsTerminal implements Terminal {
 
   @override
   void setTitle(String title) {
-    final safe = title.replaceAll('\x07', '').replaceAll('\x1B', '');
-    stdout.write('\x1B]0;$safe\x07');
+    final buf = StringBuffer();
+    mansion.SetTitle(title).writeAnsiString(buf);
+    stdout.write(buf.toString());
   }
 
   @override
   Future<(int, int)> queryCursorPosition({
     Duration timeout = const Duration(milliseconds: 500),
   }) async {
-    stdout.write('\x1B[6n');
+    stdout.write(AnsiSequences.cursorReport);
     try {
       await stdout.flush();
     } catch (_) {}

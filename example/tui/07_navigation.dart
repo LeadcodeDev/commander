@@ -27,6 +27,7 @@ Future<void> main() => runTerminal<State>(
       onEvent: (s, event, handle) {
         if (event is KeyEvent) {
           if (event.char == 'q' && event.ctrl) handle.stop();
+
           final current = s.navigator.current;
           if (current is HomeRoute) {
             if (event.key == NamedKey.enter) {
@@ -47,6 +48,7 @@ Future<void> main() => runTerminal<State>(
       render: (ctx, state) {
         final rect = ctx.area;
         final current = state.navigator.current;
+
         switch (current) {
           case HomeRoute():
             ctx.draw(

@@ -92,6 +92,7 @@ class Tree<T> implements FocusableWidget {
         }
       }
     }
+
     for (var i = 0; i < roots.length; i++) {
       visit(roots[i], 0, [i]);
     }
@@ -188,9 +189,7 @@ class Tree<T> implements FocusableWidget {
     final activeS = activeStyle ??
         Style(
           fg: ctx.theme.colors.background,
-          bg: focused
-              ? ctx.theme.colors.primary
-              : ctx.theme.colors.foreground,
+          bg: focused ? ctx.theme.colors.primary : ctx.theme.colors.foreground,
           bold: true,
         );
     final icon = iconStyle ?? Style(fg: ctx.theme.colors.muted);

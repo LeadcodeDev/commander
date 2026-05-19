@@ -17,9 +17,13 @@ class TuiNavigator<R> {
   }
 
   R? pop() {
-    if (_stack.length <= 1) return null;
+    if (_stack.length <= 1) {
+      return null;
+    }
+
     final out = _stack.removeLast();
     _changes.add(null);
+
     return out;
   }
 

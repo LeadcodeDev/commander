@@ -21,7 +21,8 @@ class Positioned implements Widget {
   final int? width;
   final int? height;
   final Widget child;
-  const Positioned({this.left, this.top, this.width, this.height, required this.child});
+  const Positioned(
+      {this.left, this.top, this.width, this.height, required this.child});
 
   @override
   void render(Rect area, Buffer buffer, RenderContext ctx) {
@@ -38,7 +39,11 @@ class Align implements Widget {
   final int? width;
   final int? height;
   final Widget child;
-  const Align({this.alignment = Alignment.center, this.width, this.height, required this.child});
+  const Align(
+      {this.alignment = Alignment.center,
+      this.width,
+      this.height,
+      required this.child});
 
   @override
   void render(Rect area, Buffer buffer, RenderContext ctx) {

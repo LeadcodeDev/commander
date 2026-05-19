@@ -22,7 +22,7 @@ class ColorScheme {
     this.success = Color.green,
     this.warning = Color.yellow,
     this.info = Color.brightBlue,
-    this.muted = Color.gray,
+    this.muted = Color.brightBlack,
   });
 }
 
@@ -71,7 +71,7 @@ class ThemeData {
     colors: ColorScheme(
       background: Color.white,
       foreground: Color.black,
-      muted: Color.gray,
+      muted: Color.brightBlack,
     ),
   );
 }

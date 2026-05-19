@@ -33,10 +33,6 @@ Future<T> runOneShot<T>(
     initialState: null,
     theme: theme,
     terminal: terminal,
-    // Start with 1 row and let autoGrow expand only as far as widgets
-    // actually draw. Without an explicit height, FlowMode would pre-allocate
-    // every row between the cursor and the bottom of the terminal, scrolling
-    // existing scrollback out of view for no reason.
     mode: const RenderMode.flow(height: 1, autoGrow: true),
     allowNonInteractive: allowNonInteractive,
     enableMouse: false,
@@ -53,5 +49,6 @@ Future<T> runOneShot<T>(
   if (!isSet) {
     throw const PromptCancelledException();
   }
+
   return captured as T;
 }

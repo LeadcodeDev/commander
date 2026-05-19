@@ -28,8 +28,7 @@ class Buffer {
     }
   }
 
-  bool _inBounds(int x, int y) =>
-      x >= 0 && x < width && y >= 0 && y < height;
+  bool _inBounds(int x, int y) => x >= 0 && x < width && y >= 0 && y < height;
 
   Cell get(int x, int y) {
     if (!_inBounds(x, y)) return Cell.empty;
@@ -37,15 +36,20 @@ class Buffer {
   }
 
   void _cleanupOrphan(int x, int y) {
-    if (!_inBounds(x, y)) return;
+    if (!_inBounds(x, y)) {
+      return;
+    }
+
     final idx = y * width + x;
     final cur = _cells[idx];
+
     if (cur.width == 0 && x > 0) {
       final left = _cells[idx - 1];
       if (left.width == 2) {
         _cells[idx - 1] = Cell.empty;
       }
     }
+
     if (cur.width == 2 && _inBounds(x + 1, y)) {
       final right = _cells[idx + 1];
       if (right.width == 0) {
@@ -55,15 +59,23 @@ class Buffer {
   }
 
   void set(int x, int y, Cell cell) {
-    if (!_inBounds(x, y)) return;
+    if (!_inBounds(x, y)) {
+      return;
+    }
+
     _cleanupOrphan(x, y);
     _cells[y * width + x] = cell;
   }
 
-  void setChar(int x, int y, String char, {Style style = Style.none, int width = 1}) {
-    assert(width == 1 || width == 2,
-        'setChar width must be 1 or 2 (got $width)');
-    if (!_inBounds(x, y)) return;
+  void setChar(int x, int y, String char,
+      {Style style = Style.none, int width = 1}) {
+    assert(
+        width == 1 || width == 2, 'setChar width must be 1 or 2 (got $width)');
+
+    if (!_inBounds(x, y)) {
+      return;
+    }
+
     _cleanupOrphan(x, y);
     if (width > 1) {
       for (var i = 1; i < width; i++) {
@@ -80,7 +92,8 @@ class Buffer {
     }
   }
 
-  void writeText(int x, int y, String text, {Style style = Style.none, int? maxWidth}) {
+  void writeText(int x, int y, String text,
+      {Style style = Style.none, int? maxWidth}) {
     if (y < 0 || y >= height) return;
     var cursor = x;
     final limit = maxWidth != null ? x + maxWidth : width;

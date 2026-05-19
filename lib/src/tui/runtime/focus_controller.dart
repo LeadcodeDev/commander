@@ -70,7 +70,8 @@ class FocusController {
   void next() {
     final scope = _active;
     if (scope.order.isEmpty) return;
-    final idx = scope.current == null ? -1 : scope.order.indexOf(scope.current!);
+    final idx =
+        scope.current == null ? -1 : scope.order.indexOf(scope.current!);
     final nextIdx = (idx + 1) % scope.order.length;
     scope.current = scope.order[nextIdx];
   }

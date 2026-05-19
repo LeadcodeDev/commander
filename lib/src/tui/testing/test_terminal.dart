@@ -13,8 +13,7 @@ class TestTerminal implements Terminal {
   bool _mouseEnabled = false;
   bool _cursorHidden = false;
 
-  TestTerminal({Size? initialSize})
-      : _size = initialSize ?? const Size(80, 24);
+  TestTerminal({Size? initialSize}) : _size = initialSize ?? const Size(80, 24);
 
   String get output => _output.toString();
   bool get rawMode => _rawMode;
@@ -62,7 +61,8 @@ class TestTerminal implements Terminal {
   @override
   Future<(int, int)> queryCursorPosition({
     Duration timeout = const Duration(milliseconds: 500),
-  }) async => (0, 0);
+  }) async =>
+      (0, 0);
   @override
   Future<void> flush() async {}
 

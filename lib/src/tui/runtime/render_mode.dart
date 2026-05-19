@@ -23,8 +23,7 @@ final class FlowMode extends RenderMode {
   final int? minHeight;
   final bool autoGrow;
   const FlowMode({this.height, this.minHeight, this.autoGrow = false})
-      : assert(height == null || height > 0,
-            'FlowMode.height must be > 0'),
+      : assert(height == null || height > 0, 'FlowMode.height must be > 0'),
         assert(minHeight == null || minHeight > 0,
             'FlowMode.minHeight must be > 0');
 }

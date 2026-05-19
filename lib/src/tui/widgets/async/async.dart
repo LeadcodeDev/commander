@@ -27,7 +27,9 @@ class Async<T> implements Widget {
     final widget = switch (entry.status) {
       AsyncStatus.success => onSuccess(entry.value as T),
       AsyncStatus.error => onError(entry.error ?? 'unknown', entry.stack),
-      AsyncStatus.loading || AsyncStatus.unknown || AsyncStatus.failure =>
+      AsyncStatus.loading ||
+      AsyncStatus.unknown ||
+      AsyncStatus.failure =>
         onLoading(),
     };
     ctx.draw(widget, area);

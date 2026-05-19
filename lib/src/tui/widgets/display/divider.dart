@@ -17,8 +17,8 @@ class Divider implements Widget {
     this.style,
   });
 
-  factory Divider.vertical({String char = '│', Style? style}) =>
-      Divider(orientation: DividerOrientation.vertical, char: char, style: style);
+  factory Divider.vertical({String char = '│', Style? style}) => Divider(
+      orientation: DividerOrientation.vertical, char: char, style: style);
 
   @override
   void render(Rect area, Buffer buffer, RenderContext ctx) {

@@ -33,8 +33,7 @@ final class SymbolKey extends Key {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is SymbolKey && other.symbol == symbol);
+      identical(this, other) || (other is SymbolKey && other.symbol == symbol);
 
   @override
   int get hashCode => Object.hash(SymbolKey, symbol);
@@ -54,7 +53,8 @@ final class CompositeKey extends Key {
   final List<Object> parts;
   CompositeKey(this.parts)
       : assert(
-          parts.every((p) => p is num || p is String || p is Symbol || p is bool),
+          parts.every(
+              (p) => p is num || p is String || p is Symbol || p is bool),
           'CompositeKey parts must be primitives (num/String/Symbol/bool)',
         ),
         super._();

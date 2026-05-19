@@ -21,6 +21,7 @@ class State {
 Widget _row(Feature f, CheckboxItemState s) {
   final mark = s.isChecked ? '[x]' : '[ ]';
   final base = s.isActive ? const Style(bold: true) : Style.none;
+
   return Row(children: [
     Fixed(size: 4, child: Text(' $mark', style: base)),
     Fixed(size: 16, child: Text(f.name, style: base)),

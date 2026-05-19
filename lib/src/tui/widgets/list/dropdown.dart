@@ -54,7 +54,9 @@ class Dropdown<T> implements FocusableWidget {
         state.open = true;
         state.highlightedIndex = selected == null
             ? 0
-            : options.indexWhere((o) => o == selected).clamp(0, options.length - 1);
+            : options
+                .indexWhere((o) => o == selected)
+                .clamp(0, options.length - 1);
         return true;
       }
       return false;
@@ -93,7 +95,8 @@ class Dropdown<T> implements FocusableWidget {
         : base;
     final label = selected == null ? placeholder : _label(selected as T);
     final arrow = state.open ? '▲' : '▼';
-    buffer.writeText(area.x, area.y, '$label $arrow', style: style, maxWidth: area.width);
+    buffer.writeText(area.x, area.y, '$label $arrow',
+        style: style, maxWidth: area.width);
 
     if (state.open) {
       final h = (options.length + 2).clamp(3, maxDropdownHeight + 2);
@@ -138,7 +141,8 @@ class _DropdownPanel<T> implements Widget {
     buffer.setChar(area.x, area.y, chars.topLeft, style: stroke);
     buffer.setChar(area.right - 1, area.y, chars.topRight, style: stroke);
     buffer.setChar(area.x, area.bottom - 1, chars.bottomLeft, style: stroke);
-    buffer.setChar(area.right - 1, area.bottom - 1, chars.bottomRight, style: stroke);
+    buffer.setChar(area.right - 1, area.bottom - 1, chars.bottomRight,
+        style: stroke);
 
     final visibleRows = area.height - 2;
     final base = ctx.theme.text.body;

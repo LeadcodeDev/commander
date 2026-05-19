@@ -343,7 +343,8 @@ class Table<T> implements FocusableWidget {
     final headerLines = _headerLines();
     final dataArea = headerLines == 0
         ? area
-        : Rect(area.x, area.y + headerLines, area.width, area.height - headerLines);
+        : Rect(area.x, area.y + headerLines, area.width,
+            area.height - headerLines);
 
     if (filtered.isEmpty) {
       if (showHeader && area.height >= 2) {
@@ -352,7 +353,8 @@ class Table<T> implements FocusableWidget {
         _renderHeader(area, buffer, ctx, widths, vis);
       }
       final emptyArea = headerLines > 0 && area.height > headerLines
-          ? Rect(area.x, area.y + headerLines, area.width, area.height - headerLines)
+          ? Rect(area.x, area.y + headerLines, area.width,
+              area.height - headerLines)
           : area;
       _renderEmpty(emptyArea, buffer, ctx);
       return;
@@ -433,7 +435,8 @@ class Table<T> implements FocusableWidget {
     var x = area.x;
     for (var i = vis.firstVisible; i <= vis.lastVisible; i++) {
       if (i != vis.firstVisible && sep != null) {
-        buffer.writeText(x, area.y, sep, style: sepStyle, maxWidth: area.right - x);
+        buffer.writeText(x, area.y, sep,
+            style: sepStyle, maxWidth: area.right - x);
         x += sep.length;
       } else if (i != vis.firstVisible) {
         x += 1; // implicit space separator
@@ -458,9 +461,11 @@ class Table<T> implements FocusableWidget {
     }
 
     if (area.height >= 2) {
-      final sepLineStyle = headerSeparatorStyle ?? ctx.theme.borders.strokeStyle;
+      final sepLineStyle =
+          headerSeparatorStyle ?? ctx.theme.borders.strokeStyle;
       for (var k = 0; k < area.width; k++) {
-        buffer.setChar(area.x + k, area.y + 1, headerSeparator, style: sepLineStyle);
+        buffer.setChar(area.x + k, area.y + 1, headerSeparator,
+            style: sepLineStyle);
       }
     }
   }
@@ -480,7 +485,9 @@ class Table<T> implements FocusableWidget {
     final activeOverlay =
         Style(bg: ctx.theme.colors.primary, fg: ctx.theme.colors.background);
 
-    for (var i = 0; i < visibleRows && i + state.verticalScroll < filtered.length; i++) {
+    for (var i = 0;
+        i < visibleRows && i + state.verticalScroll < filtered.length;
+        i++) {
       final rowIdx = i + state.verticalScroll;
       final item = filtered[rowIdx];
       final rowRect = Rect(area.x, area.y + i, area.width, 1);
@@ -489,7 +496,8 @@ class Table<T> implements FocusableWidget {
       var x = area.x;
       for (var c = vis.firstVisible; c <= vis.lastVisible; c++) {
         if (c != vis.firstVisible && sep != null) {
-          buffer.writeText(x, rowRect.y, sep, style: sepStyle, maxWidth: area.right - x);
+          buffer.writeText(x, rowRect.y, sep,
+              style: sepStyle, maxWidth: area.right - x);
           x += sep.length;
         } else if (c != vis.firstVisible) {
           x += 1;

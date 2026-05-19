@@ -3,7 +3,8 @@ import '../../rendering/buffer.dart';
 import '../../runtime/render_context.dart';
 import '../../widget/widget.dart';
 
-typedef ScreenBuilder = Widget Function(RenderContext ctx, void Function() exit);
+typedef ScreenBuilder = Widget Function(
+    RenderContext ctx, void Function() exit);
 
 class Screen implements Widget {
   final String title;

@@ -28,6 +28,7 @@ Future<void> main() => runTerminal<HelloState>(
           ),
           ctx.area,
         );
+
         ctx.draw(
           const Text(
             'Press q or Ctrl-C to quit',

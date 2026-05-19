@@ -34,9 +34,8 @@ class State {
 
 Widget _row(Country c, SelectItemState s) {
   final marker = s.isSelected ? '●' : '○';
-  final emphasis = s.isActive
-      ? const Style(bold: true)
-      : Style.none;
+  final emphasis = s.isActive ? const Style(bold: true) : Style.none;
+
   return Row(children: [
     Fixed(size: 3, child: Text('  $marker', style: emphasis)),
     Fixed(size: 5, child: Text(c.code, style: const Style(dim: true))),
@@ -51,6 +50,7 @@ Future<void> main() => runTerminal<State>(
         if (event is KeyEvent && event.char == 'q' && event.ctrl) {
           handle.stop();
         }
+
         if (event is KeyEvent &&
             event.key == NamedKey.tab &&
             handle.focus.current == Key.symbol(#tabs)) {
@@ -90,6 +90,7 @@ Future<void> main() => runTerminal<State>(
               const Text('Pick a single country (filterable)'),
               block[0],
             );
+
             ctx.draw(
               Select<Country>(
                 id: Key.symbol(#singleSelect),
@@ -111,6 +112,7 @@ Future<void> main() => runTerminal<State>(
               ),
               block[1],
             );
+
             ctx.draw(
               Paragraph(
                 'Space to select · Enter to confirm · ↑/↓ to navigate · type to filter.\n\n'
@@ -126,6 +128,7 @@ Future<void> main() => runTerminal<State>(
               const Text('Pick 2 or 3 countries (multi · max 3)'),
               block[0],
             );
+
             ctx.draw(
               Select<Country>(
                 id: Key.symbol(#multiSelect),
@@ -154,10 +157,10 @@ Future<void> main() => runTerminal<State>(
               ),
               block[1],
             );
-            final currentSelection = state.multiState.selected
-                .map((c) => c.code)
-                .toList()
-              ..sort();
+
+            final currentSelection =
+                state.multiState.selected.map((c) => c.code).toList()..sort();
+
             ctx.draw(
               Paragraph(
                 'Space to toggle · Enter to confirm · ↑/↓ navigate · type to filter.\n\n'
